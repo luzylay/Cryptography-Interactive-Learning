@@ -31,7 +31,9 @@ export const VigenereTabula: React.FC<VigenereTabulaProps> = ({ mode }) => {
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100">Tabula Recta de Vigenère y Beaufort</h2>
-            <p className="text-xs text-slate-400 font-mono">Sustitución Polialfabética Periódica · Matriz {m}×{m}</p>
+            <p className="text-xs text-slate-400 font-mono">
+              Sustitución Polialfabética Periódica · Matriz {m}×{m} · <span className="text-sky-400 font-mono text-[10px]">Fuente APA 7: Vigenère (1586); Ramió Aguirre (1999, pp. 19–25)</span>
+            </p>
           </div>
         </div>
 

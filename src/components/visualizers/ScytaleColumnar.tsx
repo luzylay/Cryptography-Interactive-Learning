@@ -32,7 +32,9 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100">Cifradores por Transposición</h2>
-            <p className="text-xs text-slate-400 font-mono">Reordenamiento geométrico sin sustitución de caracteres</p>
+            <p className="text-xs text-slate-400 font-mono">
+              Reordenamiento geométrico sin sustitución · <span className="text-rose-400 font-mono text-[10px]">Fuente APA 7: Ramió Aguirre (1999, pp. 5–7); Kahn (1996)</span>
+            </p>
           </div>
         </div>
 

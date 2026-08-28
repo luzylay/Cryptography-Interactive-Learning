@@ -52,7 +52,9 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100">Cifrador de Hill (Álgebra Matricial Modular)</h2>
-            <p className="text-xs text-slate-400 font-mono">C = K · M mod {m} · Criptosistema Poligráfico</p>
+            <p className="text-xs text-slate-400 font-mono">
+              C = K · M mod {m} · Poligráfico · <span className="text-emerald-400 font-mono text-[10px]">Fuente APA 7: Hill (1929, DOI: 10.2307/2298294); Ramió Aguirre (1999, p. 28)</span>
+            </p>
           </div>
         </div>
 

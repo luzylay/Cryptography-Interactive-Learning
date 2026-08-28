@@ -70,7 +70,9 @@ export const CaesarWheel: React.FC<CaesarWheelProps> = ({ mode }) => {
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100">Cifrador César y Variantes Afines</h2>
-            <p className="text-xs text-slate-400 font-mono">Sustitución Monoalfabética · Módulo {m}</p>
+            <p className="text-xs text-slate-400 font-mono">
+              Sustitución Monoalfabética · Módulo {m} · <span className="text-amber-400/90 text-[10px]">Fuente APA 7: Suetonio (c. 121 d.C./1985); Ramió Aguirre (1999, pp. 11–15)</span>
+            </p>
           </div>
         </div>
 

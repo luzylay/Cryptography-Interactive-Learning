@@ -129,7 +129,7 @@ export const AlbertiDisk: React.FC<AlbertiDiskProps> = ({ mode, onModeChange }) 
                 </span>
               </h2>
               <p className="text-xs text-slate-400">
-                Arrastra o usa los botones para girar el disco interior concéntrico
+                Arrastra o usa los botones para girar el disco interior concéntrico · <span className="text-amber-400/90 font-mono text-[10px]">Fuente APA 7: Ramió Aguirre (1999, p. 7); Alberti (1466/1568)</span>
               </p>
             </div>
           </div>

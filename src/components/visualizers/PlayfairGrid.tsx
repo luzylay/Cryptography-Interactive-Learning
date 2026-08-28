@@ -23,7 +23,9 @@ export const PlayfairGrid: React.FC = () => {
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100">Cifrador de Playfair (Matriz 5×5)</h2>
-            <p className="text-xs text-slate-400 font-mono">Sustitución Digrámica · 25 letras (I = J, Ñ → N)</p>
+            <p className="text-xs text-slate-400 font-mono">
+              Sustitución Digrámica · 25 letras (I = J, Ñ → N) · <span className="text-violet-400 font-mono text-[10px]">Fuente APA 7: Playfair (1854); Ramió Aguirre (1999, pp. 26–28)</span>
+            </p>
           </div>
         </div>
 

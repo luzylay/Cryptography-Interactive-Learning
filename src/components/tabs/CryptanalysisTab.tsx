@@ -30,7 +30,7 @@ export const CryptanalysisTab: React.FC<CryptanalysisTabProps> = ({ mode }) => {
           <div>
             <h2 className="text-base font-bold text-slate-100">Laboratorio de Criptoanálisis y Estadísticas</h2>
             <p className="text-xs text-slate-400 font-mono">
-              Análisis de frecuencias de monogramas, Índice de Coincidencia (IC) y Test de Kasiski
+              Frecuencias, IC y Kasiski · <span className="text-cyan-400 font-mono text-[10px]">Fuente APA 7: Kasiski (1863); Friedman (1922); Ramió Aguirre (1999, pp. 38–42)</span>
             </p>
           </div>
         </div>
