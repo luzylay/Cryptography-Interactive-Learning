@@ -5,10 +5,12 @@ node_modules/
 # Production build outputs
 dist/
 build/
+coverage/
 
 # Environment and sensitive data
-.env*
-!.env.example
+.env
+.env.local
+.env.*.local
 *.pem
 *.key
 *.cert
@@ -20,6 +22,10 @@ build/
 vite.config.*.timestamp-*
 *.tsbuildinfo
 *-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 logs/
 *.log
 .claude-replay.*
@@ -40,7 +46,12 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
+*.sublime-project
+*.sublime-workspace
 
 # Platform / Agent state
 /.plugins/
 /.opencode-skills/
+.gemini/
+.agents/
+
