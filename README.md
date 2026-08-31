@@ -10,6 +10,7 @@ Plataforma web interactiva de alta precisión orientada al estudio teórico y ex
 [![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-F59E0B?style=flat&logo=open-source-initiative&logoColor=white)](LICENSE)
 [![Seguridad SSDLC](https://img.shields.io/badge/Seguridad-SSDLC%20%2F%20SSDF-E11D48?style=flat&logo=shield&logoColor=white)](SECURITY.md)
 [![Arquitectura SSD](https://img.shields.io/badge/Arquitectura-UML%20SSD-8B5CF6?style=flat&logo=diagram-next&logoColor=white)](docs/ARCHITECTURE_AND_SECURITY.md)
+[![Fundamentos Matemáticos](https://img.shields.io/badge/Matemáticas-Guía%20Detallada-0EA5E9?style=flat&logo=scipy&logoColor=white)](docs/MATHEMATICAL_FOUNDATIONS.md)
 
 ---
 
@@ -48,13 +49,25 @@ Plataforma web interactiva de alta precisión orientada al estudio teórico y ex
 
 ## 2. Fundamentos Matemáticos y Algebraicos
 
-| Criptosistema | Ecuación de Cifrado | Ecuación de Descifrado | Condición de Biyectividad |
+Para una explicación exhaustiva con **ejemplos numéricos paso a paso, teoremas, identidades de Bézout, inversión de matrices $2\times 2$ y $3\times 3$ y criptoanálisis estadístico**, consulte el documento dedicado:
+* 📘 [**Guía Completa de Fundamentos Matemáticos y Algebraicos**](docs/MATHEMATICAL_FOUNDATIONS.md)
+
+### Resumen de Ecuaciones y Condiciones de Invertibilidad
+
+| Criptosistema | Ecuación de Cifrado | Ecuación de Descifrado | Condición de Biyectividad / Invertibilidad |
 | :--- | :--- | :--- | :--- |
-| **César** | $C_i = (M_i + k) \pmod m$ | $M_i = (C_i - k + m) \pmod m$ | $\forall k \in \mathbb{Z}$ |
-| **Afín** | $C_i = (a \cdot M_i + b) \pmod m$ | $M_i = a^{-1} \cdot (C_i - b) \pmod m$ | $\text{mcd}(a, m) = 1$ |
-| **Vigenère** | $C_i = (M_i + K_{i \bmod L}) \pmod m$ | $M_i = (C_i - K_{i \bmod L} + m) \pmod m$ | $K \neq \emptyset$ |
-| **Beaufort** | $C_i = (K_{i \bmod L} - M_i + m) \pmod m$ | $M_i = (K_{i \bmod L} - C_i + m) \pmod m$ | Involutivo ($\mathcal{E} \equiv \mathcal{D}$) |
-| **Hill ($n\times n$)** | $\vec{C} = K \cdot \vec{M} \pmod m$ | $\vec{M} = K^{-1} \cdot \vec{C} \pmod m$ | $\text{mcd}(\det(K), m) = 1$ |
+| **César** | $C_i = (M_i + k) \pmod m$ | $M_i = (C_i - k + m) \pmod m$ | $\forall k \in \mathbb{Z}$ (Siempre biyectivo) |
+| **Afín** | $C_i = (a \cdot M_i + b) \pmod m$ | $M_i = a^{-1} \cdot (C_i - b) \pmod m$ | $\text{mcd}(a, m) = 1$ (Existe inverso modular $a^{-1}$) |
+| **Vigenère** | $C_i = (M_i + K_{i \bmod L}) \pmod m$ | $M_i = (C_i - K_{i \bmod L} + m) \pmod m$ | Longitud de clave $L \ge 1$ |
+| **Beaufort** | $C_i = (K_{i \bmod L} - M_i + m) \pmod m$ | $M_i = (K_{i \bmod L} - C_i + m) \pmod m$ | Involutivo ($\mathcal{E} \equiv \mathcal{D}$, auto-inverso) |
+| **Hill ($n\times n$)** | $\vec{C} = K \cdot \vec{M} \pmod m$ | $\vec{M} = K^{-1} \cdot \vec{C} \pmod m$ | $\det(K) \not\equiv 0$ y $\text{mcd}(\det(K), m) = 1$ |
+
+### ¿Qué significa cada concepto a simple vista?
+1. **Aritmética Modular ($\mathbb{Z}_m$):** Es la "matemática del reloj". Si un alfabeto tiene $m=27$ letras, el número 28 equivale a 1 ($28 \bmod 27 = 1$). El resultado siempre permanece dentro del alfabeto.
+2. **Coprimalidad ($\text{mcd}(a, m) = 1$):** Significa que el multiplicador $a$ y el tamaño del alfabeto $m$ no comparten factores comunes salvo el 1. Esto garantiza que dos letras distintas nunca se conviertan en la misma letra cifrada.
+3. **Inverso Modular ($a^{-1}$):** Es el número que al multiplicarse por $a$ da residuo 1 ($a \cdot a^{-1} \equiv 1 \pmod m$). Por ejemplo, en español ($m=27$), el inverso de $7$ es $4$ porque $7 \times 4 = 28 \equiv 1 \pmod{27}$.
+4. **Matrices de Hill ($K^{-1}$):** Se agrupan las letras en vectores (de 2 en 2 o de 3 en 3) y se multiplican por una matriz secreta. Para descifrar, se calcula la matriz inversa utilizando la matriz adjunta y el inverso del determinante modular.
+5. **Índice de Coincidencia ($IC$):** Mide la dispersión estadística de las letras. Un texto en español o cifrado César tiene $IC \approx 0.076$, mientras que un texto polialfabético o aleatorio tiene $IC \approx 0.037$.
 
 ---
 
@@ -69,10 +82,11 @@ El diseño del software aplica **Clean Architecture** separando de forma estrict
 | **`src/components/visualizers/`** *(Visualización)* | React 19, Tailwind CSS v4, Recharts, SVG | Componentes gráficos interactivos (Disco de Alberti SVG, Tabula Recta, Matrices de Hill, Histogramas Recharts). |
 | **`tests/`** *(Validación)* | Node.js Test Runner Nativo | Pruebas unitarias de invariantes matemáticos, simetría de descifrado y seguridad de entradas. |
 | **`.github/workflows/`** *(CI/CD)* | GitHub Actions | Automatización de integración continua, compilación y despliegue a GitHub Pages. |
-| **`docs/`** *(Documentación)* | Markdown, Mermaid UML | Diagramas de Secuencia del Sistema (SSD), modelo STRIDE y manuales de arquitectura. |
+| **`docs/`** *(Documentación)* | Markdown, Mermaid UML, MathJax/KaTeX | Diagramas SSD, modelo STRIDE, fundamentos matemáticos y manuales de arquitectura. |
 
-La documentación formal de arquitectura y los **Diagramas de Secuencia del Sistema (SSD en notación UML)** se encuentran detallados en:
-* [Especificación Técnica de Arquitectura y SSD](docs/ARCHITECTURE_AND_SECURITY.md)
+La documentación técnica complementaria se encuentra detallada en:
+* 📘 [Guía Completa de Fundamentos Matemáticos y Algebraicos](docs/MATHEMATICAL_FOUNDATIONS.md)
+* 📐 [Especificación Técnica de Arquitectura, SSD y Seguridad](docs/ARCHITECTURE_AND_SECURITY.md)
 
 ---
 
