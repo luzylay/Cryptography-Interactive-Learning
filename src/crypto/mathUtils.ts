@@ -85,15 +85,16 @@ export function inv3x3(M: number[][], m: number): number[][] | null {
   if (dInv === null) return null;
 
   const a = M[0][0], b = M[0][1], c = M[0][2];
-  const e = M[1][0], f = M[1][1], g = M[1][2];
-  const h = M[2][0], i = M[2][1], j = M[2][2];
+  const dVal = M[1][0], e = M[1][1], f = M[1][2];
+  const g = M[2][0], h = M[2][1], i = M[2][2];
 
-  // Adjugate matrix
+  // Matriz adjunta = Transpuesta de la matriz de cofactores
   const adj = [
-    [f * j - g * i, -(b * j - c * i), b * g - c * f],
-    [-(e * j - g * h), a * j - c * h, -(a * g - c * e)],
-    [e * i - f * h, -(a * i - b * h), a * f - b * e],
+    [e * i - f * h, -(b * i - c * h), b * f - c * e],
+    [-(dVal * i - f * g), a * i - c * g, -(a * f - c * dVal)],
+    [dVal * h - e * g, -(a * h - b * g), a * e - b * dVal],
   ];
 
   return adj.map(row => row.map(val => mod(dInv * val, m)));
 }
+

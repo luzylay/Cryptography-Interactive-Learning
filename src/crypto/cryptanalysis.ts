@@ -65,8 +65,12 @@ export function performKasiski(text: string, mode: AlphabetMode, minLen = 3, max
   repetitions: KasiskiRepetition[];
   suggestedKeyLengths: { length: number; score: number }[];
 } {
-  const norm = normalizeText(text, mode);
+  // Limite defensivo para evitar DoS por sobrecarga de CPU en hilos de interfaz
+  const MAX_KASISKI_LENGTH = 10000;
+  const rawNorm = normalizeText(text, mode);
+  const norm = rawNorm.length > MAX_KASISKI_LENGTH ? rawNorm.slice(0, MAX_KASISKI_LENGTH) : rawNorm;
   const patterns: Record<string, number[]> = {};
+
 
   for (let len = minLen; len <= maxLen; len++) {
     for (let i = 0; i <= norm.length - len; i++) {

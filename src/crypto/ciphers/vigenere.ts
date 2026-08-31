@@ -71,7 +71,7 @@ export function processVigenere(
     let pChar = tChar;
     let cChar = '';
 
-    if (variant === 'vigenere') {
+    if (variant === 'vigenere' || variant === 'autokey') {
       if (direction === 'encrypt') {
         resIdx = mod(tIdx + kIdx, m);
         cChar = alpha[resIdx];
