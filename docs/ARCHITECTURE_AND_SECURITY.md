@@ -1,43 +1,117 @@
-# Especificación Técnica de Arquitectura, Diagramas de Secuencia del Sistema (SSD) y Seguridad (SSDLC)
+# Especificación Técnica de Arquitectura, Estructura del Software, Diagramas de Secuencia (SSD) y Seguridad (SSDLC)
 
-Este documento describe la arquitectura modular, los **Diagramas de Secuencia del Sistema (SSD en notación UML)** y los mecanismos del **Ciclo de Vida de Desarrollo de Software Seguro (SSDLC)** implementados en la plataforma *Criptografía Interactiva*.
-
----
-
-## 1. Arquitectura del Sistema
-
-La arquitectura de la aplicación sigue un patrón desacoplado en tres capas con flujo de datos unidireccional y funciones algebraicas puras en el núcleo de cálculo.
-
-```
-+------------------------------------------------------------------+
-|                    Capa de Presentación (UI)                     |
-|  - Tabs de Navegación (Laboratorio, Práctica, Criptoanálisis)     |
-|  - Visualizadores Interactivos (Alberti SVG, Hill, Tabula, etc.) |
-+---------------------------------+--------------------------------+
-                                  | Eventos de Usuario
-                                  v
-+------------------------------------------------------------------+
-|                 Capa de Control y Estado React                   |
-|  - Gestión de Modo de Alfabeto (mod 26 / mod 27)                 |
-|  - Sincronización de Parámetros de Cifrado                       |
-+---------------------------------+--------------------------------+
-                                  | Invocación de Operaciones
-                                  v
-+------------------------------------------------------------------+
-|               Capa de Dominio y Cálculo (src/crypto)             |
-|  - Normalización y Filtrado (alphabets.ts)                       |
-|  - Aritmética Modular y Álgebra Lineal (mathUtils.ts)            |
-|  - Motores de Cifrado y Criptoanálisis (ciphers/, cryptanalysis) |
-+------------------------------------------------------------------+
-```
+Este documento describe la estructura de directorios por capas y tecnologías, los **Diagramas de Secuencia del Sistema (SSD en notación UML)** y los mecanismos del **Ciclo de Vida de Desarrollo de Software Seguro (SSDLC)** implementados en la plataforma *Criptografía Interactiva*.
 
 ---
 
-## 2. Diagramas de Secuencia del Sistema (SSD - UML)
+## 1. Patrón Arquitectónico del Software
+
+El proyecto implementa los principios de **Clean Architecture (Arquitectura Limpia)** y **Separación de Responsabilidades (Separation of Concerns)** adaptados a aplicaciones web modernas. La regla fundamental es que **la lógica criptográfica y matemática es agnóstica de la interfaz gráfica** y no posee dependencias sobre React ni sobre el DOM.
+
+```
++-------------------------------------------------------------------------+
+|                       CAPA DE PRESENTACION (UI)                         |
+|  Tecnologias: React 19, Tailwind CSS v4, Lucide Icons, SVG interactivo   |
+|  - Tabs de Navegacion (Laboratorio, Practica, Criptoanalisis, Teoria)   |
+|  - Visualizadores Especializados (AlbertiDisk, HillTool, CaesarWheel)   |
++------------------------------------+------------------------------------+
+                                     | Eventos de Usuario (Props / Callbacks)
+                                     v
++-------------------------------------------------------------------------+
+|                  CAPA DE CONTROL Y ESTADO DE APLICACION                 |
+|  Tecnologias: React Hooks (useState, useMemo, useCallback)              |
+|  - Gestion de Contexto de Alfabeto (es27 / en26 / alberti24)            |
+|  - Sincronizacion de Parametros y Formularios                           |
++------------------------------------+------------------------------------+
+                                     | Invocacion de Funciones Puras
+                                     v
++-------------------------------------------------------------------------+
+|                 CAPA DE DOMINIO Y CALCULO (NUCLEO PURO)                 |
+|  Tecnologias: TypeScript 5.7 estricto (Sin dependencias de UI ni DOM)   |
+|  - Aritmetica Modular y Algebra Lineal (mathUtils.ts)                   |
+|  - Definicion y Normalizacion de Alfabetos (alphabets.ts)               |
+|  - Algoritmos de Cifrado Clasico (src/crypto/ciphers/)                  |
+|  - Motor de Criptoanalisis Estadistico (cryptanalysis.ts)               |
+|  - Generador Determinista de Problemas (exercises.ts)                   |
++-------------------------------------------------------------------------+
+```
+
+---
+
+## 2. Mapa Estructural de Carpetas por Tecnologías y Responsabilidad
+
+A continuación se detalla la estructura física del proyecto clasificada por capas funcionales y tecnologías empleadas, como estándar de referencia para desarrollo de software:
+
+```
+Cryptography-Interactive-Learning/
+├── .github/                              # [CAPA CI/CD & AUTOMATIZACION]
+│   └── workflows/
+│       └── deploy.yml                    # Pipeline GitHub Actions (Build & Deploy a GitHub Pages)
+│
+├── public/                               # [CAPA DE RECURSOS ESTATICOS INMUTABLES]
+│   ├── manifest.json                     # Configuracion Web App / PWA
+│   └── robots.txt                        # Directivas de indexacion web
+│
+├── docs/                                 # [CAPA DE DOCUMENTACION TECNICA]
+│   └── ARCHITECTURE_AND_SECURITY.md      # Especificacion de Arquitectura, SSD y Seguridad
+│
+├── tests/                                # [CAPA DE PRUEBAS AUTOMATIZADAS]
+│   └── crypto-security.test.mjs          # Suite de pruebas unitarias, algebraicas y de seguridad
+│
+├── src/                                  # [CODIGO FUENTE DE LA APLICACION]
+│   │
+│   ├── crypto/                           # >>> CAPA DE DOMINIO (LOGICA PURA & TYPESCRIPT) <<<
+│   │   ├── alphabets.ts                  # Alfabetos (mod 26, mod 27), mapeo de caracteres y frecuencias
+│   │   ├── mathUtils.ts                  # Aritmetica modular: gcd, euclides extendido, matrices 2x2/3x3
+│   │   ├── cryptanalysis.ts              # Histogramas, Indice de Friedman, Test de Kasiski, Fuerza Bruta
+│   │   ├── exercises.ts                  # Motor generador de ejercicios y validacion matematica
+│   │   └── ciphers/                      # Submodulo de Algoritmos Criptograficos Clasicos
+│   │       ├── alberti.ts                # Motor de giros y paso a paso del Disco de Alberti
+│   │       ├── caesarAffine.ts           # Algoritmos Cesar, Afin y Cesar Mixto
+│   │       ├── hill.ts                   # Transformaciones lineales y producto matricial modular
+│   │       ├── playfair.ts               # Cifrado digramico y matriz 5x5 Playfair
+│   │       ├── polybius.ts               # Tablero de Polibio
+│   │       ├── transposition.ts          # Escitala Espartana y Transposicion Columnar
+│   │       └── vigenere.ts               # Cifrador de Vigenere, Beaufort y Autoclave
+│   │
+│   ├── components/                       # >>> CAPA DE PRESENTACION (REACT 19 + TAILWIND CSS) <<<
+│   │   ├── Navbar.tsx                    # Cabecera interactiva y selector global de alfabeto
+│   │   │
+│   │   ├── tabs/                         # Vistas / Controladores de Pestana
+│   │   │   ├── InteractiveLabTab.tsx     # Laboratorio de simulacion interactiva
+│   │   │   ├── PracticeQuizTab.tsx       # Modulo de autoevaluacion y ejercicios
+│   │   │   ├── CryptanalysisTab.tsx      # Laboratorio de criptoanalisis estadistico
+│   │   │   └── EncyclopediaTab.tsx       # Enciclopedia historico-teorica con citas APA 7
+│   │   │
+│   │   └── visualizers/                  # Componentes Graficos de Simulacion (SVG & Interaccion)
+│   │       ├── AlbertiDisk.tsx           # Disco concentrico SVG arrastrable con rayo laser
+│   │       ├── CaesarWheel.tsx           # Rueda de calculo modular interactiva
+│   │       ├── HillMatrixTool.tsx        # Calculadora matricial con determinantes e inversas
+│   │       ├── PlayfairGrid.tsx          # Grilla 5x5 con trazado de digramas
+│   │       ├── ScytaleColumnar.tsx       # Baston cilindrico y rejillas de transposicion
+│   │       └── VigenereTabula.tsx        # Tabula Recta interactiva con coordenadas
+│   │
+│   ├── App.tsx                           # Componente raiz y orquestador de vistas
+│   ├── main.tsx                          # Punto de entrada React (DOM Mounting)
+│   ├── index.css                         # Estilos globales y configuracion Tailwind CSS v4
+│   └── vite-env.d.ts                     # Definiciones de tipo para el entorno Vite
+│
+├── package.json                          # [CONFIGURACION DE DEPENDENCIAS Y SCRIPTS]
+├── tsconfig.json                         # [CONFIGURACION DEL COMPILADOR TYPESCRIPT]
+├── vite.config.ts                        # [CONFIGURACION DEL BUNDLER VITE 8]
+├── .gitignore                            # [REGLAS DE EXCLUSION DE CONTROL DE VERSIONES]
+├── SECURITY.md                           # [POLITICA DE SEGURIDAD Y MARCO SSDLC / STRIDE]
+├── LICENSE                               # [LICENCIA DE CODIGO ABIERTO MIT]
+└── README.md                             # [MANIFIESTO PRINCIPAL DEL PROYECTO]
+```
+
+---
+
+## 3. Diagramas de Secuencia del Sistema (SSD - UML)
 
 Los Diagramas de Secuencia del Sistema modelan los eventos de entrada y salida generados por el actor externo (Usuario) en la frontera del sistema.
 
-### 2.1 SSD-01: Simulación y Cifrado con Disco de Alberti
+### 3.1 SSD-01: Simulación y Cifrado con Disco de Alberti
 
 ```mermaid
 sequenceDiagram
@@ -61,7 +135,7 @@ sequenceDiagram
     end
 ```
 
-### 2.2 SSD-02: Cifrado y Descifrado Matricial de Hill (2×2 y 3×3)
+### 3.2 SSD-02: Cifrado y Descifrado Matricial de Hill (2×2 y 3×3)
 
 ```mermaid
 sequenceDiagram
@@ -87,7 +161,7 @@ sequenceDiagram
     deactivate Sistema
 ```
 
-### 2.3 SSD-03: Criptoanálisis de Criptogramas
+### 3.3 SSD-03: Criptoanálisis de Criptogramas
 
 ```mermaid
 sequenceDiagram
@@ -114,7 +188,7 @@ sequenceDiagram
     deactivate Sistema
 ```
 
-### 2.4 SSD-04: Estudio de Ejercicios y Autoevaluación
+### 3.4 SSD-04: Estudio de Ejercicios y Autoevaluación
 
 ```mermaid
 sequenceDiagram
@@ -144,7 +218,7 @@ sequenceDiagram
 
 ---
 
-## 3. Contratos de Operaciones del Sistema
+## 4. Contratos de Operaciones del Sistema
 
 | Operación | Precondición | Postcondición | Invariante de Seguridad |
 | :--- | :--- | :--- | :--- |
@@ -155,7 +229,7 @@ sequenceDiagram
 
 ---
 
-## 4. Marco de Desarrollo de Software Seguro (SSDLC)
+## 5. Marco de Desarrollo de Software Seguro (SSDLC)
 
 El ciclo de vida del proyecto incorpora controles de seguridad en cada una de sus fases:
 

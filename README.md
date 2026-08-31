@@ -57,11 +57,20 @@ Plataforma web de alta precision orientada al estudio teorico y experimental de 
 
 ---
 
-## 3. Arquitectura y Diagramas de Secuencia del Sistema (SSD)
+## 3. Estructura del Software por Capas y Tecnologias
 
-El diseno del software sigue una separacion estricta entre la interfaz de usuario reactiva y el motor matematico puro ubicado en `src/crypto/`.
+El diseno del software aplica **Clean Architecture** separando de forma estricta la interfaz grafica del nucleo de computo criptografico puro:
 
-La documentacion formal de arquitectura y los **Diagramas de Secuencia del Sistema (SSD en notacion UML)** para cada caso de uso se encuentran detallados en:
+| Capa / Directorio | Tecnologias Principales | Proposito y Responsabilidad |
+| :--- | :--- | :--- |
+| **`src/crypto/`** *(Dominio Puro)* | TypeScript 5.7 (Agnostico del DOM) | Logica algebraica, transformaciones matriciales, algoritmos de cifrado y generador de ejercicios. |
+| **`src/components/tabs/`** *(Vistas)* | React 19, Lucide Icons | Controladores de flujo y pantallas principales (Laboratorio, Practica, Criptoanalisis, Teoria). |
+| **`src/components/visualizers/`** *(Visualizacion)* | React 19, Tailwind CSS v4, SVG | Componentes graficos interactivos (Disco de Alberti SVG, Tabula Recta, Matrices de Hill). |
+| **`tests/`** *(Validacion)* | Node.js Test Runner Nativo | Pruebas unitarias de invariantes matematicos, simetria de descifrado y seguridad de entradas. |
+| **`.github/workflows/`** *(CI/CD)* | GitHub Actions | Automatizacion de integracion continua, compilacion y despliegue a GitHub Pages. |
+| **`docs/`** *(Documentacion)* | Markdown, Mermaid UML | Diagramas de Secuencia del Sistema (SSD), modelo STRIDE y manuales de arquitectura. |
+
+La documentacion formal de arquitectura y los **Diagramas de Secuencia del Sistema (SSD en notacion UML)** se encuentran detallados en:
 * [Especificacion Tecnica de Arquitectura y SSD](docs/ARCHITECTURE_AND_SECURITY.md)
 
 ---
