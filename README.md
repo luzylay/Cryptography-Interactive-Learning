@@ -22,9 +22,9 @@ Plataforma web interactiva de alta precisión orientada al estudio teórico y ex
 * Modos de operación estática (monoalfabética) y dinámica con desplazamiento progresivo polialfabético cada $k$ caracteres.
 
 ### 1.2 Adaptabilidad de Alfabetos y Anillos Modulares
-* **Castellano ($\text{mod } 27$ con letra Ñ):** $A=0, \dots, N=13, \tilde{N}=14, O=15, \dots, Z=26$.
-* **Internacional / Inglés ($\text{mod } 26$ sin Ñ):** $A=0, \dots, Z=25$.
-* **Histórico de Alberti (24 caracteres):** Alfabeto exterior en mayúsculas latinas y dígitos 1 a 4; disco interior en minúsculas con el carácter $\&$.
+* **Castellano (mód. 27 con letra Ñ):** $A=0, \dots, N=13, \text{Ñ}=14, O=15, \dots, Z=26$.
+* **Internacional / Inglés (mód. 26 sin Ñ):** $A=0, \dots, Z=25$.
+* **Histórico de Alberti (24 caracteres):** Alfabeto exterior en mayúsculas latinas y dígitos 1 a 4; disco interior en minúsculas con el carácter `&`.
 
 ### 1.3 Catálogo de Criptosistemas Implementados
 * **César y Afín:** Desplazamiento lineal y transformación $C_i = (a \cdot M_i + b) \pmod m$ con verificación de coprimalidad ($\text{mcd}(a, m) = 1$) e inversos modulares mediante el algoritmo extendido de Euclides.
