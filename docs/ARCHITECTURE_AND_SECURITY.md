@@ -11,9 +11,10 @@ El proyecto implementa los principios de **Clean Architecture (Arquitectura Limp
 ```
 +-------------------------------------------------------------------------+
 |                       CAPA DE PRESENTACION (UI)                         |
-|  Tecnologias: React 19, Tailwind CSS v4, Lucide Icons, SVG interactivo   |
+|  Tecnologias: React 19, Tailwind CSS v4, Recharts, Lucide, SVG          |
 |  - Tabs de Navegacion (Laboratorio, Practica, Criptoanalisis, Teoria)   |
 |  - Visualizadores Especializados (AlbertiDisk, HillTool, CaesarWheel)   |
+|  - Graficos Estadisticos Interactivos (Recharts Histogram & Kasiski)   |
 +------------------------------------+------------------------------------+
                                      | Eventos de Usuario (Props / Callbacks)
                                      v

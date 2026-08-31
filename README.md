@@ -64,8 +64,8 @@ El diseno del software aplica **Clean Architecture** separando de forma estricta
 | Capa / Directorio | Tecnologias Principales | Proposito y Responsabilidad |
 | :--- | :--- | :--- |
 | **`src/crypto/`** *(Dominio Puro)* | TypeScript 5.7 (Agnostico del DOM) | Logica algebraica, transformaciones matriciales, algoritmos de cifrado y generador de ejercicios. |
-| **`src/components/tabs/`** *(Vistas)* | React 19, Lucide Icons | Controladores de flujo y pantallas principales (Laboratorio, Practica, Criptoanalisis, Teoria). |
-| **`src/components/visualizers/`** *(Visualizacion)* | React 19, Tailwind CSS v4, SVG | Componentes graficos interactivos (Disco de Alberti SVG, Tabula Recta, Matrices de Hill). |
+| **`src/components/tabs/`** *(Vistas)* | React 19, Lucide Icons, Recharts | Controladores de flujo y pantallas principales (Laboratorio, Practica, Criptoanalisis con graficos, Teoria). |
+| **`src/components/visualizers/`** *(Visualizacion)* | React 19, Tailwind CSS v4, Recharts, SVG | Componentes graficos interactivos (Disco de Alberti SVG, Tabula Recta, Matrices de Hill, Histogramas Recharts). |
 | **`tests/`** *(Validacion)* | Node.js Test Runner Nativo | Pruebas unitarias de invariantes matematicos, simetria de descifrado y seguridad de entradas. |
 | **`.github/workflows/`** *(CI/CD)* | GitHub Actions | Automatizacion de integracion continua, compilacion y despliegue a GitHub Pages. |
 | **`docs/`** *(Documentacion)* | Markdown, Mermaid UML | Diagramas de Secuencia del Sistema (SSD), modelo STRIDE y manuales de arquitectura. |
