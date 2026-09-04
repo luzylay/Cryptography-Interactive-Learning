@@ -297,7 +297,10 @@ export const CaesarWheel: React.FC<CaesarWheelProps> = ({ mode }) => {
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 mb-1">Resultado:</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[11px] font-mono text-slate-400">Resultado:</label>
+                <span className="text-[10px] font-mono text-slate-500">Bloques de 5 letras (Pentagramas)</span>
+              </div>
               <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 min-h-[44px] flex items-center justify-between">
                 <span className="font-mono text-sm text-emerald-400 font-semibold tracking-wider break-all">
                   {affineResult.formattedOutput || '---'}
@@ -306,6 +309,9 @@ export const CaesarWheel: React.FC<CaesarWheelProps> = ({ mode }) => {
                   {affineResult.outputText.length} letras
                 </span>
               </div>
+              <p className="text-[10px] font-mono text-slate-500 mt-1">
+                Nota: Por seguridad criptográfica se eliminan espacios y signos; el resultado se agrupa en pentagramas.
+              </p>
             </div>
 
             {/* Formula steps */}

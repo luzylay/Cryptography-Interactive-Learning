@@ -281,6 +281,31 @@ Cita académica: (Kasiski, 1863; Friedman, 1922; Ramió Aguirre, 1999, pp. 38–
      - Texto en inglés monoalfabético:   IC ≈ 0.0667 (Friedman, 1922, p. 14)
      - Texto aleatorio / Vigenère largo: IC ≈ 0.0385 (1/26) o 0.0370 (1/27)`,
     },
+    {
+      id: 'normalizacion_bloques',
+      title: 'Normalización de Texto y Bloques de 5 Letras (Pentagramas)',
+      category: 'Convenciones Criptográficas',
+      citation: '(Ramió Aguirre, 1999, pp. 5–6; Kahn, 1996, pp. 98–102)',
+      content: `TRATAMIENTO DE ESPACIOS Y FORMATEO EN PENTAGRAMAS
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Ramió Aguirre, 1999, pp. 5–6; Kahn, 1996)
+
+1. ¿POR QUÉ SE ELIMINAN LOS ESPACIOS Y SIGNOS? (Normalización)
+   • En criptografía clásica, los espacios en blanco, comas, puntos y tildes NUNCA forman parte del alfabeto de cifrado ni se cifran de forma independiente.
+   • Justificación de seguridad:
+     - Si se preservaran los espacios originales, el criptoanalista conocería la longitud exacta de cada palabra individual.
+     - En español, una palabra aislada de 1 letra es casi con seguridad 'A' o 'Y'; una de 2 letras suele ser 'DE', 'EN', 'EL', 'LA', 'NO', 'SI', etc.
+     - Esto permitiría romper la cifra en minutos mediante análisis sintáctico elemental.
+   • Por tanto, el texto claro se normaliza en un flujo continuo de letras mayúsculas continuas antes de aplicar cualquier fórmula matemática:
+     "A PERRO FLACO" → "APERROFLACO"
+
+2. FORMATEO EN BLOQUES DE 5 LETRAS (Pentagramas)
+   • Tras cifrar el texto continuo, el resultado se divide en grupos fijos de 5 letras:
+     Ejemplo: "YGBKK FRIYP FMFOF LFNGÑ IEYL"
+   • Origen histórico:
+     - Convención militar y de telegrafía Morse para facilitar la transmisión manual, lectura sin fatiga visual y detección rápida de caracteres omitidos.
+     - Los espacios entre bloques de 5 letras NO guardan ninguna relación con la separación original de palabras del mensaje en claro.`,
+    },
   ];
 
   const current = articles.find(a => a.id === activeArticle) || articles[0];
