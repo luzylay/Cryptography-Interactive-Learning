@@ -112,58 +112,58 @@ export const AlbertiDisk: React.FC<AlbertiDiskProps> = ({ mode, onModeChange }) 
   const activeInnerIndex = activeIndex !== null ? (activeIndex - rotation + N * 100) % N : null;
 
   return (
-    <div className="flex flex-col xl:flex-row gap-6 p-2 lg:p-4 w-full max-w-7xl mx-auto">
+    <div className="flex flex-col xl:flex-row gap-4 sm:gap-6 p-1 sm:p-2 lg:p-4 w-full max-w-7xl mx-auto">
       {/* ── LEFT: INTERACTIVE SVG DISK & CONTROLS ── */}
-      <div className="flex-1 flex flex-col items-center bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 lg:p-6 backdrop-blur-md shadow-2xl">
+      <div className="flex-1 flex flex-col items-center bg-slate-900/60 border border-slate-800/80 rounded-2xl p-3 sm:p-4 lg:p-6 backdrop-blur-md shadow-2xl">
         {/* Controls Bar */}
-        <div className="w-full flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <RotateCw className="w-5 h-5" />
+        <div className="w-full flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4 pb-4 border-b border-slate-800">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0">
+              <RotateCw className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-slate-100 flex items-center gap-2">
+              <h2 className="text-sm sm:text-base font-semibold text-slate-100 flex items-center gap-2">
                 Disco Cifrador de Alberti
-                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                <span className="text-[9px] sm:text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400">
                   {ALPHABETS[mode].shortName}
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
-                Arrastra o usa los botones para girar el disco interior concéntrico · <span className="text-amber-400/90 font-mono text-[10px]">Fuente APA 7: Ramió Aguirre (1999, p. 7); Alberti (1466/1568)</span>
+              <p className="text-[11px] sm:text-xs text-slate-400">
+                Arrastra o usa los botones para girar el disco interior concéntrico
               </p>
             </div>
           </div>
 
           {/* Quick Step Buttons */}
-          <div className="flex items-center gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800">
+          <div className="flex items-center justify-center gap-1 sm:gap-1.5 bg-slate-950/80 p-1 sm:p-1.5 rounded-xl border border-slate-800">
             <button
               onClick={() => rotateStep(-5)}
-              className="px-2.5 py-1 text-xs font-mono rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition"
+              className="px-2 sm:px-2.5 py-1 text-xs font-mono rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition"
               title="Girar 5 posiciones atrás"
             >
               -5
             </button>
             <button
               onClick={() => rotateStep(-1)}
-              className="p-1.5 text-slate-300 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition"
+              className="p-1 sm:p-1.5 text-slate-300 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition"
               title="Girar 1 posición atrás"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
-            <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-lg text-center min-w-[70px]">
-              <span className="text-[10px] text-amber-500 block uppercase font-mono leading-tight">Desfase</span>
-              <span className="text-sm font-mono font-bold text-amber-300">k = {rotation}</span>
+            <div className="px-2.5 sm:px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-lg text-center min-w-[65px] sm:min-w-[70px]">
+              <span className="text-[9px] sm:text-[10px] text-amber-500 block uppercase font-mono leading-tight">Desfase</span>
+              <span className="text-xs sm:text-sm font-mono font-bold text-amber-300">k = {rotation}</span>
             </div>
             <button
               onClick={() => rotateStep(1)}
-              className="p-1.5 text-slate-300 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition"
+              className="p-1 sm:p-1.5 text-slate-300 hover:text-amber-400 hover:bg-slate-800 rounded-lg transition"
               title="Girar 1 posición adelante"
             >
-              <RotateCw className="w-4 h-4" />
+              <RotateCw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </button>
             <button
               onClick={() => rotateStep(5)}
-              className="px-2.5 py-1 text-xs font-mono rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition"
+              className="px-2 sm:px-2.5 py-1 text-xs font-mono rounded-lg text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition"
               title="Girar 5 posiciones adelante"
             >
               +5
@@ -172,7 +172,7 @@ export const AlbertiDisk: React.FC<AlbertiDiskProps> = ({ mode, onModeChange }) 
         </div>
 
         {/* ── THE INTERACTIVE SVG WHEEL ── */}
-        <div className="relative w-full max-w-[500px] aspect-square flex items-center justify-center select-none">
+        <div className="relative w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[480px] aspect-square flex items-center justify-center select-none touch-none">
           <svg
             ref={svgRef}
             viewBox="0 0 500 500"
