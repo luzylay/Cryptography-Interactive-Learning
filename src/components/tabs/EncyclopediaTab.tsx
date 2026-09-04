@@ -133,6 +133,32 @@ export const APA_REFERENCES: ApaReference[] = [
     inTextCitation: '(Kahn, 1996, pp. 106–188)',
     notes: 'Considerada la historia canónica de referencia internacional de la criptografía desde la antigüedad hasta la era moderna.',
   },
+  {
+    id: 'fips463',
+    topic: 'Estándar de Cifrado por Bloques: DES y Triple-DES (TDEA)',
+    category: 'Documento Histórico Militar',
+    author: 'National Institute of Standards and Technology (NIST)',
+    year: '1999',
+    title: 'Data Encryption Standard (DES)',
+    source: 'Federal Information Processing Standards Publication (FIPS PUB 46-3), U.S. Department of Commerce / NIST',
+    doiOrUrl: 'https://csrc.nist.gov/publications/detail/fips/46-3/final',
+    displayUrlLabel: 'NIST Computer Security Resource Center - FIPS PUB 46-3',
+    inTextCitation: '(NIST / FIPS PUB 46-3, 1999)',
+    notes: 'Especificación canónica del algoritmo DES y Triple DES (TDEA), fundamentado en la arquitectura de Feistel de 16 rondas, permutaciones inicial/inversa (IP/IP⁻¹), cajas S no lineales y modos de operación (ECB, CBC, CFB, OFB).',
+  },
+  {
+    id: 'katsikeas2021',
+    topic: 'Cienciometría y Mapeo Global de la Investigación en Ciberseguridad y Criptografía',
+    category: 'Artículo Científico (Journal)',
+    author: 'Katsikeas, S., Johnson, P., Ekstedt, M., & Lagerström, R.',
+    year: '2021',
+    title: 'Research communities in cyber security: A comprehensive literature review',
+    source: 'Computer Science Review, 42, 100431. Elsevier BV. ISSN: 1574-0137',
+    doiOrUrl: 'https://doi.org/10.1016/j.cosrev.2021.100431',
+    displayUrlLabel: 'Elsevier ScienceDirect - DOI: 10.1016/j.cosrev.2021.100431',
+    inTextCitation: '(Katsikeas et al., 2021, pp. 1–24)',
+    notes: 'Estudio cienciométrico sobre 59,782 artículos y 98,373 autores (1949–2020) que detectó las 12 macro-comunidades de la ciberseguridad, demostrando la hegemonía histórica y matemática de la Criptografía (I & II) desde el surgimiento de DES y la clave pública.',
+  },
 ];
 
 export const EncyclopediaTab: React.FC = () => {
@@ -305,6 +331,80 @@ Cita académica: (Ramió Aguirre, 1999, pp. 5–6; Kahn, 1996)
    • Origen histórico:
      - Convención militar y de telegrafía Morse para facilitar la transmisión manual, lectura sin fatiga visual y detección rápida de caracteres omitidos.
      - Los espacios entre bloques de 5 letras NO guardan ninguna relación con la separación original de palabras del mensaje en claro.`,
+    },
+    {
+      id: 'feistel_des',
+      title: 'De la Cifra Clásica a la Cifra por Bloques: Red de Feistel y DES (FIPS 46-3)',
+      category: 'Criptografía Simétrica Moderna',
+      citation: '(NIST / FIPS PUB 46-3, 1999; Feistel, 1973; Shannon, 1949)',
+      content: `EVOLUCIÓN HACIA CIFRADORES POR BLOQUES: LA ARQUITECTURA DE FEISTEL Y DES
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST FIPS PUB 46-3, 1999; Feistel, 1973)
+
+1. PUENTE CONCEPTUAL: DE CLAUDE SHANNON A HORST FEISTEL
+   • En 1949, Claude Shannon estableció que para construir una cifra resistente se requiere combinar:
+     - Confusión (sustitución no lineal): Oculta la relación entre el texto en claro y la clave.
+     - Difusión (permutación/transposición): Dispersa la influencia estadística de cada bit en todo el criptograma.
+   • Horst Feistel (IBM, 1973) diseñó una arquitectura iterativa que divide el bloque en dos mitades (L, R) y aplica rondas sucesivas de sustitución y permutación.
+
+2. ESTRUCTURA MATEMÁTICA DE LA RED DE FEISTEL (FIPS 46-3)
+   • Bloque de entrada: 64 bits (L₀, R₀ de 32 bits cada uno tras la Permutación Inicial IP).
+   • En cada ronda n (n = 1 ... 16):
+       L_n = R_{n-1}
+       R_n = L_{n-1} ⊕ f(R_{n-1}, K_n)
+   • Simetría de Descifrado:
+     Para descifrar se utiliza exactamente el mismo circuito algebraico, pero aplicando las subclaves en orden inverso (K₁₆, K₁₅, ..., K₁):
+       R_{n-1} = L_n
+       L_{n-1} = R_n ⊕ f(L_n, K_n)
+
+3. LA FUNCIÓN DE CIFRADO f(R, K) Y LAS CAJAS S (S-BOXES)
+   • Expansión E: Transforma 32 bits de R en 48 bits mediante duplicación posicional controlada.
+   • Mezcla con la clave: E(R) ⊕ K_n (48 bits).
+   • Cajas de Selección S₁...S₈: Dividen los 48 bits en 8 grupos de 6 bits (B₁...B₈).
+     - Cada caja S_i mapea 6 bits de entrada a 4 bits de salida no lineal.
+     - Fórmulas de índices: El 1.º y 6.º bit forman la fila (0..3); los 4 bits centrales forman la columna (0..15).
+   • Permutación P: Reordena los 32 bits resultantes para garantizar la difusión en las siguientes rondas.
+
+4. TRIPLE-DES (TDEA / ANSI X9.52)
+   • Con el avance de la computación, el espacio de claves de 56 bits de DES se volvió vulnerable a ataques por fuerza bruta (Matsui, 1994).
+   • FIPS 46-3 estandarizó TDEA (Triple-DES) con un paquete de 3 claves (K₁, K₂, K₃):
+       C = E_{K3}( D_{K2}( E_{K1}(M) ) )
+       M = D_{K1}( E_{K2}( D_{K3}(C) ) )
+   • Si K₁ = K₂ = K₃, TDEA es 100% retrocompatible con DES simple (D_{K}(E_{K}(M)) = M).`,
+    },
+    {
+      id: 'katsikeas_taxonomy',
+      title: 'Taxonomía y Comunidades Científicas de la Ciberseguridad (Katsikeas et al., 2021)',
+      category: 'Cienciometría e Investigación',
+      citation: '(Katsikeas, Johnson, Ekstedt, & Lagerström, 2021)',
+      content: `MAPA DE LAS 12 COMUNIDADES DE INVESTIGACIÓN EN CIBERSEGURIDAD
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Katsikeas et al., 2021, Computer Science Review, Elsevier)
+
+El estudio de Katsikeas et al. (KTH Royal Institute of Technology) analizó 59,782 artículos y 98,373 autores (1949–2020) mediante el algoritmo de Louvain, descubriendo 12 macro-comunidades científicas:
+
+1. CRIPTOGRAFÍA (Comunidades I & II - El Pilar Fundacional)
+   • Representó más del 70% de toda la investigación mundial en ciberseguridad en los años 80 tras el nacimiento de DES (FIPS 46) y la Criptografía Asimétrica (Diffie-Hellman 1976, RSA 1978).
+   • Sub-comunidades clave:
+     - Seguridad demostrable (Modelo de Oráculo Aleatorio; Bellare & Rogaway, 1993).
+     - Cifradores de bloque y criptoanálisis (DES, AES, Criptoanálisis Diferencial/Lineal).
+     - Curvas elípticas (Miller, 1986; Koblitz, 1987).
+     - Cifrado totalmente homomórfico (FHE; Gentry, 2009).
+     - Cifrado basado en atributos (ABE; Sahai & Waters).
+     - Criptoanálisis por canales laterales (DPA; Kocher et al., 1999).
+
+2. OCULTACIÓN DE INFORMACIÓN (Information Hiding)
+   • Esteganografía: Ocultación de la existencia del mensaje (Shannon, 1949).
+   • Marcas de agua digitales (Watermarking): Protección de procedencia e integridad (Cox et al., 1997).
+   • Criptografía visual y cifrado de imágenes caóticas.
+
+3. OTRAS MACRO-COMUNIDADES IDENTIFICADAS
+   • Detección de Intrusiones: Modelos de anomalías y grafos de ataque (Denning, 1987).
+   • Redes de Sensores e IoT: Protocolos SPINS (Perrig et al., 2002) y gestión de claves.
+   • Malware y Análisis de Flujo de Información (Enck et al., TaintDroid).
+   • Autenticación: Contraseñas con hash (Lamport, 1981) y 2FA/MFA.
+   • Control de Acceso: Modelos RBAC (Sandhu et al., 1996; NIST).
+   • Criptografía Cuántica: Distribución Cuántica de Claves (QKD / Protocolo BB84; Bennett & Brassard).`,
     },
   ];
 
