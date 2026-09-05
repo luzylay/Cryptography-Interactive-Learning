@@ -161,7 +161,20 @@ Para activar el despliegue en su bifurcación (*fork*):
 7. **Friedman, W. F.** (1922). *The index of coincidence and its applications in cryptography* (War Department Document No. 1083 / Riverbank Publication No. 22). Government Printing Office. https://archive.org/details/41761039080018
 8. **Suetonio Tranquilo, C.** (1985). *Vida de los doce césares (Libro I: Divus Iulius, cap. 56)* (R. M. Agudo Cubas, Trad.). Editorial Gredos. Perseus Digital Library, Tufts University. https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.02.0061
 9. **Kahn, D.** (1996). *The codebreakers: The comprehensive history of secret communication from ancient times to the internet* (2.ª ed. rev.). Scribner. ISBN: 978-0684831305. https://archive.org/details/codebreakersstor0000kahn_k4s3
-10. **National Institute of Standards and Technology.** (2022). *Secure Software Development Framework (SSDF) Version 1.1: Recommendations for Mitigating the Risk of Software Vulnerabilities* (NIST Special Publication 800-218). U.S. Department of Commerce. https://doi.org/10.6028/NIST.SP.800-218
+10. **National Institute of Standards and Technology.** (1999). *Data Encryption Standard (DES)* (FIPS PUB 46-3). U.S. Department of Commerce. https://csrc.nist.gov/publications/detail/fips/46-3/final
+11. **Katsikeas, S., Johnson, P., Ekstedt, M., & Lagerström, R.** (2021). Research communities in cyber security: A comprehensive literature review. *Computer Science Review*, 42, 100431. Elsevier. https://doi.org/10.1016/j.cosrev.2021.100431
+12. **National Institute of Standards and Technology.** (2022). *Secure Software Development Framework (SSDF) Version 1.1: Recommendations for Mitigating the Risk of Software Vulnerabilities* (NIST Special Publication 800-218). U.S. Department of Commerce. https://doi.org/10.6028/NIST.SP.800-218
+
+---
+
+## ⭐ ¿Te gustó el proyecto? ¡Déjanos tu estrella!
+
+Si esta plataforma interactiva te ayudó a aprender, experimentar o te pareció interesante:
+
+1. Ve a la **esquina superior derecha** de esta página en GitHub.
+2. Haz clic en el botón **`⭐ Star`** (Estrella).
+
+> **¡Muchas gracias!** Tu apoyo con una estrella ayuda a que más estudiantes, docentes y apasionados de la seguridad informática puedan conocer y utilizar este recurso educativo abierto. 🚀
 
 ---
 
