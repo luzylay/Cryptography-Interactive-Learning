@@ -167,14 +167,16 @@ Para activar el despliegue en su bifurcación (*fork*):
 
 ---
 
-## ⭐ ¿Te gustó el proyecto? ¡Déjanos tu estrella!
+## ⭐ ¿Te gustó este proyecto? ¡Regálame una estrellita!
 
-Si esta plataforma interactiva te ayudó a aprender, experimentar o te pareció interesante:
+He desarrollado esta plataforma con mucha dedicación, esfuerzo y cariño para que cualquier persona pueda aprender y experimentar con la criptografía de forma interactiva y visual.
+
+Si este proyecto te fue de utilidad, aprendiste algo nuevo o te pareció interesante:
 
 1. Ve a la **esquina superior derecha** de esta página en GitHub.
 2. Haz clic en el botón **`⭐ Star`** (Estrella).
 
-> **¡Muchas gracias!** Tu apoyo con una estrella ayuda a que más estudiantes, docentes y apasionados de la seguridad informática puedan conocer y utilizar este recurso educativo abierto. 🚀
+> **¡Muchísimas gracias de corazón!** Tu estrellita significa un montón para mí y me motiva a seguir mejorando este proyecto educativo y creando más herramientas de código abierto. 😊✨
 
 ---
 
