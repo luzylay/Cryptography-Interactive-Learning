@@ -370,6 +370,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
       'transposicion',
       'escitala',
       'frecuencia',
+      'conceptos',
     ];
     const type = selectedCipher === 'random' ? cipherPool[Math.floor(Math.random() * cipherPool.length)] : selectedCipher;
     const ex = generateExercise(type, mode);
@@ -486,6 +487,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
           { id: 'transposicion', label: 'Transposición' },
           { id: 'escitala', label: 'Escítala' },
           { id: 'frecuencia', label: 'Criptoanálisis' },
+          { id: 'conceptos', label: 'Preguntas Teóricas' },
           { id: 'random', label: 'Modo Aleatorio' },
         ].map(tab => (
           <button

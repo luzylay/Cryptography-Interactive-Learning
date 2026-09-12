@@ -1,5 +1,28 @@
-import React, { useState } from 'react';
-import { BookOpen, ExternalLink, Copy, Check, BookmarkCheck, FileText, Award } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import {
+  BookOpen,
+  ExternalLink,
+  Copy,
+  Check,
+  BookmarkCheck,
+  FileText,
+  Award,
+  HelpCircle,
+  Search,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck,
+  Tag,
+  MessageSquare,
+  Lock,
+} from 'lucide-react';
+import {
+  KNOWLEDGE_BASE_QA,
+  QA_CATEGORIES,
+  QACategory,
+  QAItem,
+} from '../../crypto/knowledgeBase';
 
 export interface ApaReference {
   id: string;
@@ -253,9 +276,34 @@ export const APA_REFERENCES: ApaReference[] = [
 ];
 
 export const EncyclopediaTab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'articles' | 'bibliography'>('bibliography');
-  const [activeArticle, setActiveArticle] = useState<string>('alberti');
+  const [activeTab, setActiveTab] = useState<'qa' | 'articles' | 'bibliography'>('qa');
+  const [activeArticle, setActiveArticle] = useState<string>('fundamentos_pilares');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [selectedQACategory, setSelectedQACategory] = useState<QACategory>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [expandedQAIds, setExpandedQAIds] = useState<Set<string>>(
+    new Set(KNOWLEDGE_BASE_QA.map(q => q.id))
+  );
+  const [copiedQAId, setCopiedQAId] = useState<string | null>(null);
+
+  const toggleQA = (id: string) => {
+    setExpandedQAIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleCopyQA = (item: QAItem) => {
+    const text = `PREGUNTA: ${item.question}\n\nRESUMEN:\n${item.shortSummary}\n\nDESARROLLO DETALLADO:\n${item.detailedContent.join('\n')}\n\nPUNTOS CLAVE:\n${item.keyTakeaways.map(k => `• ${k}`).join('\n')}\n\nREFERENCIA: ${item.apaCitation || 'N/A'}`;
+    navigator.clipboard.writeText(text);
+    setCopiedQAId(item.id);
+    setTimeout(() => setCopiedQAId(null), 2500);
+  };
 
   const handleCopyCitation = (ref: ApaReference) => {
     const apaText = `${ref.author} (${ref.year}). ${ref.title}. ${ref.source}. ${ref.doiOrUrl}`;
@@ -264,7 +312,94 @@ export const EncyclopediaTab: React.FC = () => {
     setTimeout(() => setCopiedId(null), 2500);
   };
 
+  const filteredQA = useMemo(() => {
+    return KNOWLEDGE_BASE_QA.filter(item => {
+      const matchCat = selectedQACategory === 'all' || item.category === selectedQACategory;
+      const q = searchQuery.toLowerCase().trim();
+      const matchSearch =
+        !q ||
+        item.question.toLowerCase().includes(q) ||
+        item.shortSummary.toLowerCase().includes(q) ||
+        item.detailedContent.some(c => c.toLowerCase().includes(q)) ||
+        item.tags.some(t => t.toLowerCase().includes(q));
+      return matchCat && matchSearch;
+    });
+  }, [selectedQACategory, searchQuery]);
+
   const articles = [
+    {
+      id: 'fundamentos_pilares',
+      title: 'Fundamentos: Criptografía, Criptoanálisis y los 6 Pilares',
+      category: 'Fundamentos de Seguridad',
+      citation: '(NIST SP 800-57, 2020; ISO/IEC 7498-2; Ramió Aguirre, 1999)',
+      content: `FUNDAMENTOS CONCEPTUALES Y LOS 6 PILARES DE LA SEGURIDAD
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST SP 800-57 Part 1 Rev. 5; ISO/IEC 7498-2, 1989; Ramió Aguirre, 1999)
+
+1. DEFINICIONES CANÓNICAS
+   • Criptografía: Ciencia y disciplina matemática encargada de transformar datos legibles en mensajes cifrados inteligibles únicamente por entidades que poseen la clave secreta o privada legítima.
+   • Criptoanálisis: Estudio analítico, estadístico y matemático enfocado en vulnerar, descifrar o evaluar la robustez de criptogramas y algoritmos sin autorización ni posesión previa de la clave.
+   • Ocultamiento (Information Hiding): Estrategia de seguridad diseñada para esconder la presencia o existencia misma del canal o mensaje de datos.
+
+2. LOS 6 PILARES DE LA SEGURIDAD DE LA INFORMACIÓN (ISO 7498-2 / Parkerian Hexad)
+   1. Confidencialidad: Restricción del acceso a la lectura de datos exclusivamente a usuarios autorizados.
+   2. Integridad: Certeza técnica de que los datos no han sufrido modificaciones no autorizadas, corrupciones o inserciones en reposo o tránsito.
+   3. Disponibilidad: Garantía de operatividad y acceso expedito a los servicios y datos cuando un usuario legítimo lo requiera.
+   4. Autenticación (Autenticidad): Validación indiscutible de la identidad del emisor o del origen legítimo del mensaje.
+   5. No Repudio (Irrenunciabilidad): Imposibilidad matemática de que el emisor niegue haber originado o transmitido el mensaje (garantizado con firma digital).
+   6. Control de Acceso: Determinación y verificación de privilegios específicos para interactuar con la información.`,
+    },
+    {
+      id: 'esteganografia_estegoanalisis',
+      title: 'Esteganografía, LSB y Métodos de Estegoanálisis',
+      category: 'Ocultación de Información',
+      citation: '(Katsikeas et al., 2021; Westfeld & Pfitzmann, 1999; Kahn, 1996)',
+      content: `ESTEGANOGRAFÍA DIGITAL Y MÉTODOS DE ESTEGOANÁLISIS
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Katsikeas et al., 2021; Westfeld & Pfitzmann, 1999; Kahn, 1996)
+
+1. MECANISMOS DE INSERCIÓN ESTEGANOGRÁFICA
+   • Técnica LSB (Least Significant Bit):
+     Los bits menos significativos de cada muestra de audio o canal RGB de un píxel poseen un impacto visual/auditivo mínimo. Sustituir el bit 0 permite codificar texto o binarios sin deformar perceptiblemente la imagen original.
+   • Contraste con Criptografía:
+     La Criptografía oculta el CONTENIDO (produce ruido visible o texto ilegible). La Esteganografía oculta la EXISTENCIA (produce un portador aparentemente normal).
+
+2. ATAQUES Y TÉCNICAS DE ESTEGOANÁLISIS
+   • Prueba de Chi-Cuadrado (χ²):
+     La inserción aleatoria o secuencial de bits LSB empareja artificialmente las frecuencias de pares de valores adyacentes (PoVs: 2k y 2k+1), revelando una signatura estadística anormal.
+   • Ataque por Portador Conocido (Known-Cover):
+     Resta directa bit a bit entre la matriz del archivo original y la del archivo sospechoso.
+   • Análisis de Planos de Bits (Bit-Plane Slicing):
+     Extracción aislada del plano LSB; en una imagen natural es ruido blanco puro, mientras que con datos incrustados muestra patrones geométricos o texturas artificiales.
+
+3. CASOS DE APLICACIÓN EN CIBERSEGURIDAD
+   • Forense Digital: Detección de evidencias ocultas en investigaciones criminales.
+   • Stegware / C2 Malware: Bloqueo de cargas útiles o comandos remotos encubiertos en imágenes en la nube.
+   • DLP Empresarial: Prevención de fuga de propiedad intelectual incrustada en fotografías.
+   • Sanitización de Imágenes: Destrucción de canales encubiertos en firewalls mediante recompresión o filtrado.`,
+    },
+    {
+      id: 'seleccion_cifrado_moderno',
+      title: 'Selección Criptográfica: Firma de Código vs Correo Seguro',
+      category: 'Criptosistemas Modernos & NIST',
+      citation: '(NIST SP 800-57, 2020; FIPS 186-5, 2023; RFC 9580, 2024)',
+      content: `CRITERIOS DE SELECCIÓN DE CIFRADO Y LONGITUD DE CLAVE
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST SP 800-57 Part 1 Rev. 5, 2020; FIPS PUB 186-5, 2023; RFC 9580, 2024)
+
+1. CERTIFICADOS DE FIRMA DE CÓDIGO (Code Signing)
+   • Recomendación Moderna: EdDSA (Curva Edwards Ed25519) o ECDSA (Curva NIST P-384).
+     - Longitud: 256 bits (Ed25519) o 384 bits (P-384).
+     - Ventajas: Firmas compactas de 64 bytes, verificación casi instantánea durante la instalación masiva de binarios y resistencia a ataques de canal lateral.
+   • Alternativa de Alta Compatibilidad: RSA de 3072 o 4096 bits (con SHA-256 o SHA-384).
+
+2. CIFRADO DE CORREOS ELECTRÓNICOS DE MÁXIMA CONFIDENCIALIDAD (OpenPGP / S/MIME)
+   • Esquema Híbrido:
+     1. Cifrado del Mensaje (Simétrico): AES-256 en modo GCM (Autenticado / AEAD) o ChaCha20-Poly1305.
+        - Longitud de clave: 256 bits (máxima inmunidad criptográfica).
+     2. Envoltura de Clave Asimétrica: ECDH (Curve25519 de 256 bits / NIST P-384) o RSA-4096.
+     3. Firma Digital Integrada: Ed25519 / RSA-4096 con función de hash SHA-512.`,
+    },
     {
       id: 'alberti',
       title: 'El Disco de Alberti y Cifrado Polialfabético',
@@ -511,42 +646,238 @@ El estudio de Katsikeas et al. (KTH Royal Institute of Technology) analizó 59,7
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              Enciclopedia y Referencias Académicas (Normas APA 7.ª Edición)
+              Enciclopedia, Banco de Preguntas y Referencias APA 7
             </h2>
             <p className="text-xs text-slate-400 font-mono">
-              Fuentes formales con enlaces 100% activos y verificados (JSTOR, BNF Gallica, Archive.org, Dialnet)
+              Fundamentos teóricos, cuestionario conceptual escalable y fuentes académicas verificadas
             </p>
           </div>
         </div>
 
-        {/* Tab switcher: Articles vs References */}
-        <div className="flex rounded-xl bg-slate-950 p-1 border border-slate-800">
+        {/* Tab switcher: QA vs Articles vs References */}
+        <div className="flex rounded-xl bg-slate-950 p-1 border border-slate-800 overflow-x-auto">
           <button
-            onClick={() => setActiveTab('bibliography')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono rounded-lg transition ${
-              activeTab === 'bibliography'
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
+            onClick={() => setActiveTab('qa')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono rounded-lg transition whitespace-nowrap ${
+              activeTab === 'qa'
+                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <BookmarkCheck className="w-3.5 h-3.5" />
-            Bibliografía APA 7.ª Edición ({APA_REFERENCES.length})
+            <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
+            Preguntas y Fundamentos ({KNOWLEDGE_BASE_QA.length})
           </button>
           <button
             onClick={() => setActiveTab('articles')}
-            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono rounded-lg transition ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono rounded-lg transition whitespace-nowrap ${
               activeTab === 'articles'
-                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30'
+                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-sm'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            Artículos Teóricos
+            Artículos Teóricos ({articles.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('bibliography')}
+            className={`flex items-center gap-2 px-3.5 py-1.5 text-xs font-mono rounded-lg transition whitespace-nowrap ${
+              activeTab === 'bibliography'
+                ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/30 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BookmarkCheck className="w-3.5 h-3.5" />
+            Bibliografía APA 7 ({APA_REFERENCES.length})
           </button>
         </div>
       </div>
 
-      {/* ── VIEW 1: BIBLIOGRAPHY APA 7TH EDITION ── */}
+      {/* ── VIEW 1: SCALABLE QUESTION & ANSWER KNOWLEDGE BASE ── */}
+      {activeTab === 'qa' && (
+        <div className="flex flex-col gap-6">
+          {/* Filter & Search Bar */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 backdrop-blur-md">
+            {/* Category Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {QA_CATEGORIES.map(cat => {
+                const count =
+                  cat.id === 'all'
+                    ? KNOWLEDGE_BASE_QA.length
+                    : KNOWLEDGE_BASE_QA.filter(q => q.category === cat.id).length;
+
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedQACategory(cat.id)}
+                    className={`px-3 py-1.5 rounded-xl font-mono text-xs whitespace-nowrap transition border flex items-center gap-1.5 flex-shrink-0 ${
+                      selectedQACategory === cat.id
+                        ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold shadow-sm'
+                        : 'bg-slate-950/80 border-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <span>{cat.label}</span>
+                    <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400">
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Search Input */}
+            <div className="relative min-w-[240px] sm:max-w-xs flex-shrink-0">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder="Buscar preguntas o conceptos..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-1.5 font-mono text-xs text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-500 transition"
+              />
+            </div>
+          </div>
+
+          {/* Q&A Cards List */}
+          <div className="flex flex-col gap-4">
+            {filteredQA.length === 0 ? (
+              <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-8 text-center text-slate-500 font-mono text-xs">
+                No se encontraron preguntas que coincidan con los criterios de búsqueda.
+              </div>
+            ) : (
+              filteredQA.map((item, index) => {
+                const isExpanded = expandedQAIds.has(item.id);
+
+                return (
+                  <div
+                    key={item.id}
+                    className="bg-slate-900/60 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-md transition-all hover:border-slate-700 shadow-md"
+                  >
+                    {/* Question Header Accordion Toggle */}
+                    <div
+                      onClick={() => toggleQA(item.id)}
+                      className="p-4 sm:p-5 flex items-start justify-between gap-4 cursor-pointer select-none bg-slate-900/40 hover:bg-slate-900/80 transition"
+                    >
+                      <div className="flex items-start gap-3 flex-1 min-w-0">
+                        <span className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center font-mono text-xs font-bold text-amber-400 flex-shrink-0 mt-0.5">
+                          {index + 1}
+                        </span>
+                        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${item.badgeColor}`}>
+                              {item.categoryLabel}
+                            </span>
+                            {item.apaCitation && (
+                              <span className="text-[10px] font-mono text-slate-500 hidden sm:inline">
+                                Cita: {item.apaCitation}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-sm sm:text-base font-bold text-slate-100 leading-snug">
+                            {item.question}
+                          </h3>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <button
+                          onClick={e => {
+                            e.stopPropagation();
+                            handleCopyQA(item);
+                          }}
+                          className="p-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-amber-300 hover:border-amber-500/30 transition text-xs flex items-center gap-1 font-mono"
+                          title="Copiar pregunta y respuesta completa"
+                        >
+                          {copiedQAId === item.id ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span className="text-emerald-400 text-[10px] font-bold">Copiado</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span className="text-[10px] hidden sm:inline">Copiar</span>
+                            </>
+                          )}
+                        </button>
+                        <div className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200">
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4 text-amber-400" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4 text-slate-500" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Question Content Body */}
+                    {isExpanded && (
+                      <div className="p-4 sm:p-6 pt-0 border-t border-slate-800/60 flex flex-col gap-4 text-xs font-mono">
+                        {/* Summary Pill */}
+                        <div className="bg-amber-500/10 border border-amber-500/25 rounded-xl p-3 sm:p-3.5 text-amber-200 leading-relaxed">
+                          <span className="text-amber-400 font-bold block mb-1">
+                            Resumen Directo:
+                          </span>
+                          <span>{item.shortSummary}</span>
+                        </div>
+
+                        {/* Detailed Development */}
+                        <div className="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2 text-slate-300 leading-relaxed">
+                          <span className="text-slate-400 font-bold uppercase text-[11px] block mb-2 border-b border-slate-800/80 pb-1">
+                            Desarrollo Técnico y Conceptual:
+                          </span>
+                          {item.detailedContent.map((line, lIdx) => (
+                            <div key={`det-${lIdx}`} className="whitespace-pre-wrap">
+                              {line}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Key Takeaways Box */}
+                        <div className="bg-emerald-950/20 border border-emerald-500/30 rounded-xl p-3.5 text-emerald-200 flex flex-col gap-1.5">
+                          <span className="font-bold text-emerald-400 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                            Puntos Clave para Evaluaciones:
+                          </span>
+                          <ul className="space-y-1 mt-1">
+                            {item.keyTakeaways.map((takeaway, tIdx) => (
+                              <li key={`tway-${tIdx}`} className="flex items-start gap-2 text-[11px] text-slate-300">
+                                <span className="text-emerald-400 font-bold">✓</span>
+                                <span>{takeaway}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {/* Tags and APA Reference Footer */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/60 text-[11px] text-slate-500">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <Tag className="w-3 h-3 text-slate-500" />
+                            {item.tags.map(t => (
+                              <span
+                                key={`tag-${t}`}
+                                className="px-2 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-slate-400 text-[10px]"
+                              >
+                                #{t}
+                              </span>
+                            ))}
+                          </div>
+                          {item.apaCitation && (
+                            <span className="text-slate-400 font-mono">
+                              Fuente: <span className="text-amber-400/90">{item.apaCitation}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ── VIEW 2: BIBLIOGRAPHY APA 7TH EDITION ── */}
       {activeTab === 'bibliography' && (
         <div className="flex flex-col gap-4">
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3">
@@ -628,7 +959,7 @@ El estudio de Katsikeas et al. (KTH Royal Institute of Technology) analizó 59,7
         </div>
       )}
 
-      {/* ── VIEW 2: THEORETICAL ARTICLES WITH IN-TEXT CITATIONS ── */}
+      {/* ── VIEW 3: THEORETICAL ARTICLES WITH IN-TEXT CITATIONS ── */}
       {activeTab === 'articles' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Article Nav List */}

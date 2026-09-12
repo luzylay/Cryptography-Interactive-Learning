@@ -22,7 +22,8 @@ export type ExerciseCipherType =
   | 'hill'
   | 'transposicion'
   | 'escitala'
-  | 'frecuencia';
+  | 'frecuencia'
+  | 'conceptos';
 
 export interface ExerciseItem {
   id: string;
@@ -338,6 +339,83 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
           `Letra teórica más frecuente en castellano: 'E' (índice ${expectedEIdx})`,
           `Deducción de la clave: k = (${topIdx} - ${expectedEIdx} + ${m}) mod ${m} = ${deducedK}`,
         ],
+        alphabetMode,
+      };
+    }
+
+    case 'conceptos': {
+      const conceptualPool = [
+        {
+          title: 'Ataques a la Esteganografía',
+          question: '¿Qué disciplina y tipo de ataque científico permite descubrir y extraer información oculta dentro de archivos portadores digitales mediante pruebas estadísticas como Chi-cuadrado?',
+          expectedAnswer: 'ESTEGOANALISIS',
+          hint: 'Es el equivalente al criptoanálisis pero aplicado a técnicas de esteganografía.',
+          steps: [
+            'Disciplina: Estegoanálisis (Steganalysis).',
+            'Método: Prueba de Chi-cuadrado (χ²) y análisis de pares de valores (PoVs) en bits LSB.',
+            'Objetivo: Detectar anomalías estadísticas en la distribución de frecuencias del archivo portador.',
+          ],
+        },
+        {
+          title: 'Pilares de Seguridad de la Información',
+          question: '¿Cuántos pilares fundamentales componen el modelo formal extendido de la seguridad de la información según el estándar ISO 7498-2 (incluyendo Confidencialidad, Integridad, Disponibilidad, Autenticación, No Repudio y Control de Acceso)?',
+          expectedAnswer: '6',
+          hint: 'Son los 3 clásicos de la tríada CIA más 3 adicionales en el modelo extendido.',
+          steps: [
+            '1. Confidencialidad',
+            '2. Integridad',
+            '3. Disponibilidad',
+            '4. Autenticación',
+            '5. No Repudio',
+            '6. Control de Acceso',
+          ],
+        },
+        {
+          title: 'Algoritmos Modernos para Firma de Código',
+          question: '¿Qué algoritmo asimétrico de Curvas de Edwards de 256 bits se recomienda actualmente según estándares modernos (FIPS/NIST) para certificados de firma de código debido a sus firmas de 64 bytes y alta velocidad?',
+          expectedAnswer: 'ED25519',
+          hint: 'Es una variante de EdDSA muy popular sobre la curva 25519.',
+          steps: [
+            'Algoritmo: EdDSA / Ed25519.',
+            'Longitud: 256 bits de clave.',
+            'Tamaño de firma: 64 bytes fijos con validación ultrarrápida.',
+          ],
+        },
+        {
+          title: 'Cifrado de Correo de Máxima Confidencialidad',
+          question: '¿Qué algoritmo simétrico de 256 bits en modo autenticado (AEAD) es el estándar recomendado por NIST y OpenPGP RFC 9580 para el cifrado del cuerpo y adjuntos de correos electrónicos confidenciales?',
+          expectedAnswer: 'AES-256-GCM',
+          hint: 'Es el estándar AES de 256 bits en modo Galois/Counter Mode (GCM).',
+          steps: [
+            'Algoritmo simétrico: AES-256 (Advanced Encryption Standard).',
+            'Modo de operación: GCM (Galois/Counter Mode - Cifrado Autenticado AEAD).',
+            'Seguridad: 256 bits (máxima inmunidad criptográfica).',
+          ],
+        },
+        {
+          title: 'Diferencia Criptografía vs Esteganografía',
+          question: '¿Cuál de las dos técnicas tiene como objetivo ocultar la EXISTENCIA misma del mensaje en lugar de ocultar únicamente su significado o contenido?',
+          expectedAnswer: 'ESTEGANOGRAFIA',
+          hint: 'Proviene del griego "steganos" (cubierto u oculto).',
+          steps: [
+            'Criptografía: Oculta el SIGNIFICADO (el mensaje se vuelve incomprensible).',
+            'Esteganografía: Oculta la EXISTENCIA (el mensaje se camufla en una imagen o audio).',
+          ],
+        },
+      ];
+
+      const item = pickRandom(conceptualPool);
+
+      return {
+        id: `concepto-${Date.now()}`,
+        cipherType: 'conceptos',
+        mode: 'find_key',
+        title: item.title,
+        question: item.question,
+        contextParams: {},
+        expectedAnswer: item.expectedAnswer,
+        hint: item.hint,
+        detailedSteps: item.steps,
         alphabetMode,
       };
     }
