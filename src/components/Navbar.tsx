@@ -1,8 +1,8 @@
 import React from 'react';
 import { AlphabetMode, ALPHABETS } from '../crypto/alphabets';
-import { Shield, Sparkles, BookOpen, GraduationCap, BarChart3, SlidersHorizontal, Layers } from 'lucide-react';
+import { Shield, Sparkles, BookOpen, GraduationCap, BarChart3, SlidersHorizontal, Layers, Compass } from 'lucide-react';
 
-export type MainTabType = 'lab' | 'practice' | 'cryptoanalysis' | 'encyclopedia';
+export type MainTabType = 'lab' | 'practice' | 'cryptoanalysis' | 'decision' | 'encyclopedia';
 
 interface NavbarProps {
   activeTab: MainTabType;
@@ -21,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'lab', label: 'Laboratorio de Discos y Cifras', shortLabel: 'Laboratorio', icon: Layers, badge: 'Interactivo' },
     { id: 'practice', label: 'Estudio de Ejercicios', shortLabel: 'Ejercicios', icon: GraduationCap, badge: 'Autoevaluación' },
     { id: 'cryptoanalysis', label: 'Criptoanálisis y Frecuencias', shortLabel: 'Criptoanálisis', icon: BarChart3, badge: 'Herramientas' },
+    { id: 'decision', label: 'Toma de Decisiones & Kleopatra', shortLabel: 'Matriz de Decisión', icon: Compass, badge: 'NIST & OpenPGP' },
     { id: 'encyclopedia', label: 'Enciclopedia Teórica', shortLabel: 'Enciclopedia', icon: BookOpen, badge: 'Referencia' },
   ];
 

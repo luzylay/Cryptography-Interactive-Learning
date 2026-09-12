@@ -7,6 +7,7 @@ import { processVigenere } from './ciphers/vigenere';
 import { processPlayfair } from './ciphers/playfair';
 import { processHill2x2 } from './ciphers/hill';
 import { processColumnarTransposition, processScytale } from './ciphers/transposition';
+import { processPolybius } from './ciphers/polybius';
 import { calculateFrequencies } from './cryptanalysis';
 import { getCoprimes, isHillMatrixValid2x2 } from './mathUtils';
 
@@ -14,6 +15,7 @@ export type ExerciseCipherType =
   | 'alberti'
   | 'cesar'
   | 'afin'
+  | 'polybius'
   | 'vigenere'
   | 'beaufort'
   | 'playfair'
@@ -136,6 +138,40 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
           ? `Para cada letra calcula: ( ${a} × índice + ${b} ) mod ${m}`
           : `Usa la función inversa: M_i = ${res.aInv} · (C_i - ${b}) mod ${m}`,
         detailedSteps: res.steps.slice(0, 8).map(s => s.formulaCalculation),
+        alphabetMode,
+      };
+    }
+
+    case 'polybius': {
+      const isEncrypt = Math.random() > 0.4;
+      const polybiusSampleTexts = [
+        'TABLA DE POLIBIO',
+        'DEFENSA DE ATENAS',
+        'SECRETO MILITAR',
+        'ROMA INVENCIBLE',
+        'COMUNICACION OPTICA',
+        'ANTORCHAS GRIEGAS',
+        'MENSAJE SEGURO',
+        'ATAQUE NOCTURNO',
+      ];
+      const selectedRaw = Math.random() > 0.3 ? pickRandom(polybiusSampleTexts) : normText.slice(0, 16);
+      const cleanPolyText = selectedRaw.toUpperCase().replace(/J/g, 'I').replace(/Ñ/g, 'N').replace(/[^A-Z]/g, '');
+      const res = processPolybius(cleanPolyText, isEncrypt ? 'encrypt' : 'decrypt');
+
+      return {
+        id: `polybius-${Date.now()}`,
+        cipherType: 'polybius',
+        mode: isEncrypt ? 'encrypt' : 'decrypt',
+        title: 'Cifrador de Tabla de Polibio (5×5)',
+        question: isEncrypt
+          ? `Utilizando la Tabla Cuadrada de Polibio estándar 5×5 (donde I = J y el primer dígito es la Fila y el segundo la Columna), cifra el siguiente mensaje:\n\n"${cleanPolyText}"`
+          : `Descifra el siguiente criptograma numérico obtenido con la Tabla de Polibio 5×5 (I = J):\n\n"${formatInBlocks(res.outputText, 2)}"`,
+        contextParams: { text: cleanPolyText, result: res.outputText },
+        expectedAnswer: isEncrypt ? res.outputText : cleanPolyText,
+        hint: isEncrypt
+          ? 'Localiza cada letra en la matriz 5×5: el primer número es la fila (1–5) y el segundo la columna (1–5).'
+          : 'Agrupa los números en pares de 2 dígitos. El primer dígito indica la fila vertical y el segundo la columna horizontal.',
+        detailedSteps: res.steps.slice(0, 10).map(s => s.explanation),
         alphabetMode,
       };
     }

@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import { AlphabetMode, ALPHABETS, ALBERTI_HISTORICAL, normalizeText, formatInBlocks } from '../../crypto/alphabets';
 import { generateExercise, ExerciseItem, ExerciseCipherType } from '../../crypto/exercises';
 import { getAlbertiAlignmentOffset } from '../../crypto/ciphers/alberti';
+import { PracticePolybiusAssistant } from './PracticePolybiusAssistant';
 import {
   GraduationCap,
   Sparkles,
@@ -17,6 +18,7 @@ import {
   Compass,
   ArrowRight,
   SlidersHorizontal,
+  Grid3X3,
 } from 'lucide-react';
 
 interface PracticeQuizTabProps {
@@ -349,7 +351,8 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
   const [status, setStatus] = useState<'idle' | 'correct' | 'incorrect'>('idle');
   const [showHint, setShowHint] = useState<boolean>(false);
   const [showSolution, setShowSolution] = useState<boolean>(false);
-  const [showDiskAssistant, setShowDiskAssistant] = useState<boolean>(true);
+  const [showAssistant, setShowAssistant] = useState<boolean>(true);
+  const [assistantType, setAssistantType] = useState<'disk' | 'polybius'>('disk');
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
@@ -359,6 +362,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
       'alberti',
       'cesar',
       'afin',
+      'polybius',
       'vigenere',
       'beaufort',
       'playfair',
@@ -374,6 +378,13 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
     setStatus('idle');
     setShowHint(false);
     setShowSolution(false);
+
+    // Auto-switch assistant type to match cipher if appropriate
+    if (type === 'polybius') {
+      setAssistantType('polybius');
+    } else if (type === 'alberti' || type === 'cesar') {
+      setAssistantType('disk');
+    }
   }, [selectedCipher, mode]);
 
   useEffect(() => {
@@ -384,11 +395,25 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
     if (!currentExercise || !userAnswer.trim()) return;
     setAttempts(a => a + 1);
 
-    const cleanUser = currentExercise.mode === 'find_key' ? userAnswer.trim() : normalizeText(userAnswer, mode);
-    const cleanExpected =
-      currentExercise.mode === 'find_key'
-        ? currentExercise.expectedAnswer.trim()
-        : normalizeText(currentExercise.expectedAnswer, mode);
+    const isPolybiusEncrypt = currentExercise.cipherType === 'polybius' && currentExercise.mode === 'encrypt';
+    const isPolybiusDecrypt = currentExercise.cipherType === 'polybius' && currentExercise.mode === 'decrypt';
+
+    let cleanUser = '';
+    let cleanExpected = '';
+
+    if (currentExercise.mode === 'find_key') {
+      cleanUser = userAnswer.trim().replace(/\s+/g, '');
+      cleanExpected = currentExercise.expectedAnswer.trim().replace(/\s+/g, '');
+    } else if (isPolybiusEncrypt) {
+      cleanUser = userAnswer.replace(/[^0-9]/g, '');
+      cleanExpected = currentExercise.expectedAnswer.replace(/[^0-9]/g, '');
+    } else if (isPolybiusDecrypt) {
+      cleanUser = normalizeText(userAnswer, mode).replace(/J/g, 'I').replace(/Ñ/g, 'N').replace(/[^A-Z]/g, '');
+      cleanExpected = normalizeText(currentExercise.expectedAnswer, mode).replace(/J/g, 'I').replace(/Ñ/g, 'N').replace(/[^A-Z]/g, '');
+    } else {
+      cleanUser = normalizeText(userAnswer, mode);
+      cleanExpected = normalizeText(currentExercise.expectedAnswer, mode);
+    }
 
     if (cleanUser === cleanExpected) {
       setStatus('correct');
@@ -434,15 +459,15 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
             </div>
           </div>
           <button
-            onClick={() => setShowDiskAssistant(prev => !prev)}
+            onClick={() => setShowAssistant(prev => !prev)}
             className={`flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl border text-xs font-mono transition ${
-              showDiskAssistant
+              showAssistant
                 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-sm'
                 : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'
             }`}
           >
             <Compass className="w-3.5 h-3.5" />
-            <span>{showDiskAssistant ? 'Ocultar Disco' : 'Mostrar Disco'}</span>
+            <span>{showAssistant ? 'Ocultar Asistente' : 'Mostrar Asistente'}</span>
           </button>
         </div>
       </div>
@@ -453,6 +478,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
           { id: 'alberti', label: 'Disco Alberti' },
           { id: 'cesar', label: 'César' },
           { id: 'afin', label: 'Afín' },
+          { id: 'polybius', label: 'Tabla Polibio' },
           { id: 'vigenere', label: 'Vigenère' },
           { id: 'beaufort', label: 'Beaufort' },
           { id: 'playfair', label: 'Playfair' },
@@ -460,11 +486,18 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
           { id: 'transposicion', label: 'Transposición' },
           { id: 'escitala', label: 'Escítala' },
           { id: 'frecuencia', label: 'Criptoanálisis' },
-          { id: 'random', label: '★ Modo Aleatorio' },
+          { id: 'random', label: 'Modo Aleatorio' },
         ].map(tab => (
           <button
             key={tab.id}
-            onClick={() => setSelectedCipher(tab.id as any)}
+            onClick={() => {
+              setSelectedCipher(tab.id as any);
+              if (tab.id === 'polybius') {
+                setAssistantType('polybius');
+              } else if (tab.id === 'alberti' || tab.id === 'cesar') {
+                setAssistantType('disk');
+              }
+            }}
             className={`px-3 py-1.5 rounded-xl font-mono text-xs whitespace-nowrap transition border flex-shrink-0 ${
               selectedCipher === tab.id
                 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold'
@@ -479,7 +512,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
       {/* Main Practice Area Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         {/* Left: Question Card */}
-        <div className={showDiskAssistant ? 'lg:col-span-7 flex flex-col gap-4' : 'lg:col-span-12 flex flex-col gap-4'}>
+        <div className={showAssistant ? 'lg:col-span-7 flex flex-col gap-4' : 'lg:col-span-12 flex flex-col gap-4'}>
           {currentExercise && (
             <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 sm:p-6 backdrop-blur-md flex flex-col gap-4 sm:gap-5">
               {/* Question Header */}
@@ -488,7 +521,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
                   {currentExercise.title}
                 </span>
                 <span className="text-[10px] sm:text-[11px] font-mono text-slate-500 uppercase flex-shrink-0">
-                  {currentExercise.mode === 'encrypt' ? '▣ CIFRAR' : currentExercise.mode === 'decrypt' ? '▢ DESCIFRAR' : '🔍 DEDUCIR CLAVE'}
+                  {currentExercise.mode === 'encrypt' ? 'MODO: CIFRAR' : currentExercise.mode === 'decrypt' ? 'MODO: DESCIFRAR' : 'MODO: DEDUCIR CLAVE'}
                 </span>
               </div>
 
@@ -568,7 +601,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
                     </span>
                     {status === 'incorrect' && (
                       <p className="text-[11px] text-slate-300 font-mono mt-0.5">
-                        Revisa tus rotaciones o cálculos modulares. Puedes abrir la pista o solución paso a paso.
+                        Revisa tus coordenadas o cálculos modulares. Puedes abrir la pista o solución paso a paso.
                       </p>
                     )}
                   </div>
@@ -604,17 +637,56 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
           )}
         </div>
 
-        {/* Right: Embedded Dedicated Wheel Assistant */}
-        {showDiskAssistant && (
+        {/* Right: Embedded Dedicated Assistant (Alberti Wheel or Polybius 5x5 Square) */}
+        {showAssistant && (
           <div className="lg:col-span-5 bg-slate-900/60 border border-slate-800 rounded-2xl p-3.5 sm:p-4 backdrop-blur-md flex flex-col items-center">
-            <div className="w-full flex items-center justify-between mb-2">
+            <div className="w-full flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
               <span className="text-xs font-mono font-semibold text-slate-300 flex items-center gap-1.5">
-                <Compass className="w-3.5 h-3.5 text-amber-400" />
-                Asistente de Rueda
+                {assistantType === 'polybius' ? (
+                  <>
+                    <Grid3X3 className="w-3.5 h-3.5 text-amber-400" />
+                    Asistente de Tabla de Polibio
+                  </>
+                ) : (
+                  <>
+                    <Compass className="w-3.5 h-3.5 text-amber-400" />
+                    Asistente de Rueda Alberti
+                  </>
+                )}
               </span>
-              <span className="text-[10px] font-mono text-slate-500">Arrastra o usa botones</span>
+
+              {/* Toggle between Assistant tools */}
+              <div className="flex items-center gap-1 bg-slate-950 p-0.5 rounded-lg border border-slate-800">
+                <button
+                  onClick={() => setAssistantType('disk')}
+                  className={`px-2 py-0.5 text-[10px] font-mono rounded transition ${
+                    assistantType === 'disk'
+                      ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Mostrar Disco de Alberti"
+                >
+                  Disco
+                </button>
+                <button
+                  onClick={() => setAssistantType('polybius')}
+                  className={`px-2 py-0.5 text-[10px] font-mono rounded transition ${
+                    assistantType === 'polybius'
+                      ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Mostrar Tabla de Polibio 5×5"
+                >
+                  Polibio 5×5
+                </button>
+              </div>
             </div>
-            <PracticeDiskAssistant mode={mode} />
+
+            {assistantType === 'polybius' ? (
+              <PracticePolybiusAssistant />
+            ) : (
+              <PracticeDiskAssistant mode={mode} />
+            )}
           </div>
         )}
       </div>

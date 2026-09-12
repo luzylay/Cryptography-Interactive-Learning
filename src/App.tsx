@@ -4,6 +4,7 @@ import { Navbar, MainTabType } from './components/Navbar';
 import { InteractiveLabTab } from './components/tabs/InteractiveLabTab';
 import { PracticeQuizTab } from './components/tabs/PracticeQuizTab';
 import { CryptanalysisTab } from './components/tabs/CryptanalysisTab';
+import { DecisionMatrixTab } from './components/tabs/DecisionMatrixTab';
 import { EncyclopediaTab } from './components/tabs/EncyclopediaTab';
 
 export default function App() {
@@ -31,6 +32,9 @@ export default function App() {
         {activeTab === 'cryptoanalysis' && (
           <CryptanalysisTab mode={alphabetMode} />
         )}
+        {activeTab === 'decision' && (
+          <DecisionMatrixTab />
+        )}
         {activeTab === 'encyclopedia' && (
           <EncyclopediaTab />
         )}
@@ -40,7 +44,7 @@ export default function App() {
       <footer className="mt-auto py-6 border-t border-slate-900 bg-slate-950/80 text-center text-xs font-mono text-slate-600">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-3">
           <span>Criptografía Clásica e Interactiva · Universidad Tecnológica</span>
-          <span>Leon Battista Alberti · César · Vigenère · Playfair · Hill · Escítala</span>
+          <span>Polibio · Leon Battista Alberti · César · Vigenère · Playfair · Hill · Escítala</span>
         </div>
       </footer>
     </div>

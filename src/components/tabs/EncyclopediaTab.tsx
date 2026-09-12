@@ -4,7 +4,7 @@ import { BookOpen, ExternalLink, Copy, Check, BookmarkCheck, FileText, Award } f
 export interface ApaReference {
   id: string;
   topic: string;
-  category: 'Libro de Texto Base' | 'Tratado Histórico Original' | 'Artículo Científico (Journal)' | 'Documento Histórico Militar';
+  category: 'Libro de Texto Base' | 'Tratado Histórico Original' | 'Artículo Científico (Journal)' | 'Documento Histórico Militar' | 'Estándar Internacional / Normativa';
   author: string;
   year: string;
   title: string;
@@ -17,6 +17,84 @@ export interface ApaReference {
 
 export const APA_REFERENCES: ApaReference[] = [
   {
+    id: 'nist_sp800_57',
+    topic: 'Gestión de Claves Criptográficas y Equivalencia de Longitudes de Clave',
+    category: 'Estándar Internacional / Normativa',
+    author: 'National Institute of Standards and Technology (NIST)',
+    year: '2020',
+    title: 'Recommendation for Key Management: Part 1 – General',
+    source: 'NIST Special Publication 800-57 Part 1 Rev. 5, Gaithersburg, MD, EE. UU.',
+    doiOrUrl: 'https://doi.org/10.6028/NIST.SP.800-57pt1r5',
+    displayUrlLabel: 'NIST CSRC - DOI: 10.6028/NIST.SP.800-57pt1r5',
+    inTextCitation: '(NIST SP 800-57 Part 1 Rev. 5, 2020)',
+    notes: 'Estándar oficial que establece los niveles de seguridad efectiva (80, 112, 128, 192, 256 bits), equivalencias de longitudes de clave entre algoritmos simétricos (AES), RSA y Curvas Elípticas (ECC), y periodos de vigencia técnica recomendados.',
+  },
+  {
+    id: 'rfc9580_openpgp',
+    topic: 'Especificación del Estándar Criptográfico OpenPGP (Crypto Refresh)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Wouters, P. (Ed.)',
+    year: '2024',
+    title: 'OpenPGP Crypto Refresh',
+    source: 'RFC 9580, Internet Engineering Task Force (IETF)',
+    doiOrUrl: 'https://www.rfc-editor.org/rfc/rfc9580',
+    displayUrlLabel: 'IETF RFC Editor - RFC 9580 (Actualización de RFC 4880)',
+    inTextCitation: '(Wouters / IETF RFC 9580, 2024)',
+    notes: 'Especificación actualizada del formato de mensajes y paquetes OpenPGP, incorporando de manera estándar cifrado AEAD (AES-GCM, OCB), EdDSA (Ed25519) y gestión moderna de claves y firmas digitales.',
+  },
+  {
+    id: 'fips186_5_dss',
+    topic: 'Estándar de Firma Digital (DSS) y Retiro Oficial de DSA',
+    category: 'Estándar Internacional / Normativa',
+    author: 'National Institute of Standards and Technology (NIST)',
+    year: '2023',
+    title: 'Digital Signature Standard (DSS)',
+    source: 'Federal Information Processing Standards Publication (FIPS PUB 186-5), EE. UU.',
+    doiOrUrl: 'https://doi.org/10.6028/NIST.FIPS.186-5',
+    displayUrlLabel: 'NIST FIPS PUB 186-5 (Febrero 2023)',
+    inTextCitation: '(NIST / FIPS PUB 186-5, 2023)',
+    notes: 'Normativa federal que ratifica el retiro formal de DSA para generación de nuevas claves e impulsa el uso mandatorio de RSA (>=2048/3072 b), ECDSA y EdDSA.',
+  },
+  {
+    id: 'bsi_tr02102',
+    topic: 'Mecanismos Criptográficos y Longitud de Claves Europeos',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Federal Office for Information Security (BSI)',
+    year: '2024',
+    title: 'Cryptographic Mechanisms: Recommendations and Key Lengths',
+    source: 'Technical Guideline BSI TR-02102-1, Bonn, Alemania',
+    doiOrUrl: 'https://www.bsi.bund.de/EN/The-BSI/Standards-and-Certifications/Technical-Guidelines/TR-02102/tr02102_node.html',
+    displayUrlLabel: 'BSI TR-02102-1 - Guía Técnica Federal Alemana',
+    inTextCitation: '(BSI TR-02102-1, 2024)',
+    notes: 'Guía técnica europea para la evaluación de resistencia de claves asimétricas ante algoritmos de factorización GNFS y migración poscuántica.',
+  },
+  {
+    id: 'rfc5280_x509',
+    topic: 'Infraestructura de Clave Pública X.509 v3 y Perfil de Certificados / Listas de Revocación (CRL)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Cooper, D., Santesson, S., Farrell, S., Boeyen, S., Housley, R., & Polk, W.',
+    year: '2008',
+    title: 'Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile',
+    source: 'RFC 5280, Internet Engineering Task Force (IETF)',
+    doiOrUrl: 'https://www.rfc-editor.org/rfc/rfc5280',
+    displayUrlLabel: 'IETF RFC 5280 - Perfil Oficial PKI X.509 v3',
+    inTextCitation: '(Cooper et al. / IETF RFC 5280, 2008)',
+    notes: 'Base normativa de los certificados de clave pública jerárquicos X.509 utilizados en S/MIME, TLS y entornos corporativos con Autoridades Certificadoras (CA).',
+  },
+  {
+    id: 'gnupg_project',
+    topic: 'Documentación y Arquitectura del Motor Criptográfico GnuPG / Kleopatra',
+    category: 'Estándar Internacional / Normativa',
+    author: 'The GnuPG Project',
+    year: '2026',
+    title: 'The GNU Privacy Guard - Documentation and Architecture Manual',
+    source: 'GnuPG.org Open Source Suite (Gpg4win / Kleopatra)',
+    doiOrUrl: 'https://www.gnupg.org/documentation/manuals/gnupg/',
+    displayUrlLabel: 'GnuPG.org - Manual de Arquitectura de GnuPG & Kleopatra',
+    inTextCitation: '(The GnuPG Project, 2026)',
+    notes: 'Manual de referencia técnica del motor subyacente de Kleopatra para derivación de claves S2K, formato OpenPGP, agentes de firma y gestión de almacenes de claves.',
+  },
+  {
     id: 'ramio1999',
     topic: 'Criptosistemas Clásicos, Aritmética Modular (mod 27) y Discos Cifradores',
     category: 'Libro de Texto Base',
@@ -28,6 +106,19 @@ export const APA_REFERENCES: ApaReference[] = [
     displayUrlLabel: 'Dialnet - Registro Bibliográfico UPM / Univ. de La Rioja',
     inTextCitation: '(Ramió Aguirre, 1999, pp. 5–42)',
     notes: 'Texto guía oficial del curso para la clasificación de cifradores clásicos, el disco de Alberti (Figura 1.4, p. 7), máquinas de Wheatstone y Bazeries, y el uso del alfabeto castellano con Ñ (módulo 27).',
+  },
+  {
+    id: 'polybius150bc',
+    topic: 'Tabla Cuadrada de Polibio y Telégrafo Óptico de Antorchas',
+    category: 'Tratado Histórico Original',
+    author: 'Polibio de Megalópolis',
+    year: '1981',
+    title: 'Historias (Libros IX-XV, Libro X: §§ 45–47 – Señales de antorchas y sistema de transmisión)',
+    source: 'Edición y traducción de M. Balasch Recort, Biblioteca Clásica Gredos, Madrid (Manuscrito original griego redactado c. 150 a.C.)',
+    doiOrUrl: 'https://archive.org/details/polybiushistories',
+    displayUrlLabel: 'Biblioteca Clásica Gredos / Internet Archive - Historias de Polibio (Libro X)',
+    inTextCitation: '(Polibio, c. 150 a.C./1981, Hist. X, 45-47)',
+    notes: 'Primera formulación histórica de cifrado fraccionario y codificación por coordenadas bidimensionales (filas y columnas 1 a 5), origen conceptual de los sistemas telegráficos ópticos y la discretización digital.',
   },
   {
     id: 'alberti1568',

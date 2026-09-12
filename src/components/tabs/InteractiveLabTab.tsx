@@ -4,9 +4,10 @@ import { AlbertiDisk } from '../visualizers/AlbertiDisk';
 import { CaesarWheel } from '../visualizers/CaesarWheel';
 import { VigenereTabula } from '../visualizers/VigenereTabula';
 import { PlayfairGrid } from '../visualizers/PlayfairGrid';
+import { PolybiusGrid } from '../visualizers/PolybiusGrid';
 import { HillMatrixTool } from '../visualizers/HillMatrixTool';
 import { ScytaleColumnar } from '../visualizers/ScytaleColumnar';
-import { RotateCw, Sliders, Grid, LayoutGrid, Calculator, Columns } from 'lucide-react';
+import { RotateCw, Sliders, Grid, LayoutGrid, Calculator, Columns, Grid3X3 } from 'lucide-react';
 
 interface InteractiveLabTabProps {
   mode: AlphabetMode;
@@ -15,12 +16,13 @@ interface InteractiveLabTabProps {
 
 export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onModeChange }) => {
   const [activeCipher, setActiveCipher] = useState<
-    'alberti' | 'cesar' | 'vigenere' | 'playfair' | 'hill' | 'transposicion'
+    'alberti' | 'cesar' | 'polybius' | 'vigenere' | 'playfair' | 'hill' | 'transposicion'
   >('alberti');
 
   const navItems = [
     { id: 'alberti', label: 'Disco de Alberti', icon: RotateCw, color: 'text-amber-400', badge: 'Polialfabético' },
     { id: 'cesar', label: 'César y Afín', icon: Sliders, color: 'text-sky-400', badge: 'Monoalfabético' },
+    { id: 'polybius', label: 'Tabla de Polibio', icon: Grid3X3, color: 'text-amber-300', badge: 'Fraccionario 5×5' },
     { id: 'vigenere', label: 'Tabula Vigenère', icon: Grid, color: 'text-cyan-400', badge: 'Polialfabético' },
     { id: 'playfair', label: 'Playfair 5×5', icon: LayoutGrid, color: 'text-violet-400', badge: 'Digrámico' },
     { id: 'hill', label: 'Cifrador de Hill', icon: Calculator, color: 'text-emerald-400', badge: 'Matricial' },
@@ -59,6 +61,7 @@ export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onMo
       <div className="w-full">
         {activeCipher === 'alberti' && <AlbertiDisk mode={mode} onModeChange={onModeChange} />}
         {activeCipher === 'cesar' && <CaesarWheel mode={mode} />}
+        {activeCipher === 'polybius' && <PolybiusGrid />}
         {activeCipher === 'vigenere' && <VigenereTabula mode={mode} />}
         {activeCipher === 'playfair' && <PlayfairGrid />}
         {activeCipher === 'hill' && <HillMatrixTool mode={mode} />}
