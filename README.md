@@ -50,7 +50,7 @@ Plataforma web interactiva de alta precisión orientada al estudio teórico y ex
 ## 2. Fundamentos Matemáticos y Algebraicos
 
 Para una explicación exhaustiva con **ejemplos numéricos paso a paso, teoremas, identidades de Bézout, inversión de matrices $2\times 2$ y $3\times 3$ y criptoanálisis estadístico**, consulte el documento dedicado:
-* 📘 [**Guía Completa de Fundamentos Matemáticos y Algebraicos**](docs/MATHEMATICAL_FOUNDATIONS.md)
+* [**Guía Completa de Fundamentos Matemáticos y Algebraicos**](docs/MATHEMATICAL_FOUNDATIONS.md)
 
 ### Resumen de Ecuaciones y Condiciones de Invertibilidad
 
@@ -85,8 +85,8 @@ El diseño del software aplica **Clean Architecture** separando de forma estrict
 | **`docs/`** *(Documentación)* | Markdown, Mermaid UML, MathJax/KaTeX | Diagramas SSD, modelo STRIDE, fundamentos matemáticos y manuales de arquitectura. |
 
 La documentación técnica complementaria se encuentra detallada en:
-* 📘 [Guía Completa de Fundamentos Matemáticos y Algebraicos](docs/MATHEMATICAL_FOUNDATIONS.md)
-* 📐 [Especificación Técnica de Arquitectura, SSD y Seguridad](docs/ARCHITECTURE_AND_SECURITY.md)
+* [Guía Completa de Fundamentos Matemáticos y Algebraicos](docs/MATHEMATICAL_FOUNDATIONS.md)
+* [Especificación Técnica de Arquitectura, SSD y Seguridad](docs/ARCHITECTURE_AND_SECURITY.md)
 
 ---
 
@@ -170,9 +170,9 @@ Para activar el despliegue en su bifurcación (*fork*):
 ## Si este proyecto te fue de utilidad, aprendiste algo nuevo o te pareció interesante:
 
 1. Ve a la **esquina superior derecha** de esta página en GitHub.
-2. Haz clic en el botón **`⭐ Star`** (Estrella).
+2. Haz clic en el botón **`Star`** (Estrella).
 
-> **¡Muchísimas gracias de corazón!** ✨
+> **¡Muchísimas gracias de corazón!**
 
 ---
 

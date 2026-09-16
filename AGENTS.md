@@ -1,10 +1,10 @@
 # Cryptography Interactive Learning — Developer & Agent Guidelines
 
-Plataforma web de aprendizaje interactivo de **Criptosistemas Clásicos**, Discos Cifradores y Criptoanálisis Estadístico.
+Plataforma web de aprendizaje interactivo de Criptosistemas Clásicos, Discos Cifradores y Criptoanálisis Estadístico.
 
 ---
 
-## 🏗️ Arquitectura del Proyecto (Clean Architecture)
+## 1. Arquitectura del Proyecto (Clean Architecture)
 
 El proyecto implementa una arquitectura modular con separación estricta de responsabilidades:
 
@@ -23,7 +23,7 @@ El proyecto implementa una arquitectura modular con separación estricta de resp
 
 ---
 
-## 🛠️ Tecnologías y Dependencias
+## 2. Tecnologías y Dependencias
 
 - **Runtime**: React 19 y React DOM 19
 - **Estilos**: Tailwind CSS v4 con `@tailwindcss/vite`
@@ -32,7 +32,7 @@ El proyecto implementa una arquitectura modular con separación estricta de resp
 
 ---
 
-## 🧪 Comandos de Calidad y Verificación
+## 3. Comandos de Calidad y Verificación
 
 ```bash
 npm test          # Ejecuta la suite de 14 pruebas unitarias y de seguridad
@@ -42,7 +42,7 @@ npm run build     # Compilación optimizada para producción
 
 ---
 
-## 🔒 Reglas de Seguridad y Calidad de Código
+## 4. Reglas de Seguridad y Calidad de Código
 
 1. **Zero-Knowledge**: Todo el procesamiento criptográfico y matemático debe ejecutarse en el cliente (`src/crypto/`).
 2. **Sin Secretos**: Nunca hardcodear claves privadas, contraseñas reales ni tokens.

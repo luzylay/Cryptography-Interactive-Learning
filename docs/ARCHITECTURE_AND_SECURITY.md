@@ -264,7 +264,7 @@ En la arquitectura de software profesional, cada componente tiene un rol, alcanc
 
 Para asegurar que la plataforma esté preparada para cualquier requerimiento futuro de producción o despliegue institucional, se definen **3 panoramas arquitectónicos escalables**:
 
-### 🌐 Panorama 1: Edge PWA / Static Single-Page App (Arquitectura Actual)
+### Panorama 1: Edge PWA / Static Single-Page App (Arquitectura Actual)
 * **Objetivo**: Máxima velocidad, costo cero de infraestructura de servidor y privacidad absoluta (*Zero-Knowledge*).
 * **Flujo**: El usuario descarga los archivos estáticos inmutables (`HTML/JS/CSS`) desde un CDN global (GitHub Pages, Cloudflare Pages o AWS S3/CloudFront).
 * **Cómputo**: Todo el procesamiento criptográfico y matemático se ejecuta en la CPU del cliente. No requiere backend ni base de datos para operar al 100%.
@@ -275,7 +275,7 @@ Para asegurar que la plataforma esté preparada para cualquier requerimiento fut
         └───> Motor Criptográfico en TypeScript (Ejecución Local 100% Client-Side)
 ```
 
-### 🏫 Panorama 2: Plataforma Académica Multi-Usuario (Full-Stack LMS)
+### Panorama 2: Plataforma Académica Multi-Usuario (Full-Stack LMS)
 * **Objetivo**: Registro de estudiantes, control de asistencia, guardado de calificaciones de quizzes y telemetría de laboratorio.
 * **Flujo**: El Frontend actual se conecta mediante peticiones seguras (`HTTPS + JWT / OAuth2`) a una API REST en Node.js/Python respaldada por una base de datos relacional.
 
@@ -288,7 +288,7 @@ Para asegurar que la plataforma esté preparada para cualquier requerimiento fut
         └───> [Redis Cache] (Sesiones activas y Rate Limiting)
 ```
 
-### 🏢 Panorama 3: Arquitectura Cloud Distribuida de Alta Concurrencia (Enterprise)
+### Panorama 3: Arquitectura Cloud Distribuida de Alta Concurrencia (Enterprise)
 * **Objetivo**: Simulación masiva en tiempo real para miles de estudiantes concurrentes con análisis de fuerza bruta en clústeres de servidores.
 * **Flujo**: Microservicios en contenedores Docker orquestados con Kubernetes, colas asíncronas de mensajes (RabbitMQ / Kafka) para tareas pesadas de criptoanálisis y base de datos distribuida.
 
