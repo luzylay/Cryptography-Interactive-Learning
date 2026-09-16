@@ -167,9 +167,14 @@ Para activar el despliegue en su bifurcación (*fork*):
 
 ---
 
-## Apoyo al Proyecto
+## ⭐ ¿Te gustó el proyecto? ¡Déjanos tu estrella!
 
-Si este proyecto te fue de utilidad, aprendiste algo nuevo o te pareció interesante, puedes apoyarlo dejando una estrella ⭐ en el repositorio (botón Star en la esquina superior derecha).
+Si esta plataforma interactiva te ayudó a aprender, experimentar o te pareció interesante:
+
+1. Ve a la esquina superior derecha de esta página en GitHub.
+2. Haz clic en el botón **`Star`** (Estrella).
+
+> **¡Muchas gracias!** Tu apoyo con una estrella ayuda a que más estudiantes, docentes y apasionados de la seguridad informática puedan conocer y utilizar este recurso educativo abierto.
 
 ---
 
