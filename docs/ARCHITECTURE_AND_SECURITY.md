@@ -244,3 +244,58 @@ El ciclo de vida del proyecto incorpora controles de seguridad en cada una de su
    - Suite de pruebas unitarias automatizadas (`tests/crypto-security.test.mjs`) que validan la simetría $\mathcal{D}_K(\mathcal{E}_K(M)) = M$ y la neutralización de ataques de inyección y sobrecarga.
 4. **Fase de Despliegue y Mantenimiento:**
    - Pipeline de integración continua mediante GitHub Actions con compilación limpia (`tsc --noEmit` y `vite build`).
+
+---
+
+## 6. Taxonomía de Capas en la Ingeniería de Software: Frontend vs Backend vs APIs vs BD
+
+En la arquitectura de software profesional, cada componente tiene un rol, alcance y responsabilidad bien delimitada:
+
+| Capa / Componente | ¿Dónde se ejecuta? | Responsabilidad Principal | Tecnologías Típicas | Rol en esta Plataforma |
+| :--- | :--- | :--- | :--- | :--- |
+| **Frontend (Cliente)** | Navegador web / Dispositivo del usuario | Renderizado de interfaz gráfica (UI), experiencia de usuario (UX), gráficos interactivos y captura de eventos. | React 19, TypeScript, Tailwind CSS, Vite, Canvas, SVG. | **Activo**: Gestiona la interfaz, visualizadores interactivos (Alberti, Polibio, Hill) y el cálculo matemático *client-side*. |
+| **Backend (Servidor)** | Servidores en la nube / Contenedores | Lógica de negocio central, orquestación de transacciones, autenticación centralizada, procesamiento pesado por lotes y seguridad server-side. | Node.js (NestJS / Fastify), Python (FastAPI / Django), Go, Java (Spring Boot). | *Diseñado para integración futura* en escenarios multi-usuario o evaluación institucional. |
+| **APIs & Endpoints** | Capa de Transporte / Gateway | Protocolos de comunicación estandarizados para intercambio de datos estructurados entre Frontend y Backend. | REST (JSON), GraphQL, gRPC, WebSockets, OpenAPI / Swagger. | *Estandarizado en contratos TypeScript* (`src/types/`) listo para consumir endpoints remotos. |
+| **Base de Datos (BD)** | Motor de Persistencia / Almacenamiento | Almacenamiento persistente, indexación, integridad referencial y consulta de datos structured/unstructured. | PostgreSQL, MySQL, Redis (Cache/Sesiones), MongoDB. | *Modelos tipados en `src/types/`* listos para mapearse a esquemas ORM (Prisma / TypeORM). |
+
+---
+
+## 7. Mapeo de Panoramas de Despliegue y Escalabilidad Futura
+
+Para asegurar que la plataforma esté preparada para cualquier requerimiento futuro de producción o despliegue institucional, se definen **3 panoramas arquitectónicos escalables**:
+
+### 🌐 Panorama 1: Edge PWA / Static Single-Page App (Arquitectura Actual)
+* **Objetivo**: Máxima velocidad, costo cero de infraestructura de servidor y privacidad absoluta (*Zero-Knowledge*).
+* **Flujo**: El usuario descarga los archivos estáticos inmutables (`HTML/JS/CSS`) desde un CDN global (GitHub Pages, Cloudflare Pages o AWS S3/CloudFront).
+* **Cómputo**: Todo el procesamiento criptográfico y matemático se ejecuta en la CPU del cliente. No requiere backend ni base de datos para operar al 100%.
+
+```
+[Usuario / Navegador] ──(HTTPS)──> [CDN / GitHub Pages (Archivos Estáticos)]
+        │
+        └───> Motor Criptográfico en TypeScript (Ejecución Local 100% Client-Side)
+```
+
+### 🏫 Panorama 2: Plataforma Académica Multi-Usuario (Full-Stack LMS)
+* **Objetivo**: Registro de estudiantes, control de asistencia, guardado de calificaciones de quizzes y telemetría de laboratorio.
+* **Flujo**: El Frontend actual se conecta mediante peticiones seguras (`HTTPS + JWT / OAuth2`) a una API REST en Node.js/Python respaldada por una base de datos relacional.
+
+```
+[Frontend (React + Vite)]
+        │  (HTTPS / REST API con Token JWT)
+        ▼
+[API Gateway / Backend Server (FastAPI / NestJS)]
+        ├───> [Base de Datos PostgreSQL] (Usuarios, Notas, Historial de Prácticas)
+        └───> [Redis Cache] (Sesiones activas y Rate Limiting)
+```
+
+### 🏢 Panorama 3: Arquitectura Cloud Distribuida de Alta Concurrencia (Enterprise)
+* **Objetivo**: Simulación masiva en tiempo real para miles de estudiantes concurrentes con análisis de fuerza bruta en clústeres de servidores.
+* **Flujo**: Microservicios en contenedores Docker orquestados con Kubernetes, colas asíncronas de mensajes (RabbitMQ / Kafka) para tareas pesadas de criptoanálisis y base de datos distribuida.
+
+```
+                    ┌─── Microservicio Autenticación (OAuth2 / SAML)
+                    ├─── Microservicio Evaluaciones (PostgreSQL)
+[API Gateway] ──────┼─── Microservicio Criptoanálisis Distribuido (Workers GPU)
+                    └─── Cola de Tareas Asíncronas (RabbitMQ / Redis)
+```
+
