@@ -169,9 +169,7 @@ Para activar el despliegue en su bifurcación (*fork*):
 
 ## Apoyo al Proyecto
 
-Si este proyecto te fue de utilidad, aprendiste algo nuevo o te pareció interesante, puedes apoyarlo dejando una estrella en el repositorio:
-
-* Haz clic directo en 👉 [⭐ **Dar Star en GitHub**](https://github.com/luzylay/Cryptography-Interactive-Learning) o en la esquina superior derecha del repositorio.
+Si este proyecto te fue de utilidad, aprendiste algo nuevo o te pareció interesante, puedes apoyarlo dejando una estrella ⭐ en el repositorio (botón Star en la esquina superior derecha).
 
 ---
 

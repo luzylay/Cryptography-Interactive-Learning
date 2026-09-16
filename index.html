@@ -4,8 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>Criptografía Interactiva · Discos Cifradores y Criptosistemas Clásicos</title>
-    <meta name="description" content="Plataforma interactiva para el aprendizaje de criptosistemas clásicos: Disco de Alberti, César, Vigenère, Playfair, Hill, Escítala y Criptoanálisis de frecuencias." />
+    <meta name="description" content="Plataforma interactiva para el aprendizaje y simulación de criptosistemas clásicos: Disco de Alberti, César, Vigenère, Playfair, Hill, Escítala, Transposición Columnar y Criptoanálisis Estadístico." />
+    <meta name="keywords" content="criptografía clásica, disco de alberti, cifrado césar, vigenere, playfair, cifrado hill, escítala, criptoanálisis, índice de coincidencia, test de kasiski, seguridad informática" />
+    <meta name="author" content="CriptoLab Community" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="theme-color" content="#020617" />
+    <meta name="color-scheme" content="dark" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Criptografía Interactiva · Criptosistemas Clásicos y Discos Cifradores" />
+    <meta property="og:description" content="Laboratorio web interactivo de criptografía clásica: Disco de Alberti, César, Vigenère, Hill, Playfair y Criptoanálisis de frecuencias." />
+    <meta property="og:site_name" content="Criptografía Interactiva" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Criptografía Interactiva · Criptosistemas Clásicos" />
+    <meta name="twitter:description" content="Laboratorio web interactivo de criptografía clásica y análisis de frecuencias." />
+
+    <!-- PWA / Mobile Web App -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="CriptoLab" />
@@ -13,6 +30,12 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z'/></svg>" />
   </head>
   <body class="bg-slate-950 text-slate-100 antialiased selection:bg-amber-500/30 selection:text-amber-200">
+    <noscript>
+      <div style="padding: 2rem; text-align: center; font-family: sans-serif; background: #020617; color: #f8fafc;">
+        <h2>JavaScript requerido</h2>
+        <p>Esta plataforma interactiva de criptografía requiere la ejecución de JavaScript en el navegador para simular los algoritmos y procesar el criptoanálisis.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

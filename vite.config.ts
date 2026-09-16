@@ -15,6 +15,21 @@ export default defineConfig(({ mode }) => {
     build: {
       sourcemap: emitSourcemaps ? 'inline' : false,
       minify: !emitSourcemaps,
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (id.includes('node_modules/recharts')) {
+              return 'vendor-charts'
+            }
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+              return 'vendor-react'
+            }
+            if (id.includes('node_modules/lucide-react') || id.includes('node_modules/canvas-confetti')) {
+              return 'vendor-ui'
+            }
+          },
+        },
+      },
     },
     plugins: [
       react(),
