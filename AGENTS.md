@@ -1,41 +1,50 @@
-# figma-make-app
+# Cryptography Interactive Learning — Developer & Agent Guidelines
 
-React + Vite + Tailwind CSS project running inside Figma Make.
+Plataforma web de aprendizaje interactivo de **Criptosistemas Clásicos**, Discos Cifradores y Criptoanálisis Estadístico.
 
-## Development Server
+---
 
-A Vite development server is **already running** on `$PORT` (default 8443). You don't need to start it manually.
+## 🏗️ Arquitectura del Proyecto (Clean Architecture)
 
-- Preview URL: The user can access the running app through the preview panel
-- Hot reload: Changes to source files are reflected immediately
+El proyecto implementa una arquitectura modular con separación estricta de responsabilidades:
 
-## Project Structure
+- `src/types/`: Interfaces globales y contratos TypeScript para algoritmos, resultados y modelos.
+- `src/data/`: Capa de datos desacoplada (artículos enciclopédicos, referencias APA 7 y matrices de decisión).
+- `src/crypto/`: Dominio criptográfico puro en TypeScript (sin dependencias de DOM ni React):
+  - `src/crypto/ciphers/`: Motores de cifrado (Alberti, Polibio, César, Afín, Vigenère, Playfair, Hill, Escítala, Columnar).
+  - `src/crypto/alphabets.ts`: Mapeos de alfabetos (`es27` con Ñ, `en26` internacional).
+  - `src/crypto/mathUtils.ts`: Aritmética modular, Euclides extendido y matrices invertibles.
+  - `src/crypto/cryptanalysis.ts`: Frecuencias, Test de Kasiski e Índice de Friedman.
+  - `src/crypto/knowledgeBase.ts`: Banco de preguntas con citas oficiales y estegoanálisis.
+- `src/hooks/`: Custom Hooks reutilizables (`useClipboard`, `useFilterSearch`).
+- `src/components/common/`: Design System atómico (`GlassCard`, `Badge`, `CopyButton`, `SearchBar`).
+- `src/components/visualizers/`: Componentes gráficos interactivos (Disco de Alberti SVG, Polibio, Hill, etc.).
+- `src/components/tabs/`: Vistas principales de la aplicación.
 
-This is the canonical project structure. Start with task-relevant files below. Only follow imports or inspect other files when required, when a documented path is missing, or when the repository contradicts this guide.
+---
 
-- `src/main.tsx` - React entrypoint; imports `src/index.css` and mounts `src/App.tsx` into the `#root` element
-- `src/App.tsx` - Primary application component and the usual starting point for UI work
-- `src/index.css` - Global CSS entrypoint and Tailwind CSS v4 import
-- `index.html` - Vite HTML shell containing the `#root` element and loading `src/main.tsx`
-- `package.json` - Project dependencies and the Vite build, development, preview, and formatting scripts
-- `vite.config.ts` - Vite configuration with React, Tailwind CSS v4, and Figma Make plugins plus the `@` alias for `src`
-- `.mise.toml` - Toolchain versions for Node.js and pnpm
+## 🛠️ Tecnologías y Dependencias
 
-## Dependencies
+- **Runtime**: React 19 y React DOM 19
+- **Estilos**: Tailwind CSS v4 con `@tailwindcss/vite`
+- **Build Tooling**: Vite 8, TypeScript 5.7, Node.js 22 LTS
+- **Gráficos**: Recharts, Lucide React, Canvas Confetti
 
-- Runtime: React 19 and React DOM 19
-- Styling: Tailwind CSS v4 with the `@tailwindcss/vite` plugin
-- Build tooling: Vite 8, TypeScript 5.7, and `@vitejs/plugin-react`
-- Formatting: oxfmt
+---
 
-## Styling
+## 🧪 Comandos de Calidad y Verificación
 
-This project uses **Tailwind CSS v4** through the `@tailwindcss/vite` plugin configured in `vite.config.ts`. `src/index.css` imports Tailwind with `@import 'tailwindcss';`. Use Tailwind utility classes directly in JSX and put global CSS or Tailwind v4 theme customization in `src/index.css`. This scaffold does not need a Tailwind config file or PostCSS config.
+```bash
+npm test          # Ejecuta la suite de 14 pruebas unitarias y de seguridad
+npm run typecheck # Verificación estricta de tipos con TypeScript (0 errores)
+npm run build     # Compilación optimizada para producción
+```
 
-`src/main.tsx` imports `src/index.css`, so global font wiring belongs in `src/index.css`. Keep CSS `@import` statements first, then add any `@font-face` rules and font-family defaults there.
+---
 
-## Code quality
+## 🔒 Reglas de Seguridad y Calidad de Código
 
-- Use double quotes for strings containing apostrophes (`"We're here to help"`), or escape them in single-quoted strings. An unescaped apostrophe in a single-quoted string breaks the build.
-- Ensure JSX tags are closed and braces are balanced.
-- Export components as default exports.
+1. **Zero-Knowledge**: Todo el procesamiento criptográfico y matemático debe ejecutarse en el cliente (`src/crypto/`).
+2. **Sin Secretos**: Nunca hardcodear claves privadas, contraseñas reales ni tokens.
+3. **Neutralidad**: Usar terminología académica formal y universal.
+4. **Citas Rigurosas**: Todo fundamento teórico debe contar con su respectiva cita (NIST, IETF RFC, BSI, IEEE, APA 7).

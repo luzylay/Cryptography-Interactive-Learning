@@ -1,7 +1,8 @@
 {
-  "name": "figma-make-app",
+  "name": "cryptography-interactive-learning",
+  "description": "Plataforma web de aprendizaje interactivo de Criptosistemas Clásicos y Discos Cifradores",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
