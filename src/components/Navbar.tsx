@@ -1,8 +1,9 @@
 import React from 'react';
 import { AlphabetMode, ALPHABETS } from '../crypto/alphabets';
+import { MainTabType } from '../types';
 import { Shield, Sparkles, BookOpen, GraduationCap, BarChart3, SlidersHorizontal, Layers, Compass } from 'lucide-react';
 
-export type MainTabType = 'lab' | 'practice' | 'cryptoanalysis' | 'decision' | 'encyclopedia';
+export type { MainTabType };
 
 interface NavbarProps {
   activeTab: MainTabType;

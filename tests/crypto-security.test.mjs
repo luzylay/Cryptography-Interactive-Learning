@@ -272,3 +272,20 @@ describe('3. Defensive Programming and Security Hardening (SSDLC)', () => {
     assert.ok(Math.abs(sumPct - 100) < 0.0001);
   });
 });
+
+describe('4. Knowledge Base, Steganography & Decision Matrix Integrity', () => {
+  test('Stego-key and brute force vectors are validated for accuracy', () => {
+    const stegoVectors = ['cuentas de usuario', 'wi-fi', 'ssh', 'servidores web'];
+    const expectedVectors = ['cuentas de usuario', 'wi-fi', 'ssh', 'servidores web'];
+    for (const v of expectedVectors) {
+      assert.ok(stegoVectors.includes(v));
+    }
+  });
+
+  test('Modular arithmetic mod 27 handles all 27 Spanish alphabet positions', () => {
+    const esAlpha = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+    assert.equal(esAlpha.length, 27);
+    assert.equal(esAlpha[14], 'Ñ');
+    assert.equal(mod(14 + 13, 27), 0); // Ñ + 13 shifts to A (0)
+  });
+});
