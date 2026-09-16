@@ -352,7 +352,7 @@ export const DecisionMatrixTab: React.FC = () => {
                 </p>
               </div>
               <Badge variant="amber" size="sm">
-                Pruebas de Laboratorio UTP
+                Pruebas de Laboratorio Académico
               </Badge>
             </div>
 
@@ -388,7 +388,7 @@ export const DecisionMatrixTab: React.FC = () => {
                   <tr className="bg-amber-500/5 hover:bg-amber-500/10 transition border-l-4 border-l-amber-500">
                     <td className="p-3.5 font-bold text-amber-300">
                       RSA 3072 bits
-                      <span className="block text-[10px] text-emerald-400 font-normal">Recomendado Laboratorio UTP</span>
+                      <span className="block text-[10px] text-emerald-400 font-normal">Recomendado Entorno Académico</span>
                     </td>
                     <td className="p-3.5 text-amber-300 font-semibold">3 - 8 seg</td>
                     <td className="p-3.5 text-sky-300">~80 firmas/s</td>

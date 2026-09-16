@@ -43,7 +43,7 @@ export default function App() {
       {/* Modern Footer */}
       <footer className="mt-auto py-6 border-t border-slate-900 bg-slate-950/80 text-center text-xs font-mono text-slate-600">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-3">
-          <span>Criptografía Clásica e Interactiva · Universidad Tecnológica</span>
+          <span>Criptografía Clásica e Interactiva · Plataforma Académica y de Investigación</span>
           <span>Polibio · Leon Battista Alberti · César · Vigenère · Playfair · Hill · Escítala</span>
         </div>
       </footer>
