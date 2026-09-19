@@ -4,3 +4,4 @@ export * from './cryptanalysis';
 export * from './ciphers';
 export * from './knowledgeBase';
 export * from './exercises';
+export * from './runningKeyCryptanalysis';

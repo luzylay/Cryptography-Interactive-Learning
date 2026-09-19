@@ -289,3 +289,58 @@ describe('4. Knowledge Base, Steganography & Decision Matrix Integrity', () => {
     assert.equal(mod(14 + 13, 27), 0); // Ñ + 13 shifts to A (0)
   });
 });
+
+describe('5. Continuous Key & Autokey Cryptanalysis Invariants', () => {
+  const alphaES = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+  const m27 = 27;
+
+  function encAutokey(plain, seed) {
+    let fullKey = seed + plain;
+    let cipher = '';
+    for (let i = 0; i < plain.length; i++) {
+      const pIdx = alphaES.indexOf(plain[i]);
+      const kIdx = alphaES.indexOf(fullKey[i]);
+      cipher += alphaES[mod(pIdx + kIdx, m27)];
+    }
+    return cipher;
+  }
+
+  function decAutokey(cipher, seed) {
+    let fullKey = seed;
+    let plain = '';
+    for (let i = 0; i < cipher.length; i++) {
+      const cIdx = alphaES.indexOf(cipher[i]);
+      const kIdx = alphaES.indexOf(fullKey[i]);
+      const pIdx = mod(cIdx - kIdx, m27);
+      const pChar = alphaES[pIdx];
+      plain += pChar;
+      fullKey += pChar;
+    }
+    return plain;
+  }
+
+  test('Autokey cascade roundtrip symmetry with seed', () => {
+    const msg = 'ATACAMOSMANANAALALBA';
+    const seed = 'CLAVE';
+    const cipher = encAutokey(msg, seed);
+    const decrypted = decAutokey(cipher, seed);
+    assert.equal(decrypted, msg);
+  });
+
+  test('Crib dragging complementary key derivation: (C - Crib) mod m = Key', () => {
+    const pChunk = 'ATAQUE';
+    const kChunk = 'SECRET';
+    let cipher = '';
+    for (let i = 0; i < pChunk.length; i++) {
+      cipher += alphaES[mod(alphaES.indexOf(pChunk[i]) + alphaES.indexOf(kChunk[i]), m27)];
+    }
+
+    // Recover key from cipher and crib
+    let recoveredKey = '';
+    for (let i = 0; i < cipher.length; i++) {
+      recoveredKey += alphaES[mod(alphaES.indexOf(cipher[i]) - alphaES.indexOf(pChunk[i]), m27)];
+    }
+    assert.equal(recoveredKey, kChunk);
+  });
+});
+

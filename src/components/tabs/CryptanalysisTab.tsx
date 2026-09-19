@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { AlphabetMode, ALPHABETS } from '../../crypto/alphabets';
 import { calculateFrequencies, calculateIndexOfCoincidence, performKasiski, crackCaesar } from '../../crypto/cryptanalysis';
-import { BarChart3, Search, Sparkles, Key, Hash, HelpCircle, Activity } from 'lucide-react';
+import { RunningKeyCryptanalysis } from '../visualizers/RunningKeyCryptanalysis';
+import { BarChart3, Search, Sparkles, Key, Hash, HelpCircle, Activity, Zap } from 'lucide-react';
 import {
   ResponsiveContainer,
   BarChart,
@@ -62,6 +63,7 @@ const CustomKasiskiTooltip: React.FC<CustomTooltipProps> = ({ active, payload, l
 };
 
 export const CryptanalysisTab: React.FC<CryptanalysisTabProps> = ({ mode }) => {
+  const [cryptMode, setCryptMode] = useState<'classic_stats' | 'running_key'>('classic_stats');
   const [ciphertext, setCiphertext] = useState<string>(
     'VAEOSMPEVHARVXFOVSVABXOIVXMOLXHEPXBPAOHALHRVFOMPMPYPMOEP'
   );
@@ -87,30 +89,71 @@ export const CryptanalysisTab: React.FC<CryptanalysisTabProps> = ({ mode }) => {
 
   return (
     <div className="flex flex-col gap-6 p-2 lg:p-4 w-full max-w-7xl mx-auto pb-10">
-      {/* Header */}
+      {/* Top Main Mode Navigation */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-            <BarChart3 className="w-5 h-5" />
+            <Activity className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-100">Laboratorio de Criptoanálisis y Estadísticas</h2>
+            <h2 className="text-base font-bold text-slate-100">Centro de Criptoanálisis Estadístico y Métodos de Ruptura</h2>
             <p className="text-xs text-slate-400 font-mono">
-              Frecuencias, IC y Kasiski · <span className="text-cyan-400 font-mono text-[10px]">Fuente APA 7: Kasiski (1863); Friedman (1922); Ramió Aguirre (1999, pp. 38–42)</span>
+              Frecuencias, IC, Kasiski, Clave Continua (Running Key) y Autoclave
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono">
-            <span className="text-slate-500 mr-1.5">Índice IC:</span>
-            <span className="font-bold text-cyan-300">{ic.toFixed(4)}</span>
-            <span className="text-[10px] text-slate-500 ml-1.5">
-              ({ic > 0.06 ? 'Monoalfabético' : 'Polialfabético / Aleatorio'})
-            </span>
-          </div>
+        {/* Segmented Mode Selector */}
+        <div className="flex rounded-xl bg-slate-950 p-1 border border-slate-800 gap-1">
+          <button
+            onClick={() => setCryptMode('classic_stats')}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono rounded-lg transition ${
+              cryptMode === 'classic_stats'
+                ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            1. Estadístico (Frecuencias, IC, Kasiski)
+          </button>
+          <button
+            onClick={() => setCryptMode('running_key')}
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-mono rounded-lg transition ${
+              cryptMode === 'running_key'
+                ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Search className="w-3.5 h-3.5" />
+            2. Clave Continua & Autoclave (Crib Dragging)
+          </button>
         </div>
       </div>
+
+      {/* RENDER VIEW ACCORDING TO SELECTED MODE */}
+      {cryptMode === 'running_key' ? (
+        <RunningKeyCryptanalysis mode={mode} />
+      ) : (
+        <>
+          {/* Header Summary for Classic Stats */}
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/40 border border-slate-800/80 p-4 rounded-2xl">
+            <div>
+              <h3 className="text-sm font-bold text-slate-200">Análisis Monoalfabético y Polialfabético Clásico</h3>
+              <p className="text-xs text-slate-400 font-mono">
+                Fuente APA 7: Kasiski (1863); Friedman (1922); Ramió Aguirre (1999, pp. 38–42)
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono">
+                <span className="text-slate-500 mr-1.5">Índice IC:</span>
+                <span className="font-bold text-cyan-300">{ic.toFixed(4)}</span>
+                <span className="text-[10px] text-slate-500 ml-1.5">
+                  ({ic > 0.06 ? 'Monoalfabético' : 'Polialfabético / Aleatorio'})
+                </span>
+              </div>
+            </div>
+          </div>
+
 
       {/* Ciphertext Input Box */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur-md">
@@ -273,6 +316,8 @@ export const CryptanalysisTab: React.FC<CryptanalysisTabProps> = ({ mode }) => {
           )}
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };
