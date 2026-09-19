@@ -17,6 +17,7 @@ import {
   Check,
   ArrowRightLeft,
   HelpCircle,
+  ArrowRight,
 } from 'lucide-react';
 
 interface VigenereTabulaProps {
@@ -437,18 +438,22 @@ export const VigenereTabula: React.FC<VigenereTabulaProps> = ({ mode }) => {
                 <div className="w-7 h-7 rounded-lg bg-sky-500/20 border border-sky-500/40 flex items-center justify-center text-sky-400 shrink-0">
                   <Info className="w-4 h-4" />
                 </div>
-                <div className="text-slate-300 leading-relaxed">
+                <div className="text-slate-300 leading-relaxed flex flex-wrap items-center gap-1.5">
                   {variant === 'beaufort' ? (
                     <>
-                      <strong>Cifrador Beaufort:</strong> En Columna <strong className="text-amber-300">'{currentStep.plainChar}'</strong> (Índice {currentStep.plainIndex}) bajamos hasta la Clave <strong className="text-sky-300">'{currentStep.keyChar}'</strong> y leemos la Fila <strong className="text-emerald-400">'{currentStep.cipherChar}'</strong> (Índice {currentStep.cipherIndex}).
+                      <strong className="text-purple-300">Cifrador Beaufort:</strong> En Columna <strong className="text-amber-300">'{currentStep.plainChar}'</strong> (Índice {currentStep.plainIndex}) bajamos hasta la Clave <strong className="text-sky-300">'{currentStep.keyChar}'</strong> y leemos la Fila <strong className="text-emerald-400">'{currentStep.cipherChar}'</strong> (Índice {currentStep.cipherIndex}).
                     </>
                   ) : direction === 'encrypt' ? (
                     <>
-                      <strong>Cifrado Vigenère:</strong> Cruzamos Columna de Mensaje <strong className="text-amber-300">'{currentStep.plainChar}'</strong> (Índice {currentStep.plainIndex}) con Fila de Clave <strong className="text-sky-300">'{currentStep.keyChar}'</strong> (Índice {currentStep.keyIndex}) $\implies$ Intersección en Celda <strong className="text-emerald-400">'{currentStep.cipherChar}'</strong>.
+                      <strong className="text-sky-300">Cifrado Vigenère:</strong> Cruzamos Columna <strong className="text-amber-300">'{currentStep.plainChar}'</strong> (Índice {currentStep.plainIndex}) con Fila de Clave <strong className="text-sky-300">'{currentStep.keyChar}'</strong> (Índice {currentStep.keyIndex})
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-400 inline" />
+                      Intersección en Celda <strong className="text-emerald-400">'{currentStep.cipherChar}'</strong>.
                     </>
                   ) : (
                     <>
-                      <strong>Descifrado Vigenère:</strong> En Fila de Clave <strong className="text-sky-300">'{currentStep.keyChar}'</strong> (Índice {currentStep.keyIndex}) localizamos la Celda <strong className="text-emerald-400">'{currentStep.cipherChar}'</strong> y subimos a la Columna <strong className="text-amber-300">'{currentStep.plainChar}'</strong> (Índice {currentStep.plainIndex}).
+                      <strong className="text-amber-300">Descifrado Vigenère:</strong> En Fila de Clave <strong className="text-sky-300">'{currentStep.keyChar}'</strong> (Índice {currentStep.keyIndex}) localizamos la Celda <strong className="text-emerald-400">'{currentStep.cipherChar}'</strong>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-400 inline" />
+                      Subimos a la Columna <strong className="text-amber-300">'{currentStep.plainChar}'</strong> (Índice {currentStep.plainIndex}).
                     </>
                   )}
                 </div>
