@@ -326,3 +326,252 @@ export const KLEOPATRA_VARIABLES: KleopatraCriticalVariable[] = [
     severityColor: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
   },
 ];
+
+export interface SoftwareTool {
+  id: string;
+  name: string;
+  category: 'openpgp_correo' | 'almacenamiento_discos' | 'pki_tls' | 'forense_estegano' | 'hashes_passwords';
+  categoryLabel: string;
+  license: string;
+  platforms: string[];
+  primaryUse: string;
+  keyFeatures: string[];
+  relationToKleopatra: string;
+  officialUrl: string;
+  badgeVariant: 'amber' | 'emerald' | 'sky' | 'purple' | 'cyan';
+}
+
+export const RECOMMENDED_SOFTWARE: SoftwareTool[] = [
+  // 1. OpenPGP & Email
+  {
+    id: 'kleopatra',
+    name: 'Kleopatra (Gpg4win)',
+    category: 'openpgp_correo',
+    categoryLabel: 'Gestión OpenPGP & S/MIME',
+    license: 'Open Source (GPLv2+)',
+    platforms: ['Windows', 'Linux (KDE)'],
+    primaryUse: 'Administrador gráfico estándar de certificados OpenPGP y X.509/CMS para cifrado y firma digital de archivos y correos.',
+    keyFeatures: [
+      'Generación de pares de claves RSA (hasta 4096b) y Curvas Elípticas (Ed25519/ECDSA)',
+      'Gestión de sub-claves independientes para firma, cifrado y autenticación',
+      'Creación y resguardo de certificados de revocación',
+      'Sincronización con servidores de claves modernos (keys.openpgp.org)',
+    ],
+    relationToKleopatra: 'Herramienta base del curso para actividades de firma y cifrado de laboratorio.',
+    officialUrl: 'https://www.gpg4win.org/',
+    badgeVariant: 'amber',
+  },
+  {
+    id: 'gnupg_cli',
+    name: 'GnuPG CLI (gpg)',
+    category: 'openpgp_correo',
+    categoryLabel: 'Línea de Comandos OpenPGP',
+    license: 'Open Source (GPLv3)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Motor criptográfico subyacente universal para terminal, scripts automatizados, servidores y tarjetas inteligentes.',
+    keyFeatures: [
+      'Comandos universales: gpg --gen-key, gpg --encrypt, gpg --sign, gpg --verify',
+      'Integración nativa con Git para firmas de commits criptográficas verificadas',
+      'Soporte directo de SmartCards y hardware tokens (YubiKey / Nitrokey)',
+    ],
+    relationToKleopatra: 'Kleopatra es la interfaz gráfica construida sobre el motor GnuPG.',
+    officialUrl: 'https://gnupg.org/',
+    badgeVariant: 'sky',
+  },
+  {
+    id: 'thunderbird',
+    name: 'Mozilla Thunderbird',
+    category: 'openpgp_correo',
+    categoryLabel: 'Correo Electrónico Seguro',
+    license: 'Open Source (MPL 2.0)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Cliente de correo con soporte nativo de extremo a extremo (E2EE) para OpenPGP y S/MIME.',
+    keyFeatures: [
+      'Cifrado y firma digital automática de correos con adjuntos',
+      'Importación y exportación directa de claves desde Kleopatra / GnuPG',
+      'Descifrado transparente en la bandeja de entrada del usuario',
+    ],
+    relationToKleopatra: 'Permite aplicar las claves generadas en Kleopatra al intercambio real de correos cifrados.',
+    officialUrl: 'https://www.thunderbird.net/',
+    badgeVariant: 'purple',
+  },
+  {
+    id: 'mailvelope',
+    name: 'Mailvelope',
+    category: 'openpgp_correo',
+    categoryLabel: 'Extensión Webmail OpenPGP',
+    license: 'Open Source (AGPLv3)',
+    platforms: ['Web (Chrome, Firefox, Edge)'],
+    primaryUse: 'Cifrado y firma OpenPGP directamente dentro de webmails comerciales (Gmail, Outlook.com, Yahoo Mail).',
+    keyFeatures: [
+      'Integración con la interfaz web del correo sin exponer claves al proveedor',
+      'Llavero OpenPGP integrado en el navegador',
+      'Fácil intercambio de claves públicas',
+    ],
+    relationToKleopatra: 'Extiende el cifrado de Kleopatra a interfaces webmail sin necesidad de un cliente de escritorio.',
+    officialUrl: 'https://mailvelope.com/',
+    badgeVariant: 'emerald',
+  },
+
+  // 2. Almacenamiento & Discos
+  {
+    id: 'veracrypt',
+    name: 'VeraCrypt',
+    category: 'almacenamiento_discos',
+    categoryLabel: 'Cifrado de Volúmenes y Discos',
+    license: 'Open Source (Apache 2.0 / TrueCrypt License)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Creación de contenedores virtuales cifrados y cifrado de particiones completas o discos de sistema en reposo.',
+    keyFeatures: [
+      'Algoritmos simétricos robustos: AES-256, Serpent, Twofish y combinaciones en cascada (AES-Twofish-Serpent)',
+      'Funciones KDF de derivación de claves pesadas: Argon2, PBKDF2 (con HMAC-SHA512/Streebog)',
+      'Volúmenes ocultos (Hidden Volumes) para negación plausible (Plausible Deniability)',
+    ],
+    relationToKleopatra: 'Mientras Kleopatra cifra archivos individuales para transmisión, VeraCrypt protege volúmenes masivos en reposo.',
+    officialUrl: 'https://www.veracrypt.fr/',
+    badgeVariant: 'emerald',
+  },
+  {
+    id: 'cryptomator',
+    name: 'Cryptomator',
+    category: 'almacenamiento_discos',
+    categoryLabel: 'Cifrado en la Nube',
+    license: 'Open Source (GPLv3)',
+    platforms: ['Windows', 'Linux', 'macOS', 'Android', 'iOS'],
+    primaryUse: 'Cifrado del lado del cliente transparente antes de sincronizar archivos con Google Drive, OneDrive o Dropbox.',
+    keyFeatures: [
+      'Cifrado archivo por archivo con AES-256 y Scrypt KDF',
+      'Ofuscación de nombres de archivo y estructura de carpetas',
+      'Zero-Knowledge absoluto frente al proveedor de almacenamiento en la nube',
+    ],
+    relationToKleopatra: 'Complementa la seguridad protegiendo copias de seguridad de claves y datos en la nube.',
+    officialUrl: 'https://cryptomator.org/',
+    badgeVariant: 'cyan',
+  },
+
+  // 3. PKI, Certificados & TLS
+  {
+    id: 'openssl',
+    name: 'OpenSSL CLI',
+    category: 'pki_tls',
+    categoryLabel: 'Herramienta Universal PKI/TLS',
+    license: 'Open Source (Apache 2.0)',
+    platforms: ['Linux', 'macOS', 'Windows'],
+    primaryUse: 'La navaja suiza estándar de la industria para generación de claves RSA/ECC, CSRs, certificados X.509 y pruebas de servidores TLS.',
+    keyFeatures: [
+      'Diagnóstico de servidores HTTPS en vivo: openssl s_client -connect host:443 -tls1_3',
+      'Conversión universal de formatos: PEM, DER, PKCS#12 (.pfx / .p12), PKCS#7',
+      'Generación de Autoridades Certificadoras (CA) raíz e intermedias personalizadas',
+    ],
+    relationToKleopatra: 'OpenSSL es el estándar de comandos para servidores y certificados web, mientras Kleopatra se especializa en OpenPGP de usuario.',
+    officialUrl: 'https://www.openssl.org/',
+    badgeVariant: 'sky',
+  },
+  {
+    id: 'xca',
+    name: 'XCA (X Certificate and Key Management)',
+    category: 'pki_tls',
+    categoryLabel: 'Gestor Gráfico de CAs y X.509',
+    license: 'Open Source (BSD)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Interfaz gráfica intuitiva para crear y operar una Autoridad Certificadora (CA) completa para laboratorios y redes corporativas.',
+    keyFeatures: [
+      'Creación visual de CA Raíz, CA Intermedias y certificados de servidor/cliente',
+      'Gestión de extensiones X.509 v3 (SAN, Key Usage, Extended Key Usage, OIDs)',
+      'Generación y publicación de Listas de Revocación de Certificados (CRL)',
+    ],
+    relationToKleopatra: 'Permite entender a nivel visual cómo se construyen las CAs que emiten los certificados que Kleopatra valida.',
+    officialUrl: 'https://hohnstaedt.de/xca/',
+    badgeVariant: 'purple',
+  },
+
+  // 4. Forense & Esteganografía
+  {
+    id: 'cyberchef',
+    name: 'CyberChef (The Cyber Swiss Army Knife)',
+    category: 'forense_estegano',
+    categoryLabel: 'Laboratorio Criptográfico Web',
+    license: 'Open Source (Apache 2.0 - Desarrollado por GCHQ)',
+    platforms: ['Web / Navegador Offline'],
+    primaryUse: 'Plataforma interactiva para construir recetas de decodificación (Base64, Hex, XOR), hashing, cifrado simétrico y estegoanálisis.',
+    keyFeatures: [
+      'Más de 300 operaciones combinables en pipelines visuales interactivos',
+      'Cálculo instantáneo de entropía de Shannon para detectar datos cifrados u ocultos',
+      'Conversión masiva de formatos numéricos y compresión',
+    ],
+    relationToKleopatra: 'Ideal para inspeccionar y preparar payloads antes de firmar o cifrar con Kleopatra.',
+    officialUrl: 'https://gchq.github.io/CyberChef/',
+    badgeVariant: 'amber',
+  },
+  {
+    id: 'steghide',
+    name: 'Steghide / OpenStego',
+    category: 'forense_estegano',
+    categoryLabel: 'Herramientas de Esteganografía',
+    license: 'Open Source (GPL)',
+    platforms: ['Windows', 'Linux'],
+    primaryUse: 'Ocultación de archivos y mensajes secretos dentro de imágenes (BMP, JPG, PNG) y archivos de audio (WAV, AU).',
+    keyFeatures: [
+      'Incrustación LSB con cifrado previo y compresión de la carga útil',
+      'Protección mediante contraseña / clave esteganográfica (Stego-Key)',
+      'Pruebas prácticas de ocultamiento vs cifrado para laboratorios',
+    ],
+    relationToKleopatra: 'Ilustra el principio de Ocultamiento (Esteganografía) frente al Cifrado explícito de Kleopatra.',
+    officialUrl: 'https://www.openstego.com/',
+    badgeVariant: 'emerald',
+  },
+  {
+    id: 'wireshark',
+    name: 'Wireshark',
+    category: 'pki_tls',
+    categoryLabel: 'Analizador de Protocolos de Red',
+    license: 'Open Source (GPLv2)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Captura e inspección profunda de paquetes de red para auditar protocolos criptográficos (TLS 1.2/1.3, IPSec, SSH, HTTPS).',
+    keyFeatures: [
+      'Desglose paquete a paquete del Handshake TLS (ClientHello, ServerHello, Certificados)',
+      'Comprobación de que el tráfico de aplicación viaja 100% cifrado sin fugas de texto claro',
+      'Descifrado de sesiones TLS en laboratorio usando archivos de registro de claves (SSLKEYLOGFILE)',
+    ],
+    relationToKleopatra: 'Permite verificar en la red la confidencialidad de los archivos y mensajes transmitidos.',
+    officialUrl: 'https://www.wireshark.org/',
+    badgeVariant: 'cyan',
+  },
+
+  // 5. Auditoría & Gestores
+  {
+    id: 'keepassxc',
+    name: 'KeePassXC',
+    category: 'hashes_passwords',
+    categoryLabel: 'Gestión de Contraseñas Segura',
+    license: 'Open Source (GPLv3)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Almacén local de credenciales cifrado con estándares de alta seguridad sin almacenamiento en servidores de terceros.',
+    keyFeatures: [
+      'Cifrado de base de datos con AES-256 o ChaCha20',
+      'Derivación de clave mediante Argon2d / Argon2id resistente a GPUs',
+      'Generador de contraseñas de alta entropía y generador de tokens 2FA (TOTP)',
+    ],
+    relationToKleopatra: 'Recomendado para resguardar las frases de paso complejas de las claves privadas de Kleopatra.',
+    officialUrl: 'https://keepassxc.org/',
+    badgeVariant: 'emerald',
+  },
+  {
+    id: 'hashcat',
+    name: 'Hashcat / John the Ripper',
+    category: 'hashes_passwords',
+    categoryLabel: 'Auditoría Forense de Hashes',
+    license: 'Open Source (MIT / GPLv2)',
+    platforms: ['Windows', 'Linux', 'macOS'],
+    primaryUse: 'Herramientas estándar de auditoría para evaluar la resistencia de contraseñas y funciones hash frente a ataques de diccionario y fuerza bruta.',
+    keyFeatures: [
+      'Aceleración masiva por GPU (OpenCL / CUDA) para más de 300 tipos de hashes',
+      'Demostración práctica de la debilidad de MD5, SHA-1 y NTLM sin sal',
+      'Validación de la necesidad de algoritmos modernos lentos (Argon2, bcrypt, PBKDF2)',
+    ],
+    relationToKleopatra: 'Permite comprender en laboratorio por qué GnuPG y Kleopatra usan derivación pesada S2K/PBKDF2 para proteger las claves privadas.',
+    officialUrl: 'https://hashcat.net/hashcat/',
+    badgeVariant: 'purple',
+  },
+];
+

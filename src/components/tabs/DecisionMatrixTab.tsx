@@ -19,9 +19,23 @@ import {
   XCircle,
   Terminal,
 } from 'lucide-react';
-import { SCENARIOS, KLEOPATRA_VARIABLES, DecisionScenario } from '../../data/decisionMatrix.data';
+import {
+  SCENARIOS,
+  KLEOPATRA_VARIABLES,
+  RECOMMENDED_SOFTWARE,
+  DecisionScenario,
+  SoftwareTool,
+} from '../../data/decisionMatrix.data';
 import { Badge, GlassCard, CopyButton } from '../common';
 import { useClipboard } from '../../hooks';
+import {
+  ExternalLink,
+  Laptop,
+  FolderLock,
+  Globe2,
+  FileCode,
+  Search,
+} from 'lucide-react';
 
 const ICON_MAP = {
   Award,
@@ -33,8 +47,10 @@ const ICON_MAP = {
 };
 
 export const DecisionMatrixTab: React.FC = () => {
-  const [subTab, setSubTab] = useState<'assistant' | 'benchmarks' | 'tables' | 'kleopatra-guide'>('assistant');
+  const [subTab, setSubTab] = useState<'assistant' | 'benchmarks' | 'tables' | 'kleopatra-guide' | 'software-ecosystem'>('assistant');
   const [selectedScenarioId, setSelectedScenarioId] = useState<string>('academic');
+  const [softwareCategoryFilter, setSoftwareCategoryFilter] = useState<string>('all');
+  const [softwareSearchQuery, setSoftwareSearchQuery] = useState<string>('');
 
   const { copy, isCopied } = useClipboard();
 
@@ -54,6 +70,16 @@ export const DecisionMatrixTab: React.FC = () => {
       `Consejo: ${scenario.recommendation.practicalAdvice}`;
     copy(text, `scenario-${scenario.id}`);
   };
+
+  const filteredSoftware = RECOMMENDED_SOFTWARE.filter(tool => {
+    const matchesCat = softwareCategoryFilter === 'all' || tool.category === softwareCategoryFilter;
+    const matchesSearch =
+      tool.name.toLowerCase().includes(softwareSearchQuery.toLowerCase()) ||
+      tool.primaryUse.toLowerCase().includes(softwareSearchQuery.toLowerCase()) ||
+      tool.categoryLabel.toLowerCase().includes(softwareSearchQuery.toLowerCase());
+    return matchesCat && matchesSearch;
+  });
+
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto pb-12">
@@ -106,6 +132,7 @@ export const DecisionMatrixTab: React.FC = () => {
             { id: 'benchmarks', label: '2. Tiempos & Rendimiento (Tabla H1)', icon: Zap },
             { id: 'tables', label: '3. Matrices Oficiales NIST & Comparativas', icon: Layers },
             { id: 'kleopatra-guide', label: '4. Mapeo Kleopatra & 8 Variables Críticas', icon: Lock },
+            { id: 'software-ecosystem', label: '5. Ecosistema de Software Recomendado', icon: Server },
           ].map(tab => {
             const Icon = tab.icon;
             const isActive = subTab === tab.id;
@@ -125,6 +152,7 @@ export const DecisionMatrixTab: React.FC = () => {
             );
           })}
         </div>
+
       </div>
 
       {/* ── SUBTAB 1: Asistente por Escenarios (Tabla I1) ── */}
@@ -621,8 +649,135 @@ export const DecisionMatrixTab: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* ── SUBTAB 5: Ecosistema de Software Recomendado ── */}
+      {subTab === 'software-ecosystem' && (
+        <div className="flex flex-col gap-6">
+          {/* Intro Card */}
+          <GlassCard borderGlow="amber">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="amber">Ecosistema de Laboratorio &amp; Industria</Badge>
+                  <Badge variant="slate">Herramientas Libres &amp; Open Source</Badge>
+                </div>
+                <h3 className="text-lg font-bold text-slate-100 font-mono flex items-center gap-2">
+                  <Server className="w-5 h-5 text-amber-400" />
+                  Software Criptográfico Recomendado para Prácticas y Producción
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 max-w-3xl">
+                  Además de <strong>Kleopatra (Gpg4win)</strong>, los laboratorios universitarios y las auditorías de seguridad profesional utilizan un ecosistema de herramientas especializadas para almacenamiento cifrado, PKI corporativa, estegoanálisis y auditoría de contraseñas.
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+
+          {/* Search & Category Filter Bar */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+              <input
+                type="text"
+                value={softwareSearchQuery}
+                onChange={e => setSoftwareSearchQuery(e.target.value)}
+                placeholder="Buscar software (ej. VeraCrypt, OpenSSL, CyberChef)..."
+                className="w-full pl-9 pr-4 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 font-mono text-xs focus:outline-none focus:border-amber-500"
+              />
+            </div>
+
+            {/* Category Filter Pills */}
+            <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+              {[
+                { id: 'all', label: 'Todos' },
+                { id: 'openpgp_correo', label: 'OpenPGP & Correo' },
+                { id: 'almacenamiento_discos', label: 'Discos & Volúmenes' },
+                { id: 'pki_tls', label: 'PKI, TLS & Redes' },
+                { id: 'forense_estegano', label: 'Forense & Estegano' },
+                { id: 'hashes_passwords', label: 'Hashes & Passwords' },
+              ].map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSoftwareCategoryFilter(cat.id)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-mono whitespace-nowrap transition-all ${
+                    softwareCategoryFilter === cat.id
+                      ? 'bg-amber-500 text-slate-950 font-bold'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Software Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredSoftware.map(tool => (
+              <GlassCard
+                key={tool.id}
+                borderGlow={tool.badgeVariant}
+                className="flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-bold font-mono text-sm text-slate-100">{tool.name}</span>
+                    <Badge variant={tool.badgeVariant}>{tool.categoryLabel}</Badge>
+                  </div>
+
+                  <p className="text-xs text-slate-300 mb-3 leading-relaxed">
+                    {tool.primaryUse}
+                  </p>
+
+                  {/* Platforms & License */}
+                  <div className="flex items-center gap-2 flex-wrap text-[10px] font-mono text-slate-400 mb-3">
+                    <span className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-300">
+                      {tool.license}
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                      {tool.platforms.join(', ')}
+                    </span>
+                  </div>
+
+                  {/* Key Features List */}
+                  <div className="space-y-1.5 p-2.5 bg-slate-950 rounded-xl border border-slate-800 mb-3 font-mono text-[11px] text-slate-400">
+                    <span className="text-slate-300 font-bold block text-[10px] uppercase">Capacidades Clave:</span>
+                    {tool.keyFeatures.map((feat, i) => (
+                      <div key={i} className="flex items-start gap-1.5 text-slate-400">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                        <span className="leading-tight">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Relation to Kleopatra */}
+                  <div className="p-2.5 bg-amber-500/5 rounded-xl border border-amber-500/20 text-[11px] text-amber-300/90 font-mono mb-3">
+                    <span className="font-bold text-amber-400 block mb-0.5">Complemento con Kleopatra:</span>
+                    {tool.relationToKleopatra}
+                  </div>
+                </div>
+
+                {/* External Official Link */}
+                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs font-mono">
+                  <span className="text-slate-500 text-[10px]">Sitio Oficial &amp; Docs</span>
+                  <a
+                    href={tool.officialUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-amber-400 hover:text-amber-300 hover:underline font-bold"
+                  >
+                    <span>Visitar Web</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </GlassCard>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default DecisionMatrixTab;
+
