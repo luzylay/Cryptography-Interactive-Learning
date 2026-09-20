@@ -251,7 +251,60 @@ export const APA_REFERENCES: ApaReference[] = [
     inTextCitation: '(Katsikeas et al., 2021, pp. 1–24)',
     notes: 'Estudio cienciométrico sobre 59,782 artículos y 98,373 autores (1949–2020) que detectó las 12 macro-comunidades de la ciberseguridad, demostrando la hegemonía histórica y matemática de la Criptografía (I & II) desde el surgimiento de DES y la clave pública.',
   },
+  {
+    id: 'fips197_aes',
+    topic: 'Estándar de Cifrado Avanzado (AES / Rijndael)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'National Institute of Standards and Technology (NIST)',
+    year: '2001',
+    title: 'Advanced Encryption Standard (AES)',
+    source: 'Federal Information Processing Standards Publication (FIPS PUB 197), U.S. Department of Commerce / NIST',
+    doiOrUrl: 'https://doi.org/10.6028/NIST.FIPS.197-upd1',
+    displayUrlLabel: 'NIST Computer Security Resource Center - FIPS PUB 197',
+    inTextCitation: '(NIST / FIPS PUB 197, 2001)',
+    notes: 'Especificación canónica del algoritmo AES (Rijndael) con tamaños de clave de 128, 192 y 256 bits, matriz de estado 4x4, transformaciones SubBytes, ShiftRows, MixColumns y AddRoundKey.',
+  },
+  {
+    id: 'fips180_4_sha',
+    topic: 'Estándar de Funciones Hash Seguras (SHA-1, SHA-224, SHA-256, SHA-384, SHA-512)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'National Institute of Standards and Technology (NIST)',
+    year: '2015',
+    title: 'Secure Hash Standard (SHS)',
+    source: 'Federal Information Processing Standards Publication (FIPS PUB 180-4), U.S. Department of Commerce / NIST',
+    doiOrUrl: 'https://doi.org/10.6028/NIST.FIPS.180-4',
+    displayUrlLabel: 'NIST CSRC - FIPS PUB 180-4 (Secure Hash Standard)',
+    inTextCitation: '(NIST / FIPS PUB 180-4, 2015)',
+    notes: 'Especificación de las funciones de resumen criptográfico de la familia SHA-2, estableciendo la construcción iterativa de Merkle-Damgård, vectores iniciales y constantes de ronda.',
+  },
+  {
+    id: 'rfc8446_tls13',
+    topic: 'Protocolo de Seguridad de la Capa de Transporte (TLS) Versión 1.3',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Rescorla, E.',
+    year: '2018',
+    title: 'The Transport Layer Security (TLS) Protocol Version 1.3',
+    source: 'RFC 8446, Internet Engineering Task Force (IETF)',
+    doiOrUrl: 'https://www.rfc-editor.org/rfc/rfc8446',
+    displayUrlLabel: 'IETF RFC Editor - RFC 8446 (TLS 1.3)',
+    inTextCitation: '(Rescorla / IETF RFC 8446, 2018)',
+    notes: 'Estándar que revoluciona las comunicaciones HTTPS reduciendo la latencia a 1-RTT, eliminando algoritmos obsoletos (MD5, SHA-1, RC4, DES, CBC estático) e imponiendo Secreto Perfecto hacia Adelante (PFS) mediante ECDHE.',
+  },
+  {
+    id: 'nist_sp800_207_zt',
+    topic: 'Arquitectura de Confianza Cero (Zero Trust) y Ciberseguridad en Teletrabajo',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Rose, S., Borchert, O., Mitchell, S., & Connelly, S.',
+    year: '2020',
+    title: 'Zero Trust Architecture',
+    source: 'NIST Special Publication 800-207, National Institute of Standards and Technology, Gaithersburg, MD',
+    doiOrUrl: 'https://doi.org/10.6028/NIST.SP.800-207',
+    displayUrlLabel: 'NIST CSRC - NIST SP 800-207 (Zero Trust Architecture)',
+    inTextCitation: '(Rose et al. / NIST SP 800-207, 2020)',
+    notes: 'Marco de referencia para la seguridad empresarial moderna pospandemia: abandono de la seguridad perimetral tradicional en favor de la verificación continua estricta de identidad, cifrado integral de extremo a extremo y principio de menor privilegio.',
+  },
 ];
+
 
 export const ENCYCLOPEDIA_ARTICLES: EncyclopediaArticle[] = [
   {
@@ -566,5 +619,146 @@ El estudio de Katsikeas et al. (KTH Royal Institute of Technology) analizó 59,7
    • Autenticación: Contraseñas con hash (Lamport, 1981) y 2FA/MFA.
    • Control de Acceso: Modelos RBAC (Sandhu et al., 1996; NIST).
    • Criptografía Cuántica: Distribución Cuántica de Claves (QKD / Protocolo BB84; Bennett & Brassard).`,
+  },
+  {
+    id: 'sistemas_numeracion_xor',
+    title: 'Sistemas de Numeración, Conversión de Bases y Álgebra Booleana en Criptografía',
+    category: 'Fundamentos Matemáticos',
+    citation: '(Ramió Aguirre, 1999; Shannon, 1949)',
+    content: `SISTEMAS DE NUMERACIÓN Y ÁLGEBRA BOOLEANA EN CRIPTOGRAFÍA (S11)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Ramió Aguirre, 1999, pp. 45–52; Shannon, 1949)
+
+1. BASES NUMÉRICAS Y CODIFICACIÓN BINARIA
+   • Binario (Base 2): Alfabeto fundamental {0, 1} de la computación digital. Todo carácter ASCII se representa en un octeto (8 bits, 0x00 a 0xFF).
+   • Hexadecimal (Base 16): Alfabeto {0-9, A-F}. Representa de forma compacta 4 bits (nibble) por dígito. Es el estándar de facto para representar claves, IVs y criptogramas.
+   • Octal (Base 8): Alfabeto {0-7}. Cada dígito agrupa 3 bits.
+   • Base64 (RFC 4648): Mapea bloques de 6 bits a un conjunto de 64 caracteres legibles (A-Z, a-z, 0-9, +, /) para transmisión sobre canales de texto (MIME, PEM, JSON).
+
+2. EL OPERADOR XOR (⊕) COMO FUNDAMENTO CRIPTOGRÁFICO
+   • Propiedades algebraicas:
+     1. Conmutatividad: A ⊕ B = B ⊕ A
+     2. Asociatividad: (A ⊕ B) ⊕ C = A ⊕ (B ⊕ C)
+     3. Elemento neutro: A ⊕ 0 = A
+     4. Involución / Auto-inverso: A ⊕ A = 0
+     5. Reversibilidad simétrica: Si C = M ⊕ K, entonces M = C ⊕ K
+   • Teorema del Secreto Perfecto de Shannon (1949):
+     Si la clave K es verdaderamente aleatoria, de igual longitud que el mensaje M y se utiliza una sola vez (One-Time Pad / Cifrador de Vernam), la distribución de probabilidad condicional P(M|C) = P(M), garantizando seguridad incondicional contra adversarios con capacidad de cómputo infinita.`,
+  },
+  {
+    id: 'aes_rijndael',
+    title: 'El Estándar AES (Rijndael), Campos Finitos GF(2^8) y Modos de Operación',
+    category: 'Criptografía Simétrica Moderna',
+    citation: '(NIST FIPS PUB 197, 2001; Daemen & Rijmen, 2002)',
+    content: `ADVANCED ENCRYPTION STANDARD (AES / RIJNDAEL - FIPS 197) (S12)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST FIPS PUB 197, 2001; Daemen & Rijmen, 2002)
+
+1. ARQUITECTURA GENERAL Y TAMAÑOS DE CLAVE
+   • Bloque estándar: 128 bits fijos estructurados en una matriz de estado de 4×4 bytes.
+   • Variantes según longitud de clave:
+     - AES-128: Clave de 128 bits, 10 rondas de transformación.
+     - AES-192: Clave de 192 bits, 12 rondas de transformación.
+     - AES-256: Clave de 256 bits, 14 rondas de transformación (Nivel militar / Top Secret).
+
+2. LAS 4 TRANSFORMACIONES DE RONDA
+   1. SubBytes: Sustitución byte a byte no lineal usando la S-Box de Rijndael. Se basa en el cálculo del inverso multiplicativo en el campo finito GF(2^8) con polinomio irreducible m(x) = x^8 + x^4 + x^3 + x + 1 (0x11B), seguido de una transformación afín sobre GF(2) para eliminar simetrías algebraicas.
+   2. ShiftRows: Permutación posicional que rota cíclicamente a la izquierda los bytes de cada fila (Fila 0: 0, Fila 1: 1, Fila 2: 2, Fila 3: 3 bytes).
+   3. MixColumns: Multiplicación matricial de cada columna por el polinomio fijo c(x) = 03·x^3 + 01·x^2 + 01·x + 02 módulo x^4 + 1 en GF(2^8), proporcionando máxima difusión inter-bytes. (Se omite en la última ronda).
+   4. AddRoundKey: Operación XOR bit a bit entre la matriz de estado y la subclave de ronda de 128 bits provista por el algoritmo KeyExpansion.
+
+3. MODOS DE OPERACIÓN DE CIFRADO POR BLOQUES (SP 800-38A)
+   • ECB (Electronic Codebook): Cifra cada bloque de forma independiente. Inseguro: preserva patrones repetitivos (vulnerabilidad del pingüino).
+   • CBC (Cipher Block Chaining): Aplica XOR entre el bloque de texto claro y el bloque cifrado anterior, utilizando un Vector de Inicialización (IV) pseudoaleatorio y único para el primer bloque.
+   • GCM (Galois/Counter Mode): Modo autenticado AEAD que combina el modo CTR con multiplicación de Galois (GHASH) para garantizar simultáneamente Confidencialidad e Integridad con altísimo rendimiento hardware.`,
+  },
+  {
+    id: 'hash_functions_integrity',
+    title: 'Funciones Hash Criptográficas: MD5, SHA-1, SHA-2 y Resistencia a Colisiones',
+    category: 'Integridad y Resumen',
+    citation: '(NIST FIPS PUB 180-4, 2015; RFC 1321; RFC 2104)',
+    content: `FUNCIONES DE RESUMEN CRIPTOGRÁFICO Y CÓDIGOS HMAC (S13)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST FIPS PUB 180-4, 2015; RFC 1321; RFC 2104)
+
+1. PROPIEDADES FUNDAMENTALES (ISO/IEC 10118)
+   • Longitud de salida fija: Transforma cualquier mensaje de longitud arbitraria en un compendio de tamaño determinista (ej. 256 bits).
+   • Eficiencia computacional: H(M) se evalúa de manera casi instantánea.
+   • Efecto Avalancha (Avalanche Effect): Modificar 1 solo bit en el mensaje de entrada debe alterar aproximadamente el 50% de los bits del hash final.
+   • Resistencia a Preimagen: Inviable deducir M a partir de h = H(M).
+   • Resistencia a Segunda Preimagen: Inviable hallar M₂ ≠ M₁ con H(M₁) = H(M₂).
+   • Resistencia a Colisiones: Inviable hallar dos mensajes arbitrarios M₁ ≠ M₂ con H(M₁) = H(M₂).
+
+2. EVOLUCIÓN HISTÓRICA Y ESTADO DE SEGURIDAD
+   • MD5 (128 bits, RFC 1321): Roto formalmente en 2004 por Wang et al. Se generan colisiones en milisegundos. PROHIBIDO para seguridad.
+   • SHA-1 (160 bits, FIPS 180-1): Colisión práctica demostrada en 2017 (Google / CWI - ataque SHAttered). Retirado oficialmente por NIST en 2022.
+   • SHA-2 (SHA-256, SHA-384, SHA-512, FIPS 180-4): Familia estándar actual basada en la construcción de Merkle-Damgård con 64 rondas no lineales.
+   • SHA-3 (FIPS 202): Algoritmo Keccak basado en la construcción esponja (Sponge Construction), independiente de SHA-2 ante futuros avances criptoanalíticos.
+
+3. HMAC (Keyed-Hash Message Authentication Code - RFC 2104)
+   • Garantiza simultáneamente Integridad y Autenticidad de origen mediante una clave secreta K compartida.
+   • Fórmula: HMAC(K, M) = H( (K ⊕ opad) || H( (K ⊕ ipad) || M ) )
+   • Protege contra ataques de extensión de longitud (Length Extension Attacks) que afectan a hashes puros de Merkle-Damgård.`,
+  },
+  {
+    id: 'digital_signatures_pki',
+    title: 'Firma Digital, Infraestructura de Clave Pública (PKI) y Protocolo TLS 1.3',
+    category: 'Autenticación y Protocolos Seguros',
+    citation: '(NIST FIPS PUB 186-5, 2023; RFC 8446, 2018; RFC 5280, 2008)',
+    content: `FIRMA DIGITAL, JERARQUÍA X.509 Y PROTOCOLO TLS 1.3 (S14–S15)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST FIPS PUB 186-5, 2023; IETF RFC 8446, 2018; RFC 5280, 2008)
+
+1. PROCESO MATEMÁTICO DE LA FIRMA DIGITAL
+   • Emisión: El emisor calcula h = H(M) y cifra el hash con su clave privada d: S = h^d mod n (en RSA) o genera el par (r, s) (en ECDSA/Ed25519).
+   • Verificación: El receptor descifra la firma con la clave pública del emisor e: h' = S^e mod n y la compara con el hash local h'' = H(M).
+   • Si h' == h'', se certifican tres pilares inquebrantables:
+     1. Integridad (el mensaje no fue alterado).
+     2. Autenticidad (solo el poseedor de la clave privada pudo generarla).
+     3. No Repudio (el emisor no puede negar jurídicamente su autoría).
+
+2. INFRAESTRUCTURA DE CLAVE PÚBLICA (PKI) Y CERTIFICADOS X.509 v3
+   • Problema fundamental: ¿Cómo sabemos que la clave pública le pertenece realmente a quien dice ser?
+   • Solución: Una Autoridad Certificadora (CA) confiable firma digitalmente el certificado X.509 del servidor.
+   • Cadena de Confianza: Root CA (almacenada en el SO/navegador) → Intermediate CA → Certificado de Servidor (Leaf).
+   • Niveles de Validación:
+     - DV (Domain Validation): Validación básica del control del dominio.
+     - OV (Organization Validation): Validación legal y registral de la empresa.
+     - EV (Extended Validation): Auditoría corporativa integral con máxima reputación.
+   • Revocación: Listas CRL (Certificate Revocation Lists) y protocolo en línea OCSP (Online Certificate Status Protocol).
+
+3. PROTOCOLO TLS 1.3 (RFC 8446) Y CONEXIÓN HTTPS
+   • Handshake 1-RTT: Reduce el retardo de conexión a un único viaje de ida y vuelta intercambiando claves efímeras ECDHE desde el ClientHello.
+   • Secreto Perfecto hacia Adelante (PFS - Perfect Forward Secrecy): Cada sesión genera claves temporales efímeras. Si la clave privada de la CA se compromete en el futuro, las sesiones pasadas no pueden descifrarse.
+   • Eliminación de algoritmos obsoletos: Prohíbe RSA estático para intercambio de claves, RC4, 3DES, MD5, SHA-1 y compresión TLS (ataques CRIME/BREACH).`,
+  },
+  {
+    id: 'teletrabajo_pandemia_seguridad',
+    title: 'Ciberseguridad y Criptografía en Tiempos de Pandemia: VPNs, MFA y Confianza Cero',
+    category: 'Ciberseguridad Moderna',
+    citation: '(NIST SP 800-207, 2020; Katsikeas et al., 2021; ISO/IEC 27001:2022)',
+    content: `CIBERSEGURIDAD EN TELETRABAJO Y CONTEXTO POSPANDEMIA (S16–S17)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST SP 800-207, 2020; Katsikeas et al., 2021; ISO/IEC 27001:2022)
+
+1. VECTORES DE AMENAZA DURANTE LA TRANSICIÓN AL TELETRABAJO (COVID-19)
+   • Dispersión del perímetro defensivo: Conexiones desde redes domésticas no seguras y dispositivos personales (BYOD - Bring Your Own Device).
+   • Campañas masivas de Phishing e Ingeniería Social: Suplantación de entidades de salud, videoconferencias (Zoom, Teams) y alertas sanitarias falsas.
+   • Ransomware Corporativo (RaaS): Secuestro extorsivo de datos corporativos mediante cifrado asimétrico/híbrido malicioso de bases de datos.
+
+2. MECANISMOS CRIPTOGRÁFICOS DE PROTECCIÓN
+   • Redes Privadas Virtuales (VPN):
+     - IPSec VPN (RFC 4301): Opera en capa de red (Capa 3). Utiliza protocolos AH (Authentication Header para integridad) y ESP (Encapsulating Security Payload para cifrado y autenticación) en modo Túnel o Transporte con IKEv2.
+     - SSL/TLS VPN (OpenVPN / WireGuard): Opera en capa de transporte/aplicación, facilitando acceso granular por navegador o cliente seguro.
+   • Autenticación Multifactor (MFA / 2FA - NIST SP 800-63B):
+     - Factores: 1. Algo que sabes (contraseña), 2. Algo que tienes (token TOTP RFC 6238, llave física FIDO2/WebAuthn), 3. Algo que eres (biometría).
+
+3. ARQUITECTURA DE CONFIANZA CERO (ZERO TRUST - NIST SP 800-207)
+   • Principio canónico: "Nunca confiar, siempre verificar" (Never trust, always verify).
+   • Pilares clave:
+     1. Verificación continua de identidad y postura de seguridad del dispositivo.
+     2. Microsegmentación de redes internas para evitar desplazamiento lateral del atacante.
+     3. Principio de Menor Privilegio (PoLP): Concesión estricta de permisos temporales mínimos necesarios.
+     4. Cifrado integral de todos los datos, tanto en tránsito (TLS 1.3 / mTLS) como en reposo (AES-256-XTS).`,
   },
 ];

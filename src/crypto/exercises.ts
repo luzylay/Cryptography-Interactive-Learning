@@ -402,6 +402,67 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
             'Esteganografía: Oculta la EXISTENCIA (el mensaje se camufla en una imagen o audio).',
           ],
         },
+        {
+          title: 'Arquitectura del Estándar AES',
+          question: '¿Cuántas rondas de transformación aplica el algoritmo AES-128 sobre su matriz de estado de 128 bits (4×4 bytes)?',
+          expectedAnswer: '10',
+          hint: 'AES-128 tiene 10 rondas, AES-192 tiene 12 rondas y AES-256 tiene 14 rondas.',
+          steps: [
+            'AES-128: 10 rondas de transformación.',
+            'Transformaciones por ronda: SubBytes, ShiftRows, MixColumns (excepto ronda final) y AddRoundKey.',
+          ],
+        },
+        {
+          title: 'Vulnerabilidad del Modo ECB',
+          question: '¿Qué modo de operación de cifrado por bloques está estrictamente desaconsejado en producción por cifrar bloques idénticos de manera idéntica preservando patrones visuales?',
+          expectedAnswer: 'ECB',
+          hint: 'Corresponde a Electronic Codebook.',
+          steps: [
+            'Modo: ECB (Electronic Codebook).',
+            'Falla: No utiliza Vector de Inicialización (IV) ni encadenamiento entre bloques.',
+            'Consecuencia: Si P₁ = P₂, entonces C₁ = C₂, revelando la estructura de imágenes o bases de datos.',
+          ],
+        },
+        {
+          title: 'Propiedad del Efecto Avalancha',
+          question: 'En una función hash segura (como SHA-256), ¿qué porcentaje aproximado de los bits totales del resumen debe invertirse cuando se modifica un solo bit del mensaje de entrada?',
+          expectedAnswer: '50%',
+          hint: 'El valor ideal de difusión estadística es exactamente la mitad de los bits.',
+          steps: [
+            'Efecto Avalancha (Avalanche Effect): Dispersión del 50% de los bits de salida.',
+            'Objetivo: Evitar correlación matemática entre entradas similares y sus resúmenes.',
+          ],
+        },
+        {
+          title: 'Pilares de la Firma Digital',
+          question: '¿Qué pilar fundamental de la seguridad de la información garantiza la firma digital impidiendo que el autor de un mensaje o transacción niegue su emisión?',
+          expectedAnswer: 'NO REPUDIO',
+          hint: 'También conocido como irrenunciabilidad.',
+          steps: [
+            'Pilar: No Repudio (Non-repudiation).',
+            'Mecanismo: Como la firma se genera con la clave privada exclusiva del emisor, este no puede rechazar su autoría.',
+          ],
+        },
+        {
+          title: 'Protocolo de Conexión Segura TLS 1.3',
+          question: '¿Cuántos viajes de ida y vuelta (RTT) requiere el protocolo TLS 1.3 (RFC 8446) para negociar e iniciar la conexión cifrada HTTPS gracias al envío anticipado de claves ECDHE?',
+          expectedAnswer: '1',
+          hint: 'Es un Handshake de 1 RTT (frente a los 2 RTT de TLS 1.2).',
+          steps: [
+            'Latencia de TLS 1.3: 1 RTT (Zero Round Trip Time opcional con 0-RTT).',
+            'El cliente envía sus claves efímeras ECDH en el primer mensaje ClientHello.',
+          ],
+        },
+        {
+          title: 'Filosofía de Seguridad Zero Trust',
+          question: '¿Cuál es el postulado o lema central de la Arquitectura de Confianza Cero (Zero Trust NIST SP 800-207) para la protección de redes y teletrabajo?',
+          expectedAnswer: 'NUNCA CONFIAR SIEMPRE VERIFICAR',
+          hint: 'En inglés: "Never trust, always verify".',
+          steps: [
+            'Postulado canónico: "Nunca confiar, siempre verificar".',
+            'Pilares: Verificación continua de identidad, microsegmentación de red y menor privilegio.',
+          ],
+        },
       ];
 
       const item = pickRandom(conceptualPool);
@@ -421,3 +482,4 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
     }
   }
 }
+

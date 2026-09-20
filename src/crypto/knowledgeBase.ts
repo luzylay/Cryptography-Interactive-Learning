@@ -183,4 +183,112 @@ export const KNOWLEDGE_BASE_QA: QAItem[] = [
     apaCitation: '(NIST SP 800-57 Part 1 Rev. 5, 2020; RFC 9580, 2024; FIPS PUB 186-5, 2023)',
     badgeColor: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
   },
+  {
+    id: 'qa-7-bases-bitwise-xor',
+    category: 'fundamentos',
+    categoryLabel: 'Sistemas Numéricos y XOR',
+    question: '¿Por qué la operación XOR (⊕) y la conversión de bases son la base matemática de la criptografía digital?',
+    shortSummary:
+      'La operación XOR es la base por su propiedad de auto-inversión (A ⊕ B ⊕ B = A), uniformidad probabilística y neutralidad sin pérdida de entropía.',
+    detailedContent: [
+      '• Propiedad de Involución: Si se aplica XOR entre un texto plano M y una clave K (C = M ⊕ K), se obtiene el criptograma. Si se vuelve a aplicar XOR con K sobre el criptograma (C ⊕ K), se recupera exactamente M: (M ⊕ K) ⊕ K = M ⊕ (K ⊕ K) = M ⊕ 0 = M.',
+      '• Preservación de Entropía: Si K tiene distribución equiprobable de 0s y 1s, la salida C tendrá exactamente 50% de unos y 50% de ceros, sin importar la distribución del mensaje original M.',
+      '• Aplicación Universal: Se utiliza en el cifrado Vernam (One-Time Pad), la mezcla de subclaves en DES (E(R) ⊕ K) y la fase AddRoundKey de AES.',
+    ],
+    keyTakeaways: [
+      'XOR es una operación simétrica e involutiva fundamental: C = M ⊕ K y M = C ⊕ K.',
+      'Base del Cifrador de Vernam y de las transformaciones AddRoundKey de AES y Feistel de DES.',
+    ],
+    tags: ['XOR', 'Binario', 'Hexadecimal', 'Vernam', 'Shannon', 'Entropía'],
+    apaCitation: '(Shannon, 1949; Ramió Aguirre, 1999)',
+    badgeColor: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+  },
+  {
+    id: 'qa-8-des-aes-modos-bloques',
+    category: 'cifrado_moderno',
+    categoryLabel: 'Cifrados por Bloques y Modos',
+    question: '¿Cuáles son las diferencias estructurales entre DES y AES, y por qué el modo ECB está prohibido en producción?',
+    shortSummary:
+      'DES usa red de Feistel de 16 rondas con bloques de 64b y clave de 56b; AES usa red de Sustitución-Permutación con matriz 4x4 de 128b. El modo ECB está prohibido porque filtra patrones visuales al cifrar bloques idénticos de manera idéntica.',
+    detailedContent: [
+      '• Arquitectura DES (FIPS 46-3): Red de Feistel que divide el bloque de 64 bits en dos mitades (L, R) y procesa únicamente una mitad por ronda con la función f(R, K) y 8 cajas S no lineales.',
+      '• Arquitectura AES (FIPS 197): Red de Sustitución-Permutación (SPN) que opera simultáneamente sobre los 16 bytes de la matriz de estado 4×4 con SubBytes, ShiftRows, MixColumns y AddRoundKey.',
+      '• Vulnerabilidad del modo ECB: Al no usar Vector de Inicialización (IV) ni encadenamiento, cada bloque se cifra de forma aislada: si P₁ = P₂, entonces C₁ = C₂. Esto permite ataques de replay y reconstrucción de imágenes (efecto pingüino). En su lugar debe emplearse CBC o GCM.',
+    ],
+    keyTakeaways: [
+      'DES: Feistel de 16 rondas, 64 bits de bloque, 56 bits de clave (obsoleto por fuerza bruta).',
+      'AES: SPN de 10/12/14 rondas, 128 bits de bloque, 128/192/256 bits de clave (estándar seguro mundial).',
+      'Modo ECB: Inseguro por preservación de patrones idénticos; sustituir por CBC o GCM.',
+    ],
+    tags: ['DES', 'AES', 'Rijndael', 'Feistel', 'ECB', 'CBC', 'FIPS 197'],
+    apaCitation: '(NIST FIPS PUB 197, 2001; NIST FIPS PUB 46-3, 1999)',
+    badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+  },
+  {
+    id: 'qa-9-hash-md5-sha-colisiones',
+    category: 'cifrado_moderno',
+    categoryLabel: 'Integridad y Funciones Hash',
+    question: '¿Qué es el Efecto Avalancha y por qué algoritmos como MD5 y SHA-1 fueron descontinuados por la comunidad científica?',
+    shortSummary:
+      'El Efecto Avalancha exige que cambiar 1 bit en la entrada invierta ~50% de los bits del hash. MD5 y SHA-1 fueron retirados por vulnerabilidades a ataques de colisión prácticos (ataque SHAttered).',
+    detailedContent: [
+      '• Efecto Avalancha (Avalanche Effect): Propiedad de estricta no linealidad donde la alteración de un único bit en el mensaje de entrada provoca que, en promedio, el 50% de los bits del resumen resultante cambien de valor, garantizando la pseudoaleatoriedad.',
+      '• Ruptura de MD5 (128 bits): En 2004, Wang et al. demostraron colisiones analíticas en minutos, permitiendo falsificar certificados digitales y ejecutables.',
+      '• Ruptura de SHA-1 (160 bits): En 2017, el proyecto SHAttered generó dos archivos PDF con contenidos distintos pero idéntico SHA-1. El NIST retiró formalmente SHA-1 para todo uso de seguridad.',
+      '• Estándar Actual: SHA-256 / SHA-512 (familia SHA-2) y SHA-3 (Keccak).',
+    ],
+    keyTakeaways: [
+      'Efecto Avalancha ideal: 50% de inversión de bits ante cualquier cambio mínimo.',
+      'MD5 y SHA-1 están totalmente obsoletos y prohibidos para firmas o certificados.',
+      'Usar exclusivamente SHA-256, SHA-384, SHA-512 (FIPS 180-4) o SHA-3 (FIPS 202).',
+    ],
+    tags: ['Hash', 'MD5', 'SHA-1', 'SHA-256', 'Efecto Avalancha', 'Colisiones', 'SHAttered'],
+    apaCitation: '(NIST FIPS PUB 180-4, 2015; Stevens et al., 2017)',
+    badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+  },
+  {
+    id: 'qa-10-firma-digital-pki-tls',
+    category: 'cifrado_moderno',
+    categoryLabel: 'Firma Digital y PKI',
+    question: '¿Cómo garantiza la Firma Digital el No Repudio y cómo valida el navegador la Cadena de Confianza X.509 en TLS 1.3?',
+    shortSummary:
+      'La firma digital cifra el hash con la clave privada del emisor, impidiendo que niegue el mensaje. El navegador valida la firma de la CA intermedia hasta la CA Raíz de su almacén del sistema.',
+    detailedContent: [
+      '• Mecanismo de Firma Digital: El emisor calcula h = H(M) y cifra el hash con su clave privada (S = h^d mod n). El receptor descifra con la clave pública del emisor (h\' = S^e mod n) y lo compara con H(M). Si coinciden, solo el poseedor de la clave privada pudo emitirlo (Autenticidad y No Repudio) y el texto no fue alterado (Integridad).',
+      '• Cadena de Certificados X.509: Un certificado de servidor es firmado por una CA Intermedia, la cual a su vez está firmada por una CA Raíz de confianza preinstalada en el sistema operativo.',
+      '• Validación DV, OV y EV: DV certifica solo el dominio; OV certifica la persona jurídica; EV realiza una auditoría corporativa completa de máxima reputación.',
+      '• TLS 1.3 (RFC 8446): Establece el canal HTTPS en 1 RTT con secreto perfecto hacia adelante (PFS).',
+    ],
+    keyTakeaways: [
+      'Firma Digital = Hash del mensaje + Cifrado con Clave Privada del Emisor.',
+      'Garantiza Integridad, Autenticidad y No Repudio legal indiscutible.',
+      'PKI valida la identidad del emisor mediante la cadena de Autoridades Certificadoras (CA).',
+    ],
+    tags: ['Firma Digital', 'RSA', 'ECDSA', 'PKI', 'X.509', 'DV', 'OV', 'EV', 'TLS 1.3'],
+    apaCitation: '(NIST FIPS PUB 186-5, 2023; RFC 8446, 2018; RFC 5280, 2008)',
+    badgeColor: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+  },
+  {
+    id: 'qa-11-ciberseguridad-teletrabajo-vpn-mfa',
+    category: 'fundamentos',
+    categoryLabel: 'Ciberseguridad y Teletrabajo',
+    question: '¿Cuáles fueron los principales desafíos criptográficos y de seguridad durante la pandemia y cómo los aborda el modelo Zero Trust?',
+    shortSummary:
+      'La pandemia multiplicó los ataques de phishing, ransomware y brechas en redes domésticas. Zero Trust responde con verificación continua, principio de menor privilegio, MFA y VPNs seguras (IPSec/WireGuard).',
+    detailedContent: [
+      '• Vectores de Ataque en Teletrabajo: Pérdida del perímetro físico corporativo, uso de dispositivos personales (BYOD), redes Wi-Fi residenciales vulnerables y proliferación masiva de campañas de phishing temático COVID-19 y ransomware extorsivo.',
+      '• VPNs Seguras: Implementación de IPSec (modos Túnel/Transporte con cifrado ESP) y SSL/TLS VPNs (WireGuard / OpenVPN) para crear túneles cifrados de extremo a extremo.',
+      '• Autenticación Multifactor (MFA): Mitiga el robo de contraseñas exigiendo tokens TOTP temporales (RFC 6238) o llaves de seguridad FIDO2/WebAuthn.',
+      '• Arquitectura Zero Trust (NIST SP 800-207): Postulado "Nunca confiar, siempre verificar". Exige microsegmentación, autenticación explícita por cada solicitud y cifrado obligatorio de todos los datos en reposo y en tránsito.',
+    ],
+    keyTakeaways: [
+      'Teletrabajo desvaneció el perímetro de red tradicional.',
+      'Defensas clave: VPN IPSec/TLS + Autenticación Multifactor (MFA/FIDO2).',
+      'Zero Trust (NIST SP 800-207): Verificación continua, mínimo privilegio y microsegmentación.',
+    ],
+    tags: ['Teletrabajo', 'COVID-19', 'Zero Trust', 'VPN IPSec', 'MFA', 'Ransomware', 'NIST SP 800-207'],
+    apaCitation: '(NIST SP 800-207, 2020; Katsikeas et al., 2021; ISO/IEC 27001:2022)',
+    badgeColor: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
+  },
 ];
+

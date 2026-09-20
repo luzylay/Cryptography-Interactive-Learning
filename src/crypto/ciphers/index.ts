@@ -5,3 +5,6 @@ export * from './playfair';
 export * from './polybius';
 export * from './transposition';
 export * from './vigenere';
+export * from './des';
+export * from './aes';
+

@@ -344,3 +344,132 @@ describe('5. Continuous Key & Autokey Cryptanalysis Invariants', () => {
   });
 });
 
+describe('6. Numeric Bases and Bitwise Cryptographic Operations (S11)', () => {
+  test('XOR involution property: (A ⊕ B) ⊕ B = A', () => {
+    const a = 0b10110011;
+    const b = 0b01011010;
+    const encrypted = a ^ b;
+    const decrypted = encrypted ^ b;
+    assert.equal(decrypted, a);
+  });
+
+  test('Binary to ASCII conversion integrity', () => {
+    const text = 'CRIPTO';
+    const binChunks = text.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0'));
+    const recovered = binChunks.map(b => String.fromCharCode(parseInt(b, 2))).join('');
+    assert.equal(recovered, text);
+  });
+});
+
+describe('7. DES & Triple-DES (3DES) Feistel Invariants (S12)', () => {
+  test('Feistel round symmetry: L_i = R_{i-1}, R_i = L_{i-1} ⊕ f(R_{i-1}, K_i)', () => {
+    // Simple 8-bit Feistel simulation
+    function dummyF(r, k) {
+      return (r * 7 + k) & 0x0f;
+    }
+    const L0 = 0x5, R0 = 0xa;
+    const K1 = 0x3;
+
+    // Encrypt 1 round
+    const L1 = R0;
+    const R1 = L0 ^ dummyF(R0, K1);
+
+    // Decrypt 1 round
+    const recoveredR0 = L1;
+    const recoveredL0 = R1 ^ dummyF(L1, K1);
+
+    assert.equal(recoveredL0, L0);
+    assert.equal(recoveredR0, R0);
+  });
+});
+
+describe('8. AES-128 Finite Field and Mode Invariants (S12)', () => {
+  test('Galois Field GF(2^8) multiplication by 0x02 and 0x03 modulo x^8+x^4+x^3+x+1', () => {
+    function galoisMul2(b) {
+      const hi = (b & 0x80) !== 0;
+      let res = (b << 1) & 0xff;
+      if (hi) res ^= 0x1b;
+      return res;
+    }
+    function galoisMul3(b) {
+      return galoisMul2(b) ^ b;
+    }
+
+    // Standard NIST test vectors
+    assert.equal(galoisMul2(0x57), 0xae);
+    assert.equal(galoisMul3(0x57), 0xf9);
+    assert.equal(galoisMul2(0xae), 0x47);
+  });
+
+  test('ECB vs CBC pattern preservation invariant', () => {
+    // Simulating block cipher
+    const fakeCipher = (block, key) => (block * 31 + key) & 0xffff;
+
+    // 2 identical blocks
+    const p1 = 0x1234, p2 = 0x1234;
+    const key = 0x5555;
+    const iv = 0x9999;
+
+    // ECB: c1 == c2
+    const ecb1 = fakeCipher(p1, key);
+    const ecb2 = fakeCipher(p2, key);
+    assert.equal(ecb1, ecb2, 'ECB MUST produce identical ciphertexts for identical plaintexts');
+
+    // CBC: c1 != c2
+    const cbc1 = fakeCipher(p1 ^ iv, key);
+    const cbc2 = fakeCipher(p2 ^ cbc1, key);
+    assert.notEqual(cbc1, cbc2, 'CBC MUST produce distinct ciphertexts for identical plaintexts due to chaining');
+  });
+});
+
+describe('9. Cryptographic Hash Functions & Avalanche Effect (S13)', () => {
+  test('Hamming distance on single-bit flip calculates avalanche diffusion', () => {
+    const binA = '11001010111100001010101011110000';
+    const binB = '01001010011100000010101001110000'; // 4 bits flipped
+    let diffs = 0;
+    for (let i = 0; i < binA.length; i++) {
+      if (binA[i] !== binB[i]) diffs++;
+    }
+    assert.equal(diffs, 4);
+    const pct = (diffs / binA.length) * 100;
+    assert.equal(pct, 12.5);
+  });
+});
+
+describe('10. Digital Signatures and PKI Trust Chain Invariants (S14 & S15)', () => {
+  test('RSA Digital Signature mathematical verification: (h^d)^e mod n = h mod n', () => {
+    function modPow(base, exp, m) {
+      let res = 1n;
+      base = BigInt(base) % BigInt(m);
+      exp = BigInt(exp);
+      const modBig = BigInt(m);
+      while (exp > 0n) {
+        if (exp % 2n === 1n) res = (res * base) % modBig;
+        exp = exp / 2n;
+        base = (base * base) % modBig;
+      }
+      return Number(res);
+    }
+
+    const p = 61, q = 53, n = p * q; // n = 3233
+    const phi = (p - 1) * (q - 1);   // phi = 3120
+    const e = 17;
+    const d = modInverse(e, phi);    // d = 2753
+
+    const messageHash = 1234;
+    // Alice signs hash with private key d
+    const signature = modPow(messageHash, d, n);
+
+    // Bob verifies signature with public key e
+    const recoveredHash = modPow(signature, e, n);
+
+    assert.equal(recoveredHash, messageHash);
+
+    // Tampering test: Attacker alters signature
+    const forgedSignature = (signature + 1) % n;
+    const corruptedHash = modPow(forgedSignature, e, n);
+    assert.notEqual(corruptedHash, messageHash, 'Corrupted signature must fail verification');
+  });
+});
+
+
