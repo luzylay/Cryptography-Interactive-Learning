@@ -230,11 +230,11 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
         mode: isEncrypt ? 'encrypt' : 'decrypt',
         title: 'Cifrador de Playfair (5×5)',
         question: isEncrypt
-          ? `Cifra con Playfair (clave "${key}", matriz 5×5, I=J, Ñ→N):\n\n"${normText}"`
-          : `Descifra con Playfair (clave "${key}", matriz 5×5, I=J, Ñ→N):\n\n"${formatInBlocks(res.outputText)}"`,
+          ? `Cifra con Playfair (clave "${key}", matriz 5×5, I=J, Ñ → N):\n\n"${normText}"`
+          : `Descifra con Playfair (clave "${key}", matriz 5×5, I=J, Ñ → N):\n\n"${formatInBlocks(res.outputText)}"`,
         contextParams: { key, matrix: res.matrix },
         expectedAnswer: isEncrypt ? res.outputText : normText.replace(/J/g, 'I').replace(/Ñ/g, 'N'),
-        hint: `Divide en pares (digramas). Aplica regla de misma fila (derecha), misma columna (abajo) o rectángulo (esquinas opuestas).`,
+        hint: 'Divide en pares (dígramas). Aplica regla de misma fila (derecha), misma columna (abajo) o rectángulo (esquinas opuestas).',
         detailedSteps: res.steps.slice(0, 8).map(s => `${s.inPair} → ${s.outPair}: ${s.description}`),
         alphabetMode,
       };
