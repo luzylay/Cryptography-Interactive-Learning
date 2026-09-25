@@ -1,7 +1,8 @@
-// Playfair 5x5 Matrix Cipher - Didactic & Robust Implementation
+// Playfair 5x5 Matrix Cipher - Didactic & Academic Implementation
+// Aligned with university curriculum (S08 - Charles Wheatstone & Lord Playfair)
 import { formatInBlocks } from '../alphabets';
 
-export const PLAYFAIR_DEFAULT_ALPHA = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'; // 25 letras: I = J unificadas
+export const PLAYFAIR_DEFAULT_ALPHA = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'; // 25 celdas: I/J unificadas, N/Ñ unificadas en español
 
 export interface DigramDetail {
   pair: string;
@@ -69,7 +70,7 @@ export function splitIntoDigramsDetails(text: string, filler = 'X'): DigramDetai
         char1: c1,
         char2: f,
         reason: 'odd_padding',
-        explanation: `Última letra aislada '${c1}': se añade relleno nulo '${f}' para completar el dígrama.`
+        explanation: `Carácter final aislado '${c1}': se añade letra nula '${f}' para completar el número par.`
       });
       i += 1;
     } else {
@@ -81,7 +82,7 @@ export function splitIntoDigramsDetails(text: string, filler = 'X'): DigramDetai
           char1: c1,
           char2: f,
           reason: 'double_letter_split',
-          explanation: `Letras gemelas consecutivas '${c1}${c2}': se separan insertando '${f}'. La segunda '${c2}' pasa al siguiente par.`
+          explanation: `Letras gemelas consecutivas '${c1}${c2}': se rompe la repetición insertando '${f}'. La segunda '${c2}' pasa al siguiente par.`
         });
         i += 1;
       } else {
@@ -90,7 +91,7 @@ export function splitIntoDigramsDetails(text: string, filler = 'X'): DigramDetai
           char1: c1,
           char2: c2,
           reason: 'normal',
-          explanation: `Par estándar de letras distintas: '${c1}' y '${c2}'.`
+          explanation: `Par estándar: '${c1}' y '${c2}'.`
         });
         i += 2;
       }
@@ -136,9 +137,9 @@ export function processPlayfair(
     const shift = direction === 'encrypt' ? 1 : 4; // mod 5: -1 es equivalente a +4
 
     if (r1 === r2) {
-      // MISMA FILA
+      // Regla A: MISMA FILA
       rule = 'row';
-      ruleNameEs = 'Misma Fila (Desplazamiento Horizontal)';
+      ruleNameEs = 'Regla A: Misma Fila';
       const nc1 = (c1 + shift) % 5;
       const nc2 = (c2 + shift) % 5;
       outPos1 = [r1, nc1];
@@ -147,16 +148,16 @@ export function processPlayfair(
       out2 = matrix[r2 * 5 + nc2];
 
       if (direction === 'encrypt') {
-        formula = `c1' = (col1 + 1) mod 5 = (${c1 + 1} + 1) mod 5 = ${nc1 + 1}, c2' = (col2 + 1) mod 5 = (${c2 + 1} + 1) mod 5 = ${nc2 + 1}`;
-        explanation = `Ambas letras comparten la Fila ${r1 + 1}. Regla: desplazar 1 posición a la DERECHA (con ciclo circular mod 5). ${dg[0]}[F${r1+1}, C${c1+1}] → ${out1}[F${r1+1}, C${nc1+1}] y ${dg[1]}[F${r2+1}, C${c2+1}] → ${out2}[F${r2+1}, C${nc2+1}].`;
+        formula = `Col' = (Col + 1) mod 5  =>  C1[${r1+1}, ${nc1+1}] = ${out1}, C2[${r2+1}, ${nc2+1}] = ${out2}`;
+        explanation = `Misma Fila ${r1 + 1}: Desplazamiento a la derecha (+1 mod 5). ${dg[0]}[F${r1+1}, C${c1+1}] → ${out1} y ${dg[1]}[F${r2+1}, C${c2+1}] → ${out2}.`;
       } else {
-        formula = `c1' = (col1 - 1 + 5) mod 5 = ${nc1 + 1}, c2' = (col2 - 1 + 5) mod 5 = ${nc2 + 1}`;
-        explanation = `Ambas letras comparten la Fila ${r1 + 1}. Regla inversa: desplazar 1 posición a la IZQUIERDA (con ciclo circular mod 5). ${dg[0]} → ${out1} y ${dg[1]} → ${out2}.`;
+        formula = `Col' = (Col - 1 + 5) mod 5  =>  C1[${r1+1}, ${nc1+1}] = ${out1}, C2[${r2+1}, ${nc2+1}] = ${out2}`;
+        explanation = `Misma Fila ${r1 + 1}: Desplazamiento a la izquierda (-1 mod 5). ${dg[0]} → ${out1} y ${dg[1]} → ${out2}.`;
       }
     } else if (c1 === c2) {
-      // MISMA COLUMNA
+      // Regla B: MISMA COLUMNA
       rule = 'col';
-      ruleNameEs = 'Misma Columna (Desplazamiento Vertical)';
+      ruleNameEs = 'Regla B: Misma Columna';
       const nr1 = (r1 + shift) % 5;
       const nr2 = (r2 + shift) % 5;
       outPos1 = [nr1, c1];
@@ -165,23 +166,23 @@ export function processPlayfair(
       out2 = matrix[nr2 * 5 + c2];
 
       if (direction === 'encrypt') {
-        formula = `r1' = (fila1 + 1) mod 5 = (${r1 + 1} + 1) mod 5 = ${nr1 + 1}, r2' = (fila2 + 1) mod 5 = (${r2 + 1} + 1) mod 5 = ${nr2 + 1}`;
-        explanation = `Ambas letras comparten la Columna ${c1 + 1}. Regla: desplazar 1 posición hacia ABAJO (con ciclo circular mod 5). ${dg[0]}[F${r1+1}, C${c1+1}] → ${out1}[F${nr1+1}, C${c1+1}] y ${dg[1]}[F${r2+1}, C${c2+1}] → ${out2}[F${nr2+1}, C${c2+1}].`;
+        formula = `Fila' = (Fila + 1) mod 5  =>  C1[${nr1+1}, ${c1+1}] = ${out1}, C2[${nr2+1}, ${c2+1}] = ${out2}`;
+        explanation = `Misma Columna ${c1 + 1}: Desplazamiento hacia abajo (+1 mod 5). ${dg[0]}[F${r1+1}, C${c1+1}] → ${out1} y ${dg[1]}[F${r2+1}, C${c2+1}] → ${out2}.`;
       } else {
-        formula = `r1' = (fila1 - 1 + 5) mod 5 = ${nr1 + 1}, r2' = (fila2 - 1 + 5) mod 5 = ${nr2 + 1}`;
-        explanation = `Ambas letras comparten la Columna ${c1 + 1}. Regla inversa: desplazar 1 posición hacia ARRIBA (con ciclo circular mod 5). ${dg[0]} → ${out1} y ${dg[1]} → ${out2}.`;
+        formula = `Fila' = (Fila - 1 + 5) mod 5  =>  C1[${nr1+1}, ${c1+1}] = ${out1}, C2[${nr2+1}, ${c2+1}] = ${out2}`;
+        explanation = `Misma Columna ${c1 + 1}: Desplazamiento hacia arriba (-1 mod 5). ${dg[0]} → ${out1} y ${dg[1]} → ${out2}.`;
       }
     } else {
-      // RECTÁNGULO
+      // Regla C: RECTÁNGULO
       rule = 'rectangle';
-      ruleNameEs = 'Regla del Rectángulo (Esquinas Opuestas)';
+      ruleNameEs = 'Regla C: Rectángulo (Esquinas Opuestas)';
       outPos1 = [r1, c2];
       outPos2 = [r2, c1];
       out1 = matrix[r1 * 5 + c2];
       out2 = matrix[r2 * 5 + c1];
 
-      formula = `P1[F${r1+1}, C${c1+1}] → C1[F${r1+1}, C${c2+1}]=${out1}  |  P2[F${r2+1}, C${c2+1}] → C2[F${r2+1}, C${c1+1}]=${out2}`;
-      explanation = `Las letras ocupan esquinas opuestas de un rectángulo de Filas ${Math.min(r1,r2)+1}..${Math.max(r1,r2)+1} y Cols ${Math.min(c1,c2)+1}..${Math.max(c1,c2)+1}. Regla: Cada letra conserva su PROPIA FILA pero adopta la COLUMNA de la otra letra. ¡El orden de las filas no cambia!`;
+      formula = `M1[F${r1+1}, C${c1+1}] & M2[F${r2+1}, C${c2+1}]  =>  C1[F${r1+1}, C${c2+1}] = ${out1}, C2[F${r2+1}, C${c1+1}] = ${out2}`;
+      explanation = `Distinta fila y columna: Vértices opuestos. Cada letra conserva su fila y toma la columna de la otra: ${dg[0]}[F${r1+1}, C${c1+1}] → ${out1} y ${dg[1]}[F${r2+1}, C${c2+1}] → ${out2}.`;
     }
 
     const outPair = out1 + out2;
@@ -199,10 +200,10 @@ export function processPlayfair(
       outPos2,
       description:
         rule === 'row'
-          ? `Misma fila ${r1 + 1}: desplazar a la ${direction === 'encrypt' ? 'derecha (→)' : 'izquierda (←)'} → ${outPair}`
+          ? `Misma fila ${r1 + 1}: ${direction === 'encrypt' ? 'derecha (→)' : 'izquierda (←)'} → ${outPair}`
           : rule === 'col'
-          ? `Misma columna ${c1 + 1}: desplazar hacia ${direction === 'encrypt' ? 'abajo (↓)' : 'arriba (↑)'} → ${outPair}`
-          : `Rectángulo: esquinas opuestas [F${r1 + 1}, C${c2 + 1}] y [F${r2 + 1}, C${c1 + 1}] → ${outPair}`,
+          ? `Misma columna ${c1 + 1}: ${direction === 'encrypt' ? 'abajo (↓)' : 'arriba (↑)'} → ${outPair}`
+          : `Rectángulo: Fila propia con columna opuesta → ${outPair}`,
       explanation,
       formula,
       digramInfo: digramDetails[i],
