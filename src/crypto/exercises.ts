@@ -220,6 +220,40 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
     }
 
     case 'playfair': {
+      // 50% chance of standard curriculum slide exercises, 50% randomized
+      const isCurriculum = Math.random() > 0.4;
+      const curriculumPairs = [
+        { pair: 'ZL', key: 'VERANO AZUL', exp: 'UB', rule: 'Misma Fila (derecha)', hint: 'Fila 2: [O, Z, U, L, B]. Z está en Col 2 -> U. L está en Col 4 -> B.' },
+        { pair: 'KP', key: 'VERANO AZUL', exp: 'MQ', rule: 'Misma Fila (derecha)', hint: 'Fila 4: [I/J, K, M, P, Q]. K avanza a M, P avanza a Q.' },
+        { pair: 'SY', key: 'VERANO AZUL', exp: 'TS', rule: 'Misma Fila (salto circular)', hint: 'Fila 5: [S, T, W, X, Y]. S avanza a T. Y salta circular al inicio S.' },
+        { pair: 'EK', key: 'VERANO AZUL', exp: 'ZT', rule: 'Misma Columna (abajo)', hint: 'Columna 2: [E, Z, D, K, T]. E baja a Z, K baja a T.' },
+        { pair: 'RU', key: 'VERANO AZUL', exp: 'UM', rule: 'Misma Columna (abajo)', hint: 'Columna 3: [R, U, F, M, W]. R baja a U, U baja hacia M.' },
+        { pair: 'ZP', key: 'VERANO AZUL', exp: 'LK', rule: 'Rectángulo', hint: 'Z[F2, C2] y P[F4, C4]. Z toma Col 4 -> L. P toma Col 2 -> K.' },
+        { pair: 'GE', key: 'VERANO AZUL', exp: 'DA', rule: 'Rectángulo', hint: 'G[F3, C4] y E[F1, C2]. G toma Col 2 -> D. E toma Col 4 -> A.' },
+      ];
+
+      if (isCurriculum) {
+        const item = pickRandom(curriculumPairs);
+        return {
+          id: `playfair-curr-${Date.now()}`,
+          cipherType: 'playfair',
+          mode: 'encrypt',
+          title: `Cifrador de Playfair (Diapositivas S08 · ${item.rule})`,
+          question: `Cifra el siguiente par dígramo con la clave de clase "${item.key}":\n\n"${item.pair}"`,
+          contextParams: { key: item.key, pair: item.pair },
+          expectedAnswer: item.exp,
+          hint: item.hint,
+          detailedSteps: [
+            `Clave: ${item.key}`,
+            `Par a cifrar: ${item.pair}`,
+            `Regla geométrica: ${item.rule}`,
+            `Paso a paso: ${item.hint}`,
+            `Resultado oficial: ${item.exp}`,
+          ],
+          alphabetMode,
+        };
+      }
+
       const key = pickRandom(KEYS_PLAYFAIR);
       const isEncrypt = Math.random() > 0.4;
       const res = processPlayfair(normText, key, isEncrypt ? 'encrypt' : 'decrypt');
@@ -228,7 +262,7 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
         id: `playfair-${Date.now()}`,
         cipherType: 'playfair',
         mode: isEncrypt ? 'encrypt' : 'decrypt',
-        title: 'Cifrador de Playfair (5×5)',
+        title: 'Cifrador de Playfair (Matriz 5×5)',
         question: isEncrypt
           ? `Cifra con Playfair (clave "${key}", matriz 5×5, I=J, Ñ → N):\n\n"${normText}"`
           : `Descifra con Playfair (clave "${key}", matriz 5×5, I=J, Ñ → N):\n\n"${formatInBlocks(res.outputText)}"`,

@@ -303,10 +303,77 @@ export const APA_REFERENCES: ApaReference[] = [
     inTextCitation: '(Rose et al. / NIST SP 800-207, 2020)',
     notes: 'Marco de referencia para la seguridad empresarial moderna pospandemia: abandono de la seguridad perimetral tradicional en favor de la verificación continua estricta de identidad, cifrado integral de extremo a extremo y principio de menor privilegio.',
   },
+  {
+    id: 'wheatstone1854',
+    topic: 'Cifrador de Playfair, Matriz 5×5 y Cifrado Digrámico',
+    category: 'Tratado Histórico Original',
+    author: 'Wheatstone, C., & Playfair, L.',
+    year: '1854',
+    title: 'The Playfair Cipher: Polygraphic Substitution on a 5×5 Matrix',
+    source: 'British Foreign Office Archives. Documentado en Kahn, D. (1996) The Codebreakers y Stallings, W. (2017) Cryptography and Network Security (7.ª ed.)',
+    doiOrUrl: 'https://archive.org/details/codebreakersstor0000kahn_k4s3',
+    displayUrlLabel: 'British Foreign Office & The Codebreakers (Kahn, 1996, pp. 198–202)',
+    inTextCitation: '(Wheatstone & Playfair, 1854; Stallings, 2017)',
+    notes: 'Primer cifrador digrámico de sustitución poligráfica simétrica de uso práctico militar. Utiliza una matriz cuadrada de 5×5 con unificación de I/J (y N/Ñ en castellano) y reglas geométricas de desplazamiento.',
+  },
 ];
 
 
 export const ENCYCLOPEDIA_ARTICLES: EncyclopediaArticle[] = [
+  {
+    id: 'playfair',
+    title: 'Cifrador de Playfair (Matriz 5×5 y Cifrado Digrámico)',
+    category: 'Sustitución Poligráfica',
+    citation: '(Wheatstone & Playfair, 1854; Kahn, 1996; Stallings, 2017; Diapositivas S08)',
+    content: `EL CIFRADOR DE PLAYFAIR (MATRIZ 5×5 Y CIFRADO POR DÍGRAFOS)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Wheatstone & Playfair, 1854; Kahn, 1996; Stallings, 2017; Diapositivas S08)
+
+1. ORIGEN HISTÓRICO Y PROBLEMA QUE RESUELVE
+   • Diseñado por Charles Wheatstone en 1854 y promovido por Lord Playfair ante el Ministerio de Guerra británico.
+   • El Gran Salto Conceptual:
+     Los cifrados monoalfabéticos previos (como César o Afín) sustituyen una letra suelta a la vez. En cualquier idioma natural, letras comunes (como 'E' o 'A' en español con ~13%) delatan el mensaje al contar sus frecuencias.
+     Playfair introdujo la sustitución DIGRÁMICA (bloques de 2 letras juntas). Al haber 25×25 = 625 pares posibles, el análisis unigramático de frecuencias queda completamente inutilizado.
+
+2. PREPARACIÓN DEL TEXTO EN DÍGRAFOS Y REGLAS DE LA LETRA NULA ('X')
+   • División en pares: El mensaje se divide estrictamente de 2 en 2 caracteres (ej. "HO LA").
+   • Regla de Letras Gemelas Consecutivas:
+     No se permite un par con dos letras iguales (ej. "LL" o "SS"), pues la geometría de la matriz colapsaría.
+     Solución: Se inserta una letra nula separadora 'X' (o 'Z' si ya es una X) entre ambas.
+     Ejemplo: "CASTILLO" → CAS TI LX LO | "SOMBRAS" → SX SO MB RA SL.
+   • Regla de Longitud Impar:
+     Si el mensaje termina en un número impar de letras y la última queda sin pareja, se añade una 'X' al final.
+     Ejemplo: "HOY" (3 letras) → HO YX.
+
+3. CONSTRUCCIÓN DE LA MATRIZ 5×5
+   • Una cuadrícula de 5 filas × 5 columnas contiene exactamente 25 casillas.
+   • Unificación de Letras:
+     - Estándar internacional: 'I' y 'J' comparten la misma celda (I/J).
+     - Convención universitaria en español (S08): 'I' y 'J' comparten celda (I/J) y 'N' y 'Ñ' comparten celda (N/Ñ).
+   • Llenado de la Cuadrícula:
+     1. Se escribe la palabra clave (ej. "MIEDO" o "VERANO AZUL") sin repetir letras ya usadas.
+     2. Se completan las celdas vacías con el resto del abecedario en riguroso orden alfabético.
+
+4. LAS 3 REGLAS GEOMÉTRICAS DE CIFRADO
+   Al ubicar las dos letras M1 y M2 del par en la matriz, solo existen tres situaciones:
+   A. Misma Fila (Horizontal):
+      Cada letra se desplaza 1 posición a la DERECHA (+1 mod 5). Salto circular Pac-Man: de columna 5 pasa a columna 1.
+   B. Misma Columna (Vertical):
+      Cada letra se desplaza 1 posición hacia ABAJO (+1 mod 5). Salto circular Pac-Man: de fila 5 pasa a fila 1.
+   C. Rectángulo (Distinta Fila y Distinta Columna):
+      Cada letra conserva su PROPIA FILA y toma la COLUMNA de su compañera:
+      M1[F1, C1] → C1[F1, C2]
+      M2[F2, C2] → C2[F2, C1]
+
+5. DESCIFRADO
+   • Misma fila: 1 paso a la IZQUIERDA (-1 mod 5).
+   • Misma columna: 1 paso hacia ARRIBA (-1 mod 5).
+   • Rectángulo: Exactamente la MISMA regla (cada una conserva su fila y toma la columna de la otra).
+
+6. VULNERABILIDAD Y CRIPTOANÁLISIS
+   • Aunque resiste frecuencias simples de 1 letra, es vulnerable al análisis de frecuencia de dígrafos en textos largos (frecuencia de pares comunes como ES, EN, DE, LA).
+   • Propiedad simétrica: Un par de letras en rectángulo genera el par inverso al invertir los caracteres (AB → CD implica BA → DC).`,
+  },
   {
     id: 'fundamentos_pilares',
     title: 'Fundamentos: Criptografía, Criptoanálisis y los 6 Pilares',

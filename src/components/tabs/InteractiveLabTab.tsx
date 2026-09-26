@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
 import { AlphabetMode } from '../../crypto/alphabets';
+import { MainTabType } from '../../types';
 import { AlbertiDisk } from '../visualizers/AlbertiDisk';
 import { CaesarWheel } from '../visualizers/CaesarWheel';
 import { VigenereTabula } from '../visualizers/VigenereTabula';
@@ -31,6 +31,7 @@ import {
 interface InteractiveLabTabProps {
   mode: AlphabetMode;
   onModeChange: (newMode: AlphabetMode) => void;
+  onNavigateTab?: (tab: MainTabType) => void;
 }
 
 type CipherToolId =
@@ -47,7 +48,7 @@ type CipherToolId =
   | 'firma'
   | 'tls';
 
-export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onModeChange }) => {
+export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onModeChange, onNavigateTab }) => {
   const [activeCipher, setActiveCipher] = useState<CipherToolId>('alberti');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'clasica' | 'moderna'>('all');
 
@@ -144,7 +145,7 @@ export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onMo
         {activeCipher === 'cesar' && <CaesarWheel mode={mode} />}
         {activeCipher === 'polybius' && <PolybiusGrid />}
         {activeCipher === 'vigenere' && <VigenereTabula mode={mode} />}
-        {activeCipher === 'playfair' && <PlayfairGrid />}
+        {activeCipher === 'playfair' && <PlayfairGrid onNavigateTab={onNavigateTab} />}
         {activeCipher === 'hill' && <HillMatrixTool mode={mode} />}
         {activeCipher === 'transposicion' && <ScytaleColumnar mode={mode} />}
 

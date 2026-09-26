@@ -4,6 +4,8 @@ import { AlphabetMode, ALPHABETS, ALBERTI_HISTORICAL, normalizeText, formatInBlo
 import { generateExercise, ExerciseItem, ExerciseCipherType } from '../../crypto/exercises';
 import { getAlbertiAlignmentOffset } from '../../crypto/ciphers/alberti';
 import { PracticePolybiusAssistant } from './PracticePolybiusAssistant';
+import { PracticePlayfairAssistant } from './PracticePlayfairAssistant';
+import { MainTabType } from '../../types';
 import {
   GraduationCap,
   Sparkles,
@@ -19,10 +21,12 @@ import {
   ArrowRight,
   SlidersHorizontal,
   Grid3X3,
+  LayoutGrid,
 } from 'lucide-react';
 
 interface PracticeQuizTabProps {
   mode: AlphabetMode;
+  onNavigateTab?: (tab: MainTabType) => void;
 }
 
 /**
@@ -344,7 +348,7 @@ const PracticeDiskAssistant: React.FC<{ mode: AlphabetMode }> = ({ mode }) => {
   );
 };
 
-export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
+export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode, onNavigateTab }) => {
   const [selectedCipher, setSelectedCipher] = useState<ExerciseCipherType | 'random'>('alberti');
   const [currentExercise, setCurrentExercise] = useState<ExerciseItem | null>(null);
   const [userAnswer, setUserAnswer] = useState<string>('');
@@ -352,7 +356,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
   const [showHint, setShowHint] = useState<boolean>(false);
   const [showSolution, setShowSolution] = useState<boolean>(false);
   const [showAssistant, setShowAssistant] = useState<boolean>(true);
-  const [assistantType, setAssistantType] = useState<'disk' | 'polybius'>('disk');
+  const [assistantType, setAssistantType] = useState<'disk' | 'polybius' | 'playfair'>('disk');
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [attempts, setAttempts] = useState<number>(0);
@@ -383,6 +387,8 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
     // Auto-switch assistant type to match cipher if appropriate
     if (type === 'polybius') {
       setAssistantType('polybius');
+    } else if (type === 'playfair') {
+      setAssistantType('playfair');
     } else if (type === 'alberti' || type === 'cesar') {
       setAssistantType('disk');
     }
@@ -447,8 +453,26 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
           </div>
         </div>
 
-        {/* Stats Pills & Assistant Toggle */}
+        {/* Navigation & Stats Controls */}
         <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2">
+          {onNavigateTab && (
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => onNavigateTab('encyclopedia')}
+                className="px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-amber-300 font-mono text-[11px] transition"
+                title="Ir a leer la teoría completa antes de resolver"
+              >
+                📖 Ver Teoría
+              </button>
+              <button
+                onClick={() => onNavigateTab('lab')}
+                className="px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-amber-300 font-mono text-[11px] transition"
+                title="Ir al simulador de laboratorio"
+              >
+                🔬 Simulador
+              </button>
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950 border border-slate-800">
               <Trophy className="w-3.5 h-3.5 text-amber-400" />
@@ -639,17 +663,24 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
           )}
         </div>
 
-        {/* Right: Embedded Dedicated Assistant (Alberti Wheel or Polybius 5x5 Square) */}
+        {/* Right: Embedded Dedicated Assistant (Alberti Wheel, Polybius, or Playfair 5x5 Square) */}
         {showAssistant && (
           <div className="lg:col-span-5 bg-slate-900/60 border border-slate-800 rounded-2xl p-3.5 sm:p-4 backdrop-blur-md flex flex-col items-center">
             <div className="w-full flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
               <span className="text-xs font-mono font-semibold text-slate-300 flex items-center gap-1.5">
-                {assistantType === 'polybius' ? (
+                {assistantType === 'polybius' && (
                   <>
                     <Grid3X3 className="w-3.5 h-3.5 text-amber-400" />
                     Asistente de Tabla de Polibio
                   </>
-                ) : (
+                )}
+                {assistantType === 'playfair' && (
+                  <>
+                    <LayoutGrid className="w-3.5 h-3.5 text-violet-400" />
+                    Asistente de Matriz Playfair
+                  </>
+                )}
+                {assistantType === 'disk' && (
                   <>
                     <Compass className="w-3.5 h-3.5 text-amber-400" />
                     Asistente de Rueda Alberti
@@ -679,13 +710,26 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode }) => {
                   }`}
                   title="Mostrar Tabla de Polibio 5×5"
                 >
-                  Polibio 5×5
+                  Polibio
+                </button>
+                <button
+                  onClick={() => setAssistantType('playfair')}
+                  className={`px-2 py-0.5 text-[10px] font-mono rounded transition ${
+                    assistantType === 'playfair'
+                      ? 'bg-violet-500/20 text-violet-300 font-bold border border-violet-500/40'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                  title="Mostrar Matriz de Playfair 5×5"
+                >
+                  Playfair
                 </button>
               </div>
             </div>
 
             {assistantType === 'polybius' ? (
               <PracticePolybiusAssistant />
+            ) : assistantType === 'playfair' ? (
+              <PracticePlayfairAssistant currentKey={currentExercise?.contextParams?.key} />
             ) : (
               <PracticeDiskAssistant mode={mode} />
             )}

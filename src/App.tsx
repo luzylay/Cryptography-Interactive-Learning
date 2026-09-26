@@ -24,10 +24,10 @@ export default function App() {
       {/* Main Tab Views */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-3 lg:p-6">
         {activeTab === 'lab' && (
-          <InteractiveLabTab mode={alphabetMode} onModeChange={setAlphabetMode} />
+          <InteractiveLabTab mode={alphabetMode} onModeChange={setAlphabetMode} onNavigateTab={setActiveTab} />
         )}
         {activeTab === 'practice' && (
-          <PracticeQuizTab mode={alphabetMode} />
+          <PracticeQuizTab mode={alphabetMode} onNavigateTab={setActiveTab} />
         )}
         {activeTab === 'cryptoanalysis' && (
           <CryptanalysisTab mode={alphabetMode} />
@@ -36,7 +36,7 @@ export default function App() {
           <DecisionMatrixTab />
         )}
         {activeTab === 'encyclopedia' && (
-          <EncyclopediaTab />
+          <EncyclopediaTab onNavigateTab={setActiveTab} />
         )}
       </main>
 

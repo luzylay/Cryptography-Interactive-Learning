@@ -17,12 +17,17 @@ import {
   QAItem,
 } from '../../crypto/knowledgeBase';
 import { APA_REFERENCES, ENCYCLOPEDIA_ARTICLES, ApaReference } from '../../data/encyclopedia.data';
+import { MainTabType } from '../../types';
 import { Badge, GlassCard, CopyButton, SearchBar } from '../common';
 import { useClipboard } from '../../hooks';
 
-export const EncyclopediaTab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'qa' | 'articles' | 'bibliography'>('qa');
-  const [activeArticle, setActiveArticle] = useState<string>('fundamentos_pilares');
+interface EncyclopediaTabProps {
+  onNavigateTab?: (tab: MainTabType) => void;
+}
+
+export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab }) => {
+  const [activeTab, setActiveTab] = useState<'qa' | 'articles' | 'bibliography'>('articles');
+  const [activeArticle, setActiveArticle] = useState<string>('playfair');
   const [selectedQACategory, setSelectedQACategory] = useState<QACategory>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedQAIds, setExpandedQAIds] = useState<Set<string>>(
@@ -337,12 +342,32 @@ export const EncyclopediaTab: React.FC = () => {
                   Referencia canónica: {currentArticle.citation}
                 </span>
               </div>
-              <CopyButton
-                text={currentArticle.content}
-                isCopied={isCopied(`art-${currentArticle.id}`)}
-                onCopy={() => copy(currentArticle.content, `art-${currentArticle.id}`)}
-                label="Copiar Texto"
-              />
+              <div className="flex items-center gap-2 flex-wrap">
+                {onNavigateTab && (
+                  <>
+                    <button
+                      onClick={() => onNavigateTab('lab')}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-xs font-mono font-semibold transition"
+                      title="Probar este algoritmo de forma visual e interactiva"
+                    >
+                      🔬 Abrir Laboratorio
+                    </button>
+                    <button
+                      onClick={() => onNavigateTab('practice')}
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 text-xs font-mono transition"
+                      title="Ir a resolver ejercicios de autoevaluación"
+                    >
+                      📝 Ir a Práctica
+                    </button>
+                  </>
+                )}
+                <CopyButton
+                  text={currentArticle.content}
+                  isCopied={isCopied(`art-${currentArticle.id}`)}
+                  onCopy={() => copy(currentArticle.content, `art-${currentArticle.id}`)}
+                  label="Copiar Texto"
+                />
+              </div>
             </div>
 
             <pre className="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono text-slate-200 overflow-x-auto whitespace-pre-wrap leading-relaxed">

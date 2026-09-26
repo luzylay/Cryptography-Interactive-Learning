@@ -290,5 +290,29 @@ export const KNOWLEDGE_BASE_QA: QAItem[] = [
     apaCitation: '(NIST SP 800-207, 2020; Katsikeas et al., 2021; ISO/IEC 27001:2022)',
     badgeColor: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
   },
+  {
+    id: 'qa-12-cifrador-playfair-matriz-5x5',
+    category: 'fundamentos',
+    categoryLabel: 'Criptosistemas Clásicos',
+    question: '¿Por qué el Cifrador de Playfair resiste el análisis de frecuencias simple y cuáles son sus 3 reglas geométricas?',
+    shortSummary:
+      'Playfair sustituye pares de 2 letras (dígrafos) en una matriz 5×5 (625 combinaciones posibles), aplanando el histograma unigramático. Aplica 3 reglas: misma fila (derecha +1), misma columna (abajo +1) y rectángulo (intercambio de columnas en su propia fila).',
+    detailedContent: [
+      '• Sustitución Poligráfica Digrámica: Al cifrar parejas de caracteres en lugar de letras individuales, la frecuencia de aparición de letras aisladas (como la E o la A) deja de ser evidente. Hay 25 × 25 = 625 combinaciones de dígrafos.',
+      '• Preparación del Texto: Las letras dobles consecutivas se separan con una "X" muda (ej. LLAMAN → LX LA MA NA) para evitar que colapse la geometría matricial. Si la longitud total es impar, se rellena con "X" al final.',
+      '• Construcción de la Matriz 5×5: 25 celdas. En el estándar internacional se fusionan I/J; en el currículo hispano universitario se fusionan I/J y N/Ñ. Se coloca la palabra clave sin duplicados y se completa con el abecedario.',
+      '• Las 3 Reglas de Cifrado: (1) Misma Fila: Desplazamiento a la derecha (+1 mod 5); (2) Misma Columna: Desplazamiento hacia abajo (+1 mod 5); (3) Rectángulo: Cada letra conserva su fila y toma la columna de su compañera.',
+      '• Descifrado: Mismos pasos en reversa (fila a la izquierda -1, columna hacia arriba -1, rectángulo idéntico).',
+    ],
+    keyTakeaways: [
+      'Cifra dígrafos (pares de 2 letras), derrotando el análisis de frecuencias monoalfabético de 1 letra.',
+      'Utiliza una matriz cuadrada de 5×5 (25 celdas) con clave permutada y letras unificadas (I/J, N/Ñ).',
+      'Reglas geométricas: Misma Fila (derecha), Misma Columna (abajo), Rectángulo (cruce de columnas en misma fila).',
+      'Ruptura de gemelas y relleno final mediante letra nula "X".',
+    ],
+    tags: ['Playfair', 'Dígrafos', 'Matriz 5x5', 'Wheatstone', 'Criptografía Clásica', 'S08', 'Geometría Modular'],
+    apaCitation: '(Wheatstone & Playfair, 1854; Kahn, 1996; Stallings, 2017)',
+    badgeColor: 'bg-violet-500/10 text-violet-400 border-violet-500/30',
+  },
 ];
 
