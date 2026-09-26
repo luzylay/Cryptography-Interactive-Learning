@@ -75,7 +75,7 @@ export function galoisMultiply(a: number, b: number): number {
 
 // ─── Key Expansion (128-bit) ────────────────────────────────────────────────
 
-export function expandKey128(keyBytes: number[]): number[][] {
+export function expandKey128(keyBytes: number[]): AesMatrix4x4[] {
   const w: number[][] = [];
   for (let i = 0; i < 4; i++) {
     w.push([keyBytes[4 * i], keyBytes[4 * i + 1], keyBytes[4 * i + 2], keyBytes[4 * i + 3]]);

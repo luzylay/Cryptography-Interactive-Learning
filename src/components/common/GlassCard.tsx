@@ -4,7 +4,7 @@ export interface GlassCardProps {
   children: React.ReactNode;
   className?: string;
   hoverEffect?: boolean;
-  borderGlow?: 'none' | 'amber' | 'emerald' | 'sky' | 'rose';
+  borderGlow?: 'none' | 'amber' | 'emerald' | 'sky' | 'rose' | 'purple' | 'cyan';
 }
 
 export const GlassCard: React.FC<GlassCardProps> = ({
@@ -19,6 +19,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({
     emerald: 'border-emerald-500/30 shadow-emerald-500/5',
     sky: 'border-sky-500/30 shadow-sky-500/5',
     rose: 'border-rose-500/30 shadow-rose-500/5',
+    purple: 'border-purple-500/30 shadow-purple-500/5',
+    cyan: 'border-cyan-500/30 shadow-cyan-500/5',
   }[borderGlow];
 
   const hoverStyle = hoverEffect

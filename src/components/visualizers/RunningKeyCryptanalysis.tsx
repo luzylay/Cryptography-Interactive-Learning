@@ -22,6 +22,7 @@ import {
   Zap,
   Sliders,
   BookOpen,
+  Info,
 } from 'lucide-react';
 
 interface RunningKeyCryptanalysisProps {
