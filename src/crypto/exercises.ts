@@ -223,6 +223,11 @@ export function generateExercise(cipherType: ExerciseCipherType, alphabetMode: A
       // 50% chance of standard curriculum slide exercises, 50% randomized
       const isCurriculum = Math.random() > 0.4;
       const curriculumPairs = [
+        { pair: 'BI', key: 'MIEDO', exp: 'KB', rule: 'Misma Columna (abajo)', hint: 'Columna 2: [I, B, K, R, W]. B baja a K, I baja a B. Resultado oficial: KB.' },
+        { pair: 'DO', key: 'MIEDO', exp: 'OM', rule: 'Misma Fila (salto circular)', hint: 'Fila 1: [M, I, E, D, O]. D avanza a O (+1). O salta circular al inicio M. Resultado oficial: OM.' },
+        { pair: 'EN', key: 'MIEDO', exp: 'DL', rule: 'Rectángulo', hint: 'E[F1, C3] y N[F3, C4]. E toma C4 -> D. N toma C3 -> L. Resultado oficial: DL.' },
+        { pair: 'VE', key: 'MIEDO', exp: 'XM', rule: 'Rectángulo', hint: 'V[F5, C1] y E[F1, C3]. V toma C3 -> X. E toma C1 -> M. Resultado oficial: XM.' },
+        { pair: 'TP', key: 'MIEDO', exp: 'UN', rule: 'Rectángulo', hint: 'T[F4, C4] y P[F3, C5]. T toma C5 -> U. P toma C4 -> N. Resultado oficial: UN.' },
         { pair: 'ZL', key: 'VERANO AZUL', exp: 'UB', rule: 'Misma Fila (derecha)', hint: 'Fila 2: [O, Z, U, L, B]. Z está en Col 2 -> U. L está en Col 4 -> B.' },
         { pair: 'KP', key: 'VERANO AZUL', exp: 'MQ', rule: 'Misma Fila (derecha)', hint: 'Fila 4: [I/J, K, M, P, Q]. K avanza a M, P avanza a Q.' },
         { pair: 'SY', key: 'VERANO AZUL', exp: 'TS', rule: 'Misma Fila (salto circular)', hint: 'Fila 5: [S, T, W, X, Y]. S avanza a T. Y salta circular al inicio S.' },
