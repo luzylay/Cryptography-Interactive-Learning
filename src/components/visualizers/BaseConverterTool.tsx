@@ -103,7 +103,7 @@ export const BaseConverterTool: React.FC = () => {
               />
 
               <div className="mt-4 flex flex-wrap gap-2">
-                {['CRIPTO', 'AES-256', 'UTP2026', 'FEISTEL', 'HELLO'].map(preset => (
+                {['CRIPTO', 'AES-256', 'KEY2026', 'FEISTEL', 'HELLO'].map(preset => (
                   <button
                     key={preset}
                     onClick={() => setInputText(preset)}
