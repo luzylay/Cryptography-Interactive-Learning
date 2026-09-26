@@ -58,4 +58,10 @@ desktop.ini
 .system_generated/
 scratch/
 
-
+# Local documents, class slides & course materials
+*.pdf
+*.pptx
+*.ppt
+*.docx
+*.doc
+*.xlsx
