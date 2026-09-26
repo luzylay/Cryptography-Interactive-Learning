@@ -3,11 +3,13 @@ import {
   processPlayfair,
   buildPlayfairMatrix,
   splitIntoDigramsDetails,
+  splitCiphertextDigrams,
   PlayfairStep,
 } from '../../crypto/ciphers/playfair';
 import { MainTabType } from '../../types';
 import {
   Grid,
+  Calculator,
   ArrowRight,
   ArrowLeft,
   ArrowDown,
@@ -22,57 +24,81 @@ import {
   Copy,
   ChevronDown,
   ChevronUp,
+  Sliders,
+  FileText,
 } from 'lucide-react';
 
-interface S08Preset {
+interface ActivityPreset {
   label: string;
   name: string;
   badge: string;
   key: string;
   text: string;
+  direction: 'encrypt' | 'decrypt';
+  filler?: string;
   description: string;
 }
 
-const S08_PRESETS: S08Preset[] = [
+const ACTIVITY_PRESETS: ActivityPreset[] = [
   {
-    label: 'Caso 1: bienvenido',
-    name: 'Caso 1: Longitud Par ("bienvenido a la UTP")',
+    label: 'Actividad 1: Longitud Par',
+    name: 'Actividad 1: Cifrado con Longitud Par',
     badge: '8 pares exactos',
     key: 'MIEDO',
-    text: 'bienvenido a la UTP',
-    description: 'Demuestra el cifrado regular de longitud par sin repetición de letras. Criptograma: KB DL XM KD OM CH GQ UN.',
+    text: 'bienvenido a la red',
+    direction: 'encrypt',
+    filler: 'X',
+    description: 'Demuestra el cifrado regular de longitud par sin repetición de letras gemelas.',
   },
   {
-    label: 'Caso 2: bienvenidos',
-    name: 'Caso 2: Longitud Impar ("bienvenidos a la UTP")',
+    label: 'Actividad 2: Longitud Impar',
+    name: 'Actividad 2: Cifrado con Relleno Impar',
     badge: 'Relleno de letra X',
     key: 'MIEDO',
-    text: 'bienvenidos a la UTP',
-    description: 'Demuestra cómo una letra adicional al final altera la agrupación en dígramos y requiere relleno.',
+    text: 'bienvenidos a la red',
+    direction: 'encrypt',
+    filler: 'X',
+    description: 'Demuestra cómo una letra adicional al final requiere la inserción de una letra de relleno.',
   },
   {
-    label: 'Caso 3: Letras Dobles',
-    name: 'Caso 3: Ruptura de Gemelas ("Las sombras...")',
-    badge: 'Ruptura SS/LL + Relleno YX',
+    label: 'Actividad 3: Ruptura Gemelas',
+    name: 'Actividad 3: Ruptura de Letras Dobles',
+    badge: 'Separación SS/LL + Relleno',
     key: 'MIEDO',
     text: 'Las sombras llaman a la puerta del castillo hoy',
-    description: 'Demuestra la inserción de "X" intermedia para romper letras dobles iguales (SS, LL) y el relleno final (YX).',
+    direction: 'encrypt',
+    filler: 'X',
+    description: 'Demuestra la inserción de "X" intermedia para romper letras dobles iguales (SS, LL) y el relleno final.',
   },
   {
-    label: 'Caso 4: VERANO AZUL',
-    name: 'Caso 4: Clave "VERANO AZUL"',
+    label: 'Actividad 4: Descifrado',
+    name: 'Actividad 4: Descifrado Inverso de Criptograma',
+    badge: 'Descifrado (-1 mod 5)',
+    key: 'MIEDO',
+    text: 'KB DL XM KD OM CH GQ UN',
+    direction: 'decrypt',
+    filler: 'X',
+    description: 'Aplica el procedimiento inverso desplazando hacia la izquierda y hacia arriba en la matriz 5×5.',
+  },
+  {
+    label: 'Actividad 5: VERANO AZUL',
+    name: 'Actividad 5: Clave "VERANO AZUL"',
     badge: '4 Reglas Geométricas',
     key: 'VERANO AZUL',
     text: 'EA LU DH ED FU AX OT YU MI EN',
+    direction: 'decrypt',
+    filler: 'X',
     description: 'Demuestra las 4 situaciones geométricas: Misma Fila, Misma Columna, Rectángulo y Letras Compartidas.',
   },
   {
-    label: 'Caso 5: CRIPTOGRAFIA',
-    name: 'Caso 5: Clave "CRIPTOGRAFIA"',
-    badge: 'Ejemplo Clásico',
+    label: 'Actividad 6: CRIPTOGRAFIA',
+    name: 'Actividad 6: Cifrado Clásico "CRIPTOGRAFIA"',
+    badge: 'Clásico Wheatstone',
     key: 'CRIPTOGRAFIA',
     text: 'ATAQUE AL AMANECER',
-    description: 'Clásico de sustitución digrámica para probar las tres reglas geométricas.',
+    direction: 'encrypt',
+    filler: 'X',
+    description: 'Ejemplo de sustitución digrámica para verificar las reglas en una clave con letras repetidas.',
   },
 ];
 
@@ -80,28 +106,42 @@ interface PlayfairGridProps {
   onNavigateTab?: (tab: MainTabType) => void;
 }
 
-export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => {
+export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab: _onNavigateTab }) => {
+  // Factores y Datos de Entrada de la Actividad
   const [keyword, setKeyword] = useState<string>('MIEDO');
-  const [inputText, setInputText] = useState<string>('bienvenido a la UTP');
+  const [inputText, setInputText] = useState<string>('bienvenido a la red');
   const [direction, setDirection] = useState<'encrypt' | 'decrypt'>('encrypt');
+  const [fillerChar, setFillerChar] = useState<string>('X');
   const [cellDisplayMode, setCellDisplayMode] = useState<'spanish' | 'international'>('spanish');
+  const [showAdvancedFactors, setShowAdvancedFactors] = useState<boolean>(false);
+
+  // Estados de navegación y copiado
   const [selectedPairIndex, setSelectedPairIndex] = useState<number>(0);
+  const [copiedResult, setCopiedResult] = useState<boolean>(false);
   const [copiedSolution, setCopiedSolution] = useState<boolean>(false);
   const [showRulesQuickRef, setShowRulesQuickRef] = useState<boolean>(false);
 
-  // Auto-play state
+  // Auto-play del reproductor didáctico
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playSpeed, setPlaySpeed] = useState<number>(1100);
 
+  // Cómputo dinámico de la calculadora
   const matrix = useMemo(() => buildPlayfairMatrix(keyword), [keyword]);
-  const result = useMemo(() => processPlayfair(inputText, keyword, direction), [inputText, keyword, direction]);
-  const digramDetails = useMemo(() => splitIntoDigramsDetails(inputText), [inputText]);
+  const result = useMemo(
+    () => processPlayfair(inputText, keyword, direction, fillerChar),
+    [inputText, keyword, direction, fillerChar]
+  );
+  const digramDetails = useMemo(() => {
+    return direction === 'decrypt'
+      ? splitCiphertextDigrams(inputText)
+      : splitIntoDigramsDetails(inputText, fillerChar);
+  }, [inputText, direction, fillerChar]);
 
-  // Extract unique key characters for matrix highlight
+  // Letras únicas extraídas de la clave
   const uniqueKeyChars = useMemo(() => {
     const seen = new Set<string>();
     const chars: string[] = [];
-    for (const c of keyword.toUpperCase().replace(/J/g, 'I')) {
+    for (const c of keyword.toUpperCase().replace(/J/g, 'I').replace(/Ñ/g, 'N')) {
       if (/[A-Z]/.test(c) && !seen.has(c)) {
         seen.add(c);
         chars.push(c);
@@ -110,13 +150,13 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
     return chars;
   }, [keyword]);
 
-  // Active step
+  // Paso actualmente activo en el reproductor
   const activeStep: PlayfairStep | null =
     result.steps.length > 0 && selectedPairIndex < result.steps.length
       ? result.steps[selectedPairIndex]
       : null;
 
-  // Compute rectangle bounding box
+  // Cuadro delimitador del rectángulo geométrico
   const rectangleBounds = useMemo(() => {
     if (!activeStep || activeStep.rule !== 'rectangle') return null;
     const [r1, c1] = activeStep.pos1;
@@ -129,7 +169,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
     };
   }, [activeStep]);
 
-  // Auto-play loop
+  // Bucle de auto-reproducción
   const timerRef = useRef<any>(null);
   useEffect(() => {
     if (isPlaying && result.steps.length > 0) {
@@ -150,9 +190,11 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
     };
   }, [isPlaying, result.steps.length, playSpeed]);
 
-  const loadPreset = (preset: S08Preset) => {
+  const loadPreset = (preset: ActivityPreset) => {
     setKeyword(preset.key);
     setInputText(preset.text);
+    setDirection(preset.direction);
+    if (preset.filler) setFillerChar(preset.filler);
     setSelectedPairIndex(0);
     setIsPlaying(false);
   };
@@ -163,45 +205,59 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
     return char;
   };
 
-  // Copy structured solution
+  // Copiar únicamente el resultado calculado
+  const copyOnlyResult = () => {
+    navigator.clipboard.writeText(result.formattedOutput || result.outputText);
+    setCopiedResult(true);
+    setTimeout(() => setCopiedResult(false), 2500);
+  };
+
+  // Copiar informe completo de la actividad
   const copyFullSolution = () => {
     const lines = [
-      `SOLUCIÓN PASO A PASO - CIFRADOR DE PLAYFAIR (MATRIZ 5x5)`,
-      `============================================================`,
-      `Clave: ${keyword}`,
-      `Operación: ${direction === 'encrypt' ? 'Cifrado (+1)' : 'Descifrado (-1)'}`,
-      `Texto original: "${inputText}"`,
+      `INFORME DE RESOLUCIÓN - CALCULADORA DE CIFRADO PLAYFAIR (MATRIZ 5x5)`,
+      `======================================================================`,
+      `PARÁMETROS Y FACTORES DE LA ACTIVIDAD:`,
+      `  • Palabra Clave (K): ${keyword}`,
+      `  • Letras únicas en matriz: [${uniqueKeyChars.join(', ')}] (${uniqueKeyChars.length} letras)`,
+      `  • Operación: ${direction === 'encrypt' ? 'Cifrado (+1 mod 5)' : 'Descifrado (-1 mod 5)'}`,
+      `  • Carácter de relleno (Filler): '${fillerChar}'`,
+      `  • Convención de matriz: ${cellDisplayMode === 'spanish' ? 'Español (I/J y N/Ñ fusionadas)' : 'Internacional (I/J fusionadas)'}`,
+      `  • Texto ingresado: "${inputText}"`,
       ``,
-      `1. MATRIZ 5x5 DESARROLLADA:`,
-      `   Fila 1: ${matrix.slice(0, 5).map(getCellLabel).join('  ')}`,
-      `   Fila 2: ${matrix.slice(5, 10).map(getCellLabel).join('  ')}`,
-      `   Fila 3: ${matrix.slice(10, 15).map(getCellLabel).join('  ')}`,
-      `   Fila 4: ${matrix.slice(15, 20).map(getCellLabel).join('  ')}`,
-      `   Fila 5: ${matrix.slice(20, 25).map(getCellLabel).join('  ')}`,
+      `1. ARQUITECTURA DE LA MATRIZ 5x5:`,
+      `   Fila 1: ${matrix.slice(0, 5).map(getCellLabel).join('   ')}`,
+      `   Fila 2: ${matrix.slice(5, 10).map(getCellLabel).join('   ')}`,
+      `   Fila 3: ${matrix.slice(10, 15).map(getCellLabel).join('   ')}`,
+      `   Fila 4: ${matrix.slice(15, 20).map(getCellLabel).join('   ')}`,
+      `   Fila 5: ${matrix.slice(20, 25).map(getCellLabel).join('   ')}`,
       ``,
-      `2. TEXTO EN DÍGRAMAS (REGLAS DE RELLENO X):`,
-      `   Cadena: ${result.digrams.join(' ')}`,
+      `2. SEGMENTACIÓN DEL TEXTO EN DÍGRAMAS (${result.digrams.length} pares):`,
+      `   Cadena agrupada: ${result.digrams.join(' ')}`,
+      ...digramDetails
+        .filter(d => d.reason !== 'normal')
+        .map(d => `   → [${d.pair}]: ${d.explanation}`),
       ``,
-      `3. TABLA DE TRANSFORMACIÓN PAR A PAR:`,
-      `#   Dígrama   Posiciones           Regla Aplicada          Criptograma`,
+      `3. TABLA DE RESOLUCIÓN PASO A PASO (AUDITORÍA GEOMÉTRICA):`,
+      `#   Dígrama   Posición en Matriz       Regla Aplicada          Salida`,
       `----------------------------------------------------------------------`,
     ];
 
     result.steps.forEach((st, idx) => {
       const num = String(idx + 1).padEnd(3, ' ');
       const inDg = st.inPair.padEnd(9, ' ');
-      const pos = `M1[F${st.pos1[0] + 1},C${st.pos1[1] + 1}] M2[F${st.pos2[0] + 1},C${st.pos2[1] + 1}]`.padEnd(20, ' ');
+      const pos = `M1[F${st.pos1[0] + 1},C${st.pos1[1] + 1}] M2[F${st.pos2[0] + 1},C${st.pos2[1] + 1}]`.padEnd(24, ' ');
       const rule = st.ruleNameEs.padEnd(23, ' ');
       const outDg = st.outPair;
       lines.push(`${num} ${inDg} ${pos} ${rule} ${outDg}`);
     });
 
     lines.push(`----------------------------------------------------------------------`);
-    lines.push(`RESULTADO FINAL:`);
-    lines.push(`Agrupado: ${result.formattedOutput}`);
-    lines.push(`Continuo: ${result.outputText}`);
+    lines.push(`RESULTADO FINAL CALCULADO:`);
+    lines.push(`  • Formato Agrupado en Pares: ${result.formattedOutput}`);
+    lines.push(`  • Texto Continuo:            ${result.outputText}`);
     lines.push(``);
-    lines.push(`Fuente Oficial: Wheatstone (1854), Lord Playfair; Diapositivas S08 Universidad.`);
+    lines.push(`Fundamento Teórico: Wheatstone, C. (1854); Lord Playfair; Kahn, D. (1967).`);
 
     navigator.clipboard.writeText(lines.join('\n'));
     setCopiedSolution(true);
@@ -210,63 +266,43 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
 
   return (
     <div className="flex flex-col gap-6 p-2 lg:p-4 w-full max-w-7xl mx-auto">
-      {/* Header unificado del Laboratorio (consistente con Vigenère, Polibio, Alberti, Hill) */}
+      {/* Header de la Calculadora de Playfair */}
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/60 border border-slate-800 p-4 rounded-2xl">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center text-violet-400">
-            <Grid className="w-5 h-5" />
+            <Calculator className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-base font-bold text-slate-100">Cifrador de Playfair (Matriz 5×5)</h2>
+            <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
+              <span>Calculadora de Cifrado Playfair (Matriz 5×5)</span>
+              <span className="text-[10px] font-mono font-normal px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">
+                Resolutor Interactivo
+              </span>
+            </h2>
             <p className="text-xs text-slate-400 font-mono">
-              Sustitución Digrámica · Matriz 5×5 con Fusión I/J ·{' '}
-              <span className="text-violet-400 font-mono text-[10px]">Fuente APA 7: Wheatstone (1854); Kahn (1967)</span>
+              Ingresa los datos de tu actividad, calcula resultados al instante y obtén la evidencia paso a paso ·{' '}
+              <span className="text-violet-400 font-mono text-[10px]">Wheatstone (1854); Kahn (1967)</span>
             </p>
           </div>
         </div>
 
-        {/* Acciones y Casos de Prueba */}
+        {/* Acciones Rápidas */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Selector de Presets S08 */}
-          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono">
-            <span className="text-slate-500 text-[11px] px-2 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-amber-400" />
-              Casos:
-            </span>
-            {S08_PRESETS.map((p, i) => {
-              const isActive = keyword === p.key && inputText === p.text;
-              return (
-                <button
-                  key={`preset-${i}`}
-                  onClick={() => loadPreset(p)}
-                  className={`px-2.5 py-1 rounded-lg transition text-[11px] font-mono ${
-                    isActive
-                      ? 'bg-violet-600/50 text-white font-bold border border-violet-400/60 shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
-                  }`}
-                  title={`${p.name}: ${p.description}`}
-                >
-                  {p.label}
-                </button>
-              );
-            })}
-          </div>
-
           <button
             onClick={() => setShowRulesQuickRef(prev => !prev)}
             className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-slate-200 text-xs font-mono transition flex items-center gap-1"
           >
-            <span>Reglas</span>
+            <span>Reglas Geométricas</span>
             {showRulesQuickRef ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
           <button
             onClick={copyFullSolution}
-            className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-violet-500/50 text-slate-300 hover:text-violet-300 text-xs font-mono transition flex items-center gap-1.5"
-            title="Copiar solución completa al portapapeles"
+            className="px-3.5 py-1.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-mono font-bold transition flex items-center gap-1.5 shadow-md"
+            title="Copiar solución completa e informe académico de la actividad"
           >
-            {copiedSolution ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-violet-400" />}
-            <span>{copiedSolution ? 'Copiado' : 'Copiar Solución'}</span>
+            {copiedSolution ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <FileText className="w-3.5 h-3.5" />}
+            <span>{copiedSolution ? '¡Informe Copiado!' : 'Copiar Solución / Informe'}</span>
           </button>
         </div>
       </div>
@@ -279,7 +315,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               <ArrowRight className="w-3.5 h-3.5" /> 1. Misma Fila (Horizontal):
             </span>
             <span className="text-slate-300">
-              Cada letra avanza <strong>1 paso a la derecha (+1 mod 5)</strong>. Al borde derecho vuelve al inicio de la fila.
+              Cifrado: <strong>+1 a la derecha mod 5</strong>. Descifrado: <strong>-1 a la izquierda mod 5</strong>. Salto circular al borde opuesto.
             </span>
           </div>
           <div className="p-3 bg-slate-950/80 rounded-xl border border-purple-500/30 text-xs font-mono">
@@ -287,41 +323,45 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               <ArrowDown className="w-3.5 h-3.5" /> 2. Misma Columna (Vertical):
             </span>
             <span className="text-slate-300">
-              Cada letra baja <strong>1 paso hacia abajo (+1 mod 5)</strong>. Al fondo vuelve a la primera fila.
+              Cifrado: <strong>+1 hacia abajo mod 5</strong>. Descifrado: <strong>-1 hacia arriba mod 5</strong>. Salto circular al extremo opuesto.
             </span>
           </div>
           <div className="p-3 bg-slate-950/80 rounded-xl border border-amber-500/30 text-xs font-mono">
             <span className="text-amber-400 font-bold block mb-1 flex items-center gap-1">
-              <Grid className="w-3.5 h-3.5" /> 3. Rectángulo (Opuestas):
+              <Grid className="w-3.5 h-3.5" /> 3. Rectángulo (Esquinas Opuestas):
             </span>
             <span className="text-slate-300">
-              Cada letra <strong>conserva su propia fila</strong> e intercambia columnas con la otra letra.
+              Cada letra <strong>conserva su propia fila</strong> y adopta la columna del otro carácter (intercambio de columnas).
             </span>
           </div>
         </div>
       )}
 
-      {/* FASE 1: Parámetros del Criptograma (Entradas y Casos de Demostración) */}
+      {/* PANEL 1: ENTRADAS Y FACTORES DE LA ACTIVIDAD (La Calculadora) */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-violet-500/20 text-violet-300 font-mono text-xs font-bold flex items-center justify-center">
+            <span className="w-6 h-6 rounded-full bg-violet-500/20 text-violet-300 font-mono text-xs font-bold flex items-center justify-center border border-violet-500/40">
               1
             </span>
             <h3 className="text-sm font-bold text-slate-100 font-mono">
-              Parámetros de Entrada (Clave y Mensaje)
+              Datos y Factores de la Actividad
             </h3>
           </div>
-          <span className="text-xs font-mono text-slate-400">
-            Define la clave secreta y la frase a procesar
-          </span>
+          <button
+            onClick={() => setShowAdvancedFactors(prev => !prev)}
+            className="text-xs font-mono text-violet-400 hover:text-violet-300 flex items-center gap-1 transition"
+          >
+            <Sliders className="w-3.5 h-3.5" />
+            <span>{showAdvancedFactors ? 'Ocultar Factores Avanzados' : 'Configurar Factores (Relleno / Alfabeto)'}</span>
+          </button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          {/* Keyword Input */}
+          {/* Palabra Clave (K) */}
           <div className="lg:col-span-4 flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-mono text-slate-400">Palabra Clave (K):</label>
+              <label className="text-xs font-mono text-slate-300 font-bold">Palabra o Frase Clave (K):</label>
               <span className="text-[10px] font-mono text-violet-400">
                 {uniqueKeyChars.length} letras únicas
               </span>
@@ -331,11 +371,11 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               value={keyword}
               onChange={e => setKeyword(e.target.value.toUpperCase())}
               placeholder="Ej. MIEDO o VERANO AZUL"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-violet-300 font-mono font-bold uppercase focus:outline-none focus:border-violet-500 tracking-wider"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-violet-300 font-mono font-bold uppercase focus:outline-none focus:border-violet-500 tracking-wider shadow-inner"
             />
-            {/* Unique Key letters pill */}
+            {/* Letras de la clave */}
             <div className="flex items-center gap-1 text-[10px] font-mono text-slate-500 overflow-x-auto pt-0.5">
-              <span>Letras Clave:</span>
+              <span>Letras en matriz:</span>
               {uniqueKeyChars.map((ch, idx) => (
                 <span key={`k-char-${idx}`} className="px-1 bg-violet-950/60 text-violet-300 rounded border border-violet-800/40">
                   {ch}
@@ -344,99 +384,133 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
             </div>
           </div>
 
-          {/* Direction */}
+          {/* Operación Criptográfica */}
           <div className="lg:col-span-4 flex flex-col gap-1.5">
-            <label className="text-xs font-mono text-slate-400">Operación Criptográfica:</label>
+            <label className="text-xs font-mono text-slate-300 font-bold">Operación Solicitada:</label>
             <div className="grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-800">
               <button
                 onClick={() => setDirection('encrypt')}
-                className={`py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center gap-1.5 ${
+                className={`py-2 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center gap-1.5 ${
                   direction === 'encrypt'
                     ? 'bg-violet-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <ArrowRight className="w-3.5 h-3.5" />
-                Cifrado (+1)
+                Cifrar (+1)
               </button>
               <button
                 onClick={() => setDirection('decrypt')}
-                className={`py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center gap-1.5 ${
+                className={`py-2 rounded-lg text-xs font-mono font-bold transition flex items-center justify-center gap-1.5 ${
                   direction === 'decrypt'
                     ? 'bg-amber-600 text-white shadow-md'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                Descifrado (-1)
+                Descifrar (-1)
               </button>
             </div>
+            <span className="text-[10px] font-mono text-slate-500">
+              {direction === 'encrypt' ? 'Avanza a la derecha / abajo (+1 mod 5)' : 'Retrocede a la izquierda / arriba (-1 mod 5)'}
+            </span>
           </div>
 
-          {/* Alphabet Convention */}
+          {/* Factores adicionales (Letra de Relleno y Alfabeto) */}
           <div className="lg:col-span-4 flex flex-col gap-1.5">
-            <label className="text-xs font-mono text-slate-400">Convención de Alfabeto (25 celdas):</label>
-            <div className="grid grid-cols-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-mono">
-              <button
-                onClick={() => setCellDisplayMode('spanish')}
-                className={`py-1.5 rounded-lg transition ${
-                  cellDisplayMode === 'spanish'
-                    ? 'bg-slate-800 text-amber-300 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Español (I/J, N/Ñ)
-              </button>
-              <button
-                onClick={() => setCellDisplayMode('international')}
-                className={`py-1.5 rounded-lg transition ${
-                  cellDisplayMode === 'international'
-                    ? 'bg-slate-800 text-amber-300 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
-                }`}
-              >
-                Estándar (I/J)
-              </button>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-mono text-slate-300 font-bold">Letra de Relleno (Filler):</label>
+              <span className="text-[10px] font-mono text-slate-400">Para gemelas e impares</span>
             </div>
+            <div className="grid grid-cols-4 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-mono font-bold">
+              {['X', 'Z', 'Q', 'W'].map(char => (
+                <button
+                  key={`filler-${char}`}
+                  onClick={() => setFillerChar(char)}
+                  className={`py-1.5 rounded-lg transition ${
+                    fillerChar === char
+                      ? 'bg-violet-600 text-white shadow'
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  {char}
+                </button>
+              ))}
+            </div>
+            <span className="text-[10px] font-mono text-slate-500">
+              Estándar histórico: <strong>'X'</strong> (si la letra es X, se usa 'Z').
+            </span>
           </div>
 
-          {/* Input Message Text */}
-          <div className="lg:col-span-12 flex flex-col gap-1.5 pt-2 border-t border-slate-800">
-            <label className="text-xs font-mono text-slate-400 flex items-center justify-between">
-              <span>Mensaje en Claro a Procesar (M):</span>
+          {/* Factores Avanzados (Desplegable) */}
+          {showAdvancedFactors && (
+            <div className="lg:col-span-12 p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
+              <div className="flex items-center gap-2">
+                <span className="text-slate-400 font-bold">Convención de Alfabeto (25 celdas):</span>
+                <div className="flex bg-slate-900 p-0.5 rounded-lg border border-slate-800">
+                  <button
+                    onClick={() => setCellDisplayMode('spanish')}
+                    className={`px-3 py-1 rounded-md transition ${
+                      cellDisplayMode === 'spanish' ? 'bg-violet-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    Español (I/J, N/Ñ)
+                  </button>
+                  <button
+                    onClick={() => setCellDisplayMode('international')}
+                    className={`px-3 py-1 rounded-md transition ${
+                      cellDisplayMode === 'international' ? 'bg-violet-600 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    Internacional (I/J)
+                  </button>
+                </div>
+              </div>
               <span className="text-[11px] text-slate-400">
-                Longitud: <strong className="text-slate-200">{inputText.replace(/[^a-zA-Z]/g, '').length} letras</strong> · Dígramos: <strong className="text-violet-400">{result.digrams.length} pares</strong>
+                La letra <strong>J</strong> siempre se mapea a <strong>I</strong> para ajustar a 25 caracteres (5×5).
               </span>
-            </label>
+            </div>
+          )}
+
+          {/* Texto de Entrada (Mensaje o Criptograma) */}
+          <div className="lg:col-span-12 flex flex-col gap-1.5 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-mono text-slate-300 font-bold">
+                {direction === 'encrypt' ? 'Texto en Claro a Cifrar (M):' : 'Criptograma a Descifrar (C):'}
+              </label>
+              <span className="text-[11px] font-mono text-slate-400">
+                Caracteres: <strong className="text-slate-200">{inputText.replace(/[^a-zA-Z]/g, '').length}</strong> · Dígramos: <strong className="text-violet-400">{result.digrams.length} pares</strong>
+              </span>
+            </div>
             <input
               type="text"
               value={inputText}
               onChange={e => setInputText(e.target.value)}
-              placeholder="Escribe aquí cualquier palabra o frase que desees resolver..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-violet-500"
+              placeholder={direction === 'encrypt' ? 'Ingresa la frase o texto que pide tu actividad...' : 'Ingresa el criptograma (ej. KB DL XM KD...)'}
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 font-mono focus:outline-none focus:border-violet-500 shadow-inner"
             />
           </div>
 
-          {/* Presets Row */}
+          {/* Presets de Actividades Oficiales */}
           <div className="lg:col-span-12 flex flex-wrap items-center gap-2 pt-2 border-t border-slate-800/80">
-            <span className="text-[11px] font-mono text-slate-500 flex items-center gap-1">
+            <span className="text-[11px] font-mono text-slate-400 flex items-center gap-1 font-bold">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              Casos de Demostración:
+              Cargar Caso de Actividad:
             </span>
-            {S08_PRESETS.map((p, i) => {
-              const isActive = keyword === p.key && inputText === p.text;
+            {ACTIVITY_PRESETS.map((p, i) => {
+              const isActive = keyword === p.key && inputText === p.text && direction === p.direction;
               return (
                 <button
-                  key={`preset-btn-${i}`}
+                  key={`act-preset-${i}`}
                   onClick={() => loadPreset(p)}
-                  className={`px-2.5 py-1 rounded-lg transition text-[11px] font-mono border ${
+                  className={`px-2.5 py-1.5 rounded-lg transition text-[11px] font-mono border flex items-center gap-1.5 ${
                     isActive
                       ? 'bg-violet-600/40 text-violet-200 font-bold border-violet-500/60 shadow-sm'
                       : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
                   }`}
                   title={`${p.name}: ${p.description}`}
                 >
-                  <span className="text-amber-400 mr-1">[{p.badge}]</span>
+                  <span className="text-amber-400 text-[10px]">[{p.badge}]</span>
                   <span>{p.label}</span>
                 </button>
               );
@@ -445,14 +519,66 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
         </div>
       </div>
 
-      {/* FASE 2: Estructura Criptográfica (Matriz 5x5 y Preparación de Dígramos) */}
+      {/* PANEL 2: PANTALLA DE RESULTADO CALCULADO (CALCULATOR DISPLAY) */}
+      <div className="bg-slate-950 border-2 border-emerald-500/40 rounded-2xl p-5 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="flex flex-col gap-2 relative z-10 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/30 uppercase tracking-wider flex items-center gap-1">
+              <Check className="w-3 h-3 text-emerald-400" />
+              Resultado Calculado · {direction === 'encrypt' ? 'Criptograma C' : 'Texto en Claro Descifrado'}
+            </span>
+            <span className="text-[11px] font-mono text-slate-400">
+              Clave: <strong className="text-violet-300">"{keyword}"</strong> · Relleno: <strong className="text-amber-300">'{fillerChar}'</strong>
+            </span>
+          </div>
+
+          {/* Visualización en Bloques / Dígramos */}
+          <div className="font-mono text-xl sm:text-2xl font-black text-emerald-400 tracking-wider break-all py-1 select-all">
+            {result.formattedOutput || '---'}
+          </div>
+
+          {/* Visualización Continua */}
+          <div className="text-xs font-mono text-slate-400 flex flex-wrap items-center gap-2">
+            <span>Texto Continuo:</span>
+            <strong className="text-slate-200 bg-slate-900 px-2 py-0.5 rounded border border-slate-800 select-all">
+              {result.outputText || '---'}
+            </strong>
+            <span className="text-slate-500">({result.outputText.length} letras · {result.digrams.length} dígramos)</span>
+          </div>
+        </div>
+
+        {/* Botones de Copiado Rápido */}
+        <div className="flex flex-row md:flex-col gap-2 relative z-10 shrink-0">
+          <button
+            onClick={copyOnlyResult}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold font-mono text-xs rounded-xl flex items-center justify-center gap-2 transition shadow-lg"
+            title="Copiar resultado al portapapeles"
+          >
+            {copiedResult ? <Check className="w-4 h-4 text-slate-950" /> : <Copy className="w-4 h-4 text-slate-950" />}
+            <span>{copiedResult ? '¡Copiado!' : 'Copiar Resultado'}</span>
+          </button>
+
+          <button
+            onClick={copyFullSolution}
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-mono text-xs rounded-xl flex items-center justify-center gap-2 transition"
+            title="Copiar informe con procedimiento paso a paso"
+          >
+            {copiedSolution ? <Check className="w-4 h-4 text-emerald-400" /> : <FileText className="w-4 h-4 text-violet-400" />}
+            <span>{copiedSolution ? '¡Informe Listo!' : 'Copiar Informe'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* PANEL 3: EVIDENCIA DE RESOLUCIÓN (Matriz 5×5 y Segmentación de Dígramos) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Columna Izquierda: Matriz 5x5 Desarrollada */}
         <div className="lg:col-span-5 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-violet-500/20 text-violet-300 font-mono text-xs font-bold flex items-center justify-center">
+                <span className="w-6 h-6 rounded-full bg-violet-500/20 text-violet-300 font-mono text-xs font-bold flex items-center justify-center border border-violet-500/40">
                   2A
                 </span>
                 <h3 className="text-sm font-bold text-slate-200 font-mono">
@@ -464,12 +590,12 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-mono mb-3">
-              La clave <strong>"{keyword}"</strong> ocupa las primeras casillas; el resto se completa con el alfabeto en orden.
+              La clave <strong>"{keyword}"</strong> ocupa las primeras posiciones; el resto se completa con el alfabeto.
             </p>
 
-            {/* Grid 5x5 */}
+            {/* Grilla 5x5 con coordenadas */}
             <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800/80 shadow-inner flex flex-col gap-2 mx-auto w-fit">
-              {/* Column Headers */}
+              {/* Encabezados de Columna */}
               <div className="flex items-center justify-center gap-2">
                 <div className="w-6 text-center text-[10px] font-mono text-slate-600"></div>
                 {[1, 2, 3, 4, 5].map(col => (
@@ -479,7 +605,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
                 ))}
               </div>
 
-              {/* Rows with labels */}
+              {/* Filas con celdas interactivas */}
               <div className="flex flex-col gap-2">
                 {[0, 1, 2, 3, 4].map(r => (
                   <div key={`row-${r}`} className="flex items-center gap-2">
@@ -551,7 +677,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
             </div>
           </div>
 
-          {/* Legend */}
+          {/* Leyenda */}
           <div className="w-full flex flex-wrap items-center justify-between text-[10px] font-mono mt-4 pt-2.5 border-t border-slate-800 text-slate-400 gap-2">
             <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded bg-amber-400"></span> Entrada (M₁, M₂)
@@ -568,15 +694,15 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
           </div>
         </div>
 
-        {/* Columna Derecha: Preparación de Dígramos (Reglas de la 'X') */}
+        {/* Columna Derecha: Segmentación en Dígramos */}
         <div className="lg:col-span-7 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-2">
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-300 font-mono text-xs font-bold flex items-center justify-center">
+              <span className="w-6 h-6 rounded-full bg-amber-500/20 text-amber-300 font-mono text-xs font-bold flex items-center justify-center border border-amber-500/40">
                 2B
               </span>
               <h3 className="text-sm font-bold text-slate-200 font-mono">
-                Segmentación del Texto en Dígramos (Pares)
+                Segmentación del Texto en Dígramos
               </h3>
             </div>
             <span className="text-[11px] font-mono text-slate-400">
@@ -584,22 +710,22 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
             </span>
           </div>
 
-          {/* Explanation of Partitioning Rules */}
+          {/* Reglas de partición */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] font-mono">
             <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-slate-300">
               <span className="text-amber-400 font-bold block mb-0.5">Regla 1: Ruptura de Gemelas</span>
-              Si un par contiene dos letras idénticas (ej. SS, LL), se inserta <strong>'X'</strong> y la segunda letra pasa al siguiente par.
+              Si un par contiene dos letras idénticas (ej. SS, LL), se inserta <strong>'{fillerChar}'</strong> y la segunda letra pasa al siguiente par.
             </div>
             <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-slate-300">
               <span className="text-sky-400 font-bold block mb-0.5">Regla 2: Relleno por Longitud Impar</span>
-              Si al final queda una letra aislada sin pareja, se añade <strong>'X'</strong> para completar el número par.
+              Si al final queda una letra aislada sin pareja, se añade <strong>'{fillerChar}'</strong> para completar el número par.
             </div>
           </div>
 
-          {/* Interactive Digrams Strip */}
+          {/* Tira interactiva de dígramos */}
           <div className="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex flex-col gap-1.5">
             <span className="text-[10px] font-mono uppercase text-slate-400">
-              Cadena de Dígramos Resultante (Haz clic en cualquier par para inspeccionarlo):
+              Cadena de Dígramos (Haz clic en cualquier par para inspeccionar su movimiento):
             </span>
             <div className="flex flex-wrap gap-1.5 font-mono text-sm pt-1">
               {result.digrams.map((dg, idx) => {
@@ -631,10 +757,10 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
             </div>
           </div>
 
-          {/* Special rules explanation audit list */}
+          {/* Lista de auditoría de inserciones */}
           <div className="bg-slate-950/60 p-3 rounded-2xl border border-slate-800/80 text-xs font-mono space-y-1.5 flex-1 overflow-y-auto max-h-40">
             <span className="text-amber-400 font-bold block text-[11px] mb-1">
-              Auditoría de Inserciones de 'X':
+              Auditoría de Inserciones y Reglas de Formación:
             </span>
             {digramDetails.some(d => d.reason !== 'normal') ? (
               digramDetails
@@ -647,19 +773,19 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
                 ))
             ) : (
               <div className="text-slate-400 italic text-[11px]">
-                ✓ Todas las parejas son de letras distintas y el texto tiene longitud par. No se requirió insertar 'X'.
+                ✓ Todas las parejas están formadas por letras distintas y longitud par. No se requirió insertar letra de relleno.
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* FASE 3: Demostración Interactiva Paso a Paso (El "¿Por qué?" de cada par) */}
+      {/* PANEL 4: DEMOSTRACIÓN INTERACTIVA PASO A PASO (El "¿Por qué?" de cada par) */}
       {activeStep && (
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold flex items-center justify-center">
+              <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold flex items-center justify-center border border-emerald-500/40">
                 3
               </span>
               <h3 className="text-sm font-bold text-slate-100 font-mono">
@@ -667,7 +793,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               </h3>
             </div>
 
-            {/* Step Navigation & Playback Controls */}
+            {/* Controles de reproducción */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setSelectedPairIndex(p => Math.max(0, p - 1))}
@@ -707,7 +833,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
             </div>
           </div>
 
-          {/* Real-time Pedagogical Reasoner Card */}
+          {/* Tarjeta de razonamiento pedagógico */}
           <div className={`p-4 rounded-xl border flex flex-col gap-3 ${
             activeStep.rule === 'row'
               ? 'bg-sky-950/30 border-sky-500/40 text-sky-200'
@@ -733,9 +859,9 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               </span>
             </div>
 
-            {/* 3 Step Decomposition Columns */}
+            {/* 3 Columnas de Descomposición */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 font-mono text-xs text-slate-300">
-              {/* Box 1: Position */}
+              {/* Caja 1: Posición */}
               <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col gap-1">
                 <span className="text-slate-400 text-[11px] font-bold">1. Posición en la Matriz:</span>
                 <div>
@@ -746,7 +872,7 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
                 </div>
               </div>
 
-              {/* Box 2: Rule Diagnosis */}
+              {/* Caja 2: Diagnóstico de la Regla */}
               <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col gap-1">
                 <span className="text-slate-400 text-[11px] font-bold">2. ¿Por qué aplica esta regla?</span>
                 {activeStep.rule === 'row' && (
@@ -760,14 +886,22 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
                 )}
               </div>
 
-              {/* Box 3: Exact Movement & Calculation */}
+              {/* Caja 3: Movimiento exacto */}
               <div className="p-3 bg-slate-950/80 rounded-xl border border-slate-800 flex flex-col gap-1">
-                <span className="text-slate-400 text-[11px] font-bold">3. Movimiento y Salida:</span>
+                <span className="text-slate-400 text-[11px] font-bold">3. Movimiento y Cálculo:</span>
                 {activeStep.rule === 'row' && (
-                  <span>Cada letra avanza <strong>1 paso a la derecha (+1 mod 5)</strong>. Si está al borde derecho salta circularmente al inicio. Salida: <strong className="text-emerald-400">"{activeStep.outPair}"</strong>.</span>
+                  <span>
+                    {direction === 'encrypt'
+                      ? 'Cada letra avanza 1 paso a la derecha (+1 mod 5).'
+                      : 'Cada letra retrocede 1 paso a la izquierda (-1 mod 5).'} Salida: <strong className="text-emerald-400">"{activeStep.outPair}"</strong>.
+                  </span>
                 )}
                 {activeStep.rule === 'col' && (
-                  <span>Cada letra baja <strong>1 paso hacia abajo (+1 mod 5)</strong>. Si está en el fondo salta circularmente a la fila 1. Salida: <strong className="text-emerald-400">"{activeStep.outPair}"</strong>.</span>
+                  <span>
+                    {direction === 'encrypt'
+                      ? 'Cada letra baja 1 paso hacia abajo (+1 mod 5).'
+                      : 'Cada letra sube 1 paso hacia arriba (-1 mod 5).'} Salida: <strong className="text-emerald-400">"{activeStep.outPair}"</strong>.
+                  </span>
                 )}
                 {activeStep.rule === 'rectangle' && (
                   <span>Cada letra <strong>conserva su fila</strong> y adopta la columna de la otra letra: {activeStep.inPair[0]} viaja a Col {activeStep.pos2[1] + 1} y {activeStep.inPair[1]} a Col {activeStep.pos1[1] + 1}. Salida: <strong className="text-emerald-400">"{activeStep.outPair}"</strong>.</span>
@@ -778,33 +912,33 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
         </div>
       )}
 
-      {/* FASE 4: Tabla Completa de Auditoría y Criptograma Final */}
+      {/* PANEL 5: TABLA COMPLETA DE AUDITORÍA DÍGRAMA POR DÍGRAMA */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold flex items-center justify-center">
+            <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold flex items-center justify-center border border-emerald-500/40">
               4
             </span>
             <h3 className="text-sm font-bold text-slate-100 font-mono">
-              Tabla Completa de Cifrado Dígrama por Dígrama
+              Tabla Completa de Resolución de la Actividad
             </h3>
           </div>
           <span className="text-xs font-mono text-slate-400">
-            Haz clic en cualquier fila para visualizarla en la matriz
+            Haz clic en cualquier fila para visualizarla inmediatamente en la matriz 5×5
           </span>
         </div>
 
-        {/* Table */}
+        {/* Tabla */}
         <div className="overflow-x-auto rounded-xl border border-slate-800">
           <table className="w-full text-left font-mono text-xs">
             <thead className="bg-slate-950 text-slate-400 text-[11px] uppercase border-b border-slate-800">
               <tr>
                 <th className="p-3 w-12 text-center">#</th>
-                <th className="p-3 w-28">Texto en Claro (M)</th>
+                <th className="p-3 w-28">Entrada ({direction === 'encrypt' ? 'M' : 'C'})</th>
                 <th className="p-3 w-36">Posición en Matriz</th>
                 <th className="p-3 w-48">Regla Aplicada</th>
                 <th className="p-3">Fórmula / Movimiento</th>
-                <th className="p-3 w-32">Criptograma (C)</th>
+                <th className="p-3 w-32">Salida ({direction === 'encrypt' ? 'C' : 'M'})</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800 bg-slate-900/60">
@@ -857,35 +991,6 @@ export const PlayfairGrid: React.FC<PlayfairGridProps> = ({ onNavigateTab }) => 
               })}
             </tbody>
           </table>
-        </div>
-
-        {/* Final Output Banner */}
-        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
-          <div>
-            <span className="text-[10px] font-mono uppercase text-slate-400 block mb-1">
-              Resultado Final ({direction === 'encrypt' ? 'Criptograma C' : 'Texto en Claro Descifrado'}):
-            </span>
-            <span className="font-mono text-xl font-black text-emerald-400 tracking-wider">
-              {result.formattedOutput || '---'}
-            </span>
-            <span className="block text-xs font-mono text-slate-400 mt-1">
-              Continuo: <strong className="text-slate-300">{result.outputText || '---'}</strong>
-            </span>
-            {result.formattedOutput === 'KB DL XM KD OM CH GQ UN' && (
-              <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[11px] font-mono font-bold">
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Criptograma verificado: KB DL XM KD OM CH GQ UN (8 pares exactos)</span>
-              </div>
-            )}
-          </div>
-
-          <button
-            onClick={copyFullSolution}
-            className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold font-mono text-xs rounded-xl flex items-center justify-center gap-2 transition shadow-lg self-start md:self-auto"
-          >
-            {copiedSolution ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            <span>{copiedSolution ? '¡Solución Copiada!' : 'Copiar Solución Completa'}</span>
-          </button>
         </div>
       </div>
     </div>

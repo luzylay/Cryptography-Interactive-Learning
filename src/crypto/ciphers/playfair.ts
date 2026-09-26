@@ -100,6 +100,27 @@ export function splitIntoDigramsDetails(text: string, filler = 'X'): DigramDetai
   return digrams;
 }
 
+export function splitCiphertextDigrams(text: string): DigramDetail[] {
+  const cleanChars = text
+    .split('')
+    .map(normalizePlayfairChar)
+    .filter(c => PLAYFAIR_DEFAULT_ALPHA.includes(c));
+
+  const digrams: DigramDetail[] = [];
+  for (let i = 0; i < cleanChars.length; i += 2) {
+    const c1 = cleanChars[i];
+    const c2 = i + 1 < cleanChars.length ? cleanChars[i + 1] : 'X';
+    digrams.push({
+      pair: c1 + c2,
+      char1: c1,
+      char2: c2,
+      reason: 'normal',
+      explanation: `Par #${Math.floor(i / 2) + 1} de criptograma a descifrar: '${c1}${c2}'.`,
+    });
+  }
+  return digrams;
+}
+
 export function splitIntoDigrams(text: string, filler = 'X'): string[] {
   return splitIntoDigramsDetails(text, filler).map(d => d.pair);
 }
@@ -114,10 +135,14 @@ export function getMatrixPos(matrix: string[], char: string): [number, number] {
 export function processPlayfair(
   text: string,
   key: string,
-  direction: 'encrypt' | 'decrypt' = 'encrypt'
+  direction: 'encrypt' | 'decrypt' = 'encrypt',
+  filler = 'X'
 ) {
   const matrix = buildPlayfairMatrix(key);
-  const digramDetails = splitIntoDigramsDetails(text);
+  const digramDetails =
+    direction === 'decrypt'
+      ? splitCiphertextDigrams(text)
+      : splitIntoDigramsDetails(text, filler);
   const digrams = digramDetails.map(d => d.pair);
   const steps: PlayfairStep[] = [];
   let outStr = '';
