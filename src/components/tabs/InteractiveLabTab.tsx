@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { AlphabetMode } from '../../crypto/alphabets';
 import { MainTabType } from '../../types';
 import { AlbertiDisk } from '../visualizers/AlbertiDisk';
