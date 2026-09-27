@@ -41,10 +41,20 @@ export default function App() {
       </main>
 
       {/* Modern Footer */}
-      <footer className="mt-auto py-6 border-t border-slate-900 bg-slate-950/80 text-center text-xs font-mono text-slate-600">
+      <footer className="mt-auto py-6 border-t border-slate-900 bg-slate-950/80 text-xs font-mono text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-3">
-          <span>Criptografía Clásica e Interactiva · Plataforma Académica y de Investigación</span>
-          <span>Polibio · Leon Battista Alberti · César · Vigenère · Playfair · Hill · Escítala</span>
+          <span>
+            © 2026 Criptografía Interactiva · Desarrollado por{' '}
+            <a
+              href="https://github.com/luzylay"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2 transition-colors"
+            >
+              Lady Luz Loayza Rodriguez (@luzylay)
+            </a>
+          </span>
+          <span className="text-slate-600">Polibio · Alberti · César · Vigenère · Playfair · Hill · Escítala</span>
         </div>
       </footer>
     </div>

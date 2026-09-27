@@ -1,0 +1,7 @@
+# Permissive robots.txt for Cryptography Interactive Learning
+# Allows search engines to index educational materials and simulators
+
+User-agent: *
+Allow: /
+
+Sitemap: https://luzylay.github.io/Cryptography-Interactive-Learning/sitemap.xml

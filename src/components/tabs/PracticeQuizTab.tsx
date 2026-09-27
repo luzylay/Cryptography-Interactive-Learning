@@ -3,8 +3,8 @@ import confetti from 'canvas-confetti';
 import { AlphabetMode, ALPHABETS, ALBERTI_HISTORICAL, normalizeText, formatInBlocks } from '../../crypto/alphabets';
 import { generateExercise, ExerciseItem, ExerciseCipherType } from '../../crypto/exercises';
 import { getAlbertiAlignmentOffset } from '../../crypto/ciphers/alberti';
-import { PracticePolybiusAssistant } from './PracticePolybiusAssistant';
-import { PracticePlayfairAssistant } from './PracticePlayfairAssistant';
+import { PracticePolybiusAssistant } from './assistants/PracticePolybiusAssistant';
+import { PracticePlayfairAssistant } from './assistants/PracticePlayfairAssistant';
 import { MainTabType } from '../../types';
 import {
   GraduationCap,

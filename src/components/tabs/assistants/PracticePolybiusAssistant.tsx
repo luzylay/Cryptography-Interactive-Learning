@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { POLYBIUS_DEFAULT_ALPHA } from '../../crypto/ciphers/polybius';
+import { POLYBIUS_DEFAULT_ALPHA } from '../../../crypto/ciphers/polybius';
 import { Grid3X3, Flame, HelpCircle } from 'lucide-react';
 
 export const PracticePolybiusAssistant: React.FC = () => {

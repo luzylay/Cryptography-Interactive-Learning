@@ -3,6 +3,12 @@
   "description": "Plataforma web de aprendizaje interactivo de Criptosistemas Clásicos y Discos Cifradores",
   "private": true,
   "version": "2.0.0",
+  "author": "Lady Luz Loayza Rodriguez (https://github.com/luzylay)",
+  "homepage": "https://luzylay.github.io/Cryptography-Interactive-Learning/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/luzylay/Cryptography-Interactive-Learning.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",

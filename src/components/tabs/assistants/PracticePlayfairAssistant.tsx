@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { buildPlayfairMatrix } from '../../crypto/ciphers/playfair';
+import { buildPlayfairMatrix } from '../../../crypto/ciphers/playfair';
 import { LayoutGrid, Compass, ArrowRight, ArrowDown } from 'lucide-react';
 
 interface PracticePlayfairAssistantProps {

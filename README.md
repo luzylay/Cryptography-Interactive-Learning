@@ -1,158 +1,180 @@
-# Criptografía Interactiva: Plataforma de Aprendizaje y Simulación de Criptosistemas Clásicos
+<div align="center">
+  <img src="assets/readme/banner.png" alt="Criptografía Interactiva — banner" width="100%" />
 
-Plataforma web interactiva de alta precisión orientada al estudio teórico y experimental de **criptosistemas clásicos**, algoritmos de sustitución monoalfabética y polialfabética, cifrado matricial, técnicas de transposición y herramientas de criptoanálisis estadístico.
+  # Criptografía Interactiva
+  ### Plataforma web para el estudio teórico y experimental de criptosistemas clásicos, discos cifradores y criptoanálisis estadístico
 
-[![Despliegue GitHub Pages](https://img.shields.io/badge/Despliegue-GitHub%20Pages-22c55e?style=flat&logo=githubpages&logoColor=white)](https://luzylay.github.io/Cryptography-Interactive-Learning/)
-[![React 19](https://img.shields.io/badge/React-19.0.0-20232A?style=flat&logo=react&logoColor=61DAFB)](https://react.dev/)
-[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0.0-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![TypeScript 5.7](https://img.shields.io/badge/TypeScript-5.7.0-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite 8](https://img.shields.io/badge/Vite-8.0.5-646CFF?style=flat&logo=vite&logoColor=white)](https://vite.dev/)
-[![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-F59E0B?style=flat&logo=open-source-initiative&logoColor=white)](LICENSE)
-[![Seguridad SSDLC](https://img.shields.io/badge/Seguridad-SSDLC%20%2F%20SSDF-E11D48?style=flat&logo=shield&logoColor=white)](SECURITY.md)
-[![Arquitectura SSD](https://img.shields.io/badge/Arquitectura-UML%20SSD-8B5CF6?style=flat&logo=diagram-next&logoColor=white)](docs/ARCHITECTURE_AND_SECURITY.md)
-[![Fundamentos Matemáticos](https://img.shields.io/badge/Matemáticas-Guía%20Detallada-0EA5E9?style=flat&logo=scipy&logoColor=white)](docs/MATHEMATICAL_FOUNDATIONS.md)
+  <br/>
 
----
+  [![Despliegue GitHub Pages](https://img.shields.io/badge/Despliegue-GitHub%20Pages-22c55e?style=flat&logo=githubpages&logoColor=white)](https://luzylay.github.io/Cryptography-Interactive-Learning/)
+  [![React 19](https://img.shields.io/badge/React-19.0.0-20232A?style=flat&logo=react&logoColor=61DAFB)](https://react.dev/)
+  [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind-v4.0.0-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+  [![TypeScript 5.7](https://img.shields.io/badge/TypeScript-5.7.0-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+  [![Vite 8](https://img.shields.io/badge/Vite-8.0.5-646CFF?style=flat&logo=vite&logoColor=white)](https://vite.dev/)
+  [![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-F59E0B?style=flat&logo=open-source-initiative&logoColor=white)](LICENSE)
+  [![Seguridad SSDLC](https://img.shields.io/badge/Seguridad-SSDLC%20%2F%20SSDF-E11D48?style=flat&logo=shield&logoColor=white)](SECURITY.md)
 
-## 1. Características del Sistema
+  <br/>
 
-### 1.1 Simulador del Disco Cifrador de Alberti (Leon Battista Alberti, c. 1466)
-* Simulación visual vectorial (SVG) con anillos concéntricos móviles.
-* Soporte para giro manual continuo, arrastre táctil (*drag & drop*) y saltos discretos por pasos.
-* Rayo indicador de correspondencia y cálculo de desfase angular $\delta = (\theta_{\text{ext}} - \theta_{\text{int}}) \pmod N$.
-* Modos de operación estática (monoalfabética) y dinámica con desplazamiento progresivo polialfabético cada $k$ caracteres.
-
-### 1.2 Adaptabilidad de Alfabetos y Anillos Modulares
-* **Castellano (mód. 27 con letra Ñ):** $A=0, \dots, N=13, \text{Ñ}=14, O=15, \dots, Z=26$.
-* **Internacional / Inglés (mód. 26 sin Ñ):** $A=0, \dots, Z=25$.
-* **Histórico de Alberti (24 caracteres):** Alfabeto exterior en mayúsculas latinas y dígitos 1 a 4; disco interior en minúsculas con el carácter `&`.
-
-### 1.3 Catálogo de Criptosistemas Implementados
-* **César y Afín:** Desplazamiento lineal y transformación $C_i = (a \cdot M_i + b) \pmod m$ con verificación de coprimalidad ($\text{mcd}(a, m) = 1$) e inversos modulares mediante el algoritmo extendido de Euclides.
-* **Tabula Recta de Vigenère, Beaufort y Autoclave:** Matrices de $m \times m$ con iluminación de intersección y extensión dinámica de clave.
-* **Matriz 5x5 de Playfair:** Cifrado digrámico con tratamiento de colisiones, sustitución $I/J$ y reglas geométricas de fila, columna y rectángulo.
-* **Cifrado Matricial de Hill ($2\times 2$ y $3\times 3$):** Evaluación de determinantes modulares $\det(K) \pmod m$, cálculo formal de matrices adjuntas y vectores de transformación lineal.
-* **Transposición por Columnas y Escítala Espartana:** Permutación columnar regular e irregular con clave alfabética y modelado de bastón cilíndrico.
-
-### 1.4 Módulo de Criptoanálisis Estadístico
-* Histograma de frecuencias de monogramas en tiempo real frente a perfiles estándar del español e inglés.
-* Cálculo del Índice de Coincidencia de Friedman ($IC$) para clasificación monoalfabética versus polialfabética.
-* Factorización de distancias e identificación de repeticiones mediante el Test de Kasiski.
-* Evaluación automatizada de fuerza bruta con ordenamiento estadístico por producto punto de frecuencias.
-
-### 1.5 Evaluación y Ejercicios Prácticos
-* Generador parametrizado de problemas de cifrado, descifrado y deducción de claves.
-* Asistente interactivo integrado de rueda de cálculo modular.
-* Solucionario detallado con justificación matemática paso a paso y registro de progreso.
+  [**Demo en vivo**](https://luzylay.github.io/Cryptography-Interactive-Learning/) · [**Fundamentos matemáticos**](docs/MATHEMATICAL_FOUNDATIONS.md) · [**Arquitectura y seguridad**](docs/ARCHITECTURE_AND_SECURITY.md) · [**Reportar bug**](https://github.com/luzylay/Cryptography-Interactive-Learning/issues)
+</div>
 
 ---
 
-## 2. Fundamentos Matemáticos y Algebraicos
+## Demo
 
-Para una explicación exhaustiva con **ejemplos numéricos paso a paso, teoremas, identidades de Bézout, inversión de matrices $2\times 2$ y $3\times 3$ y criptoanálisis estadístico**, consulte el documento dedicado:
-* [**Guía Completa de Fundamentos Matemáticos y Algebraicos**](docs/MATHEMATICAL_FOUNDATIONS.md)
-
-### Resumen de Ecuaciones y Condiciones de Invertibilidad
-
-| Criptosistema | Ecuación de Cifrado | Ecuación de Descifrado | Condición de Biyectividad / Invertibilidad |
-| :--- | :--- | :--- | :--- |
-| **César** | $C_i = (M_i + k) \pmod m$ | $M_i = (C_i - k + m) \pmod m$ | $\forall k \in \mathbb{Z}$ (Siempre biyectivo) |
-| **Afín** | $C_i = (a \cdot M_i + b) \pmod m$ | $M_i = a^{-1} \cdot (C_i - b) \pmod m$ | $\text{mcd}(a, m) = 1$ (Existe inverso modular $a^{-1}$) |
-| **Vigenère** | $C_i = (M_i + K_{i \bmod L}) \pmod m$ | $M_i = (C_i - K_{i \bmod L} + m) \pmod m$ | Longitud de clave $L \ge 1$ |
-| **Beaufort** | $C_i = (K_{i \bmod L} - M_i + m) \pmod m$ | $M_i = (K_{i \bmod L} - C_i + m) \pmod m$ | Involutivo ($\mathcal{E} \equiv \mathcal{D}$, auto-inverso) |
-| **Hill ($n\times n$)** | $\vec{C} = K \cdot \vec{M} \pmod m$ | $\vec{M} = K^{-1} \cdot \vec{C} \pmod m$ | $\det(K) \not\equiv 0$ y $\text{mcd}(\det(K), m) = 1$ |
-
-### ¿Qué significa cada concepto a simple vista?
-1. **Aritmética Modular ($\mathbb{Z}_m$):** Es la "matemática del reloj". Si un alfabeto tiene $m=27$ letras, el número 28 equivale a 1 ($28 \bmod 27 = 1$). El resultado siempre permanece dentro del alfabeto.
-2. **Coprimalidad ($\text{mcd}(a, m) = 1$):** Significa que el multiplicador $a$ y el tamaño del alfabeto $m$ no comparten factores comunes salvo el 1. Esto garantiza que dos letras distintas nunca se conviertan en la misma letra cifrada.
-3. **Inverso Modular ($a^{-1}$):** Es el número que al multiplicarse por $a$ da residuo 1 ($a \cdot a^{-1} \equiv 1 \pmod m$). Por ejemplo, en español ($m=27$), el inverso de $7$ es $4$ porque $7 \times 4 = 28 \equiv 1 \pmod{27}$.
-4. **Matrices de Hill ($K^{-1}$):** Se agrupan las letras en vectores (de 2 en 2 o de 3 en 3) y se multiplican por una matriz secreta. Para descifrar, se calcula la matriz inversa utilizando la matriz adjunta y el inverso del determinante modular.
-5. **Índice de Coincidencia ($IC$):** Mide la dispersión estadística de las letras. Un texto en español o cifrado César tiene $IC \approx 0.076$, mientras que un texto polialfabético o aleatorio tiene $IC \approx 0.037$.
+<div align="center">
+  <img src="assets/readme/demo.gif" alt="Demo interactiva de la plataforma" width="90%" />
+  <br/>
+  <em>Cifra, descifra y analiza en tiempo real — todo en el navegador, sin backend y con procesamiento 100% local.</em>
+</div>
 
 ---
 
-## 3. Estructura del Software por Capas y Tecnologías
+## ¿Qué encontrarás?
 
-El diseño del software aplica **Clean Architecture** separando de forma estricta la interfaz gráfica del núcleo de cómputo criptográfico puro:
+- **Disco cifrador de Alberti (c. 1466)** — simulación SVG interactiva con anillos concéntricos, arrastre y giro manual, cálculo de desfase angular y modo polialfabético progresivo.
+- **Criptosistemas clásicos (S06–S10)** — César, Sustitución Afín ($a \cdot x + b$), Tablero de Polibio ($5\times 5$), Tabula Recta de Vigenère, Cifrador de Beaufort, Clave Continua (Autoclave), Matriz Playfair, Cifrado matricial de Hill ($2\times 2$ y $3\times 3$), Escítala espartana y Transposición columnar.
+- **Criptosistemas modernos y seguridad (S11–S15)** — Bases numéricas y lógica XOR bitwise, simulación de rondas Feistel en DES/3DES, transformaciones de estado AES-128 (SubBytes, ShiftRows, MixColumns), efecto avalancha en funciones Hash SHA-256, simulador de firma digital RSA con canal inseguro y explorador de la cadena de confianza TLS / PKI.
+- **Alfabetos adaptables y anillos modulares** — Castellano (mód. 27 con Ñ), Internacional (mód. 26 sin Ñ) e histórico de Alberti (24 caracteres).
+- **Criptoanálisis estadístico** — histogramas en tiempo real con Recharts comparando frecuencias observadas vs. perfiles teóricos en español/inglés, Índice de Coincidencia de Friedman ($IC$), Test de Kasiski y fuerza bruta evaluada por producto punto.
+- **Estudio y autoevaluación guiada** — generador dinámico de retos de examen con solucionarios matemáticos detallados y asistentes interactivos dedicados.
+- **100% client-side (Zero-Knowledge)** — sin persistencia remota, sanitización estricta por listas blancas y validación matemática defensiva.
 
-| Capa / Directorio | Tecnologías Principales | Propósito y Responsabilidad |
+---
+
+## Galería de Capturas Reales
+
+<div align="center">
+
+### Disco Cifrador de Alberti (c. 1466)
+<img src="assets/readme/alberti-disk.png" alt="Simulador real del disco de Alberti" width="85%" />
+
+<br/><br/>
+
+### Cifrador César y Variantes Afines ($C = (a \cdot M + b) \pmod m$)
+<img src="assets/readme/caesar-cipher.png" alt="Módulo real del cifrado César y Afín" width="85%" />
+
+<br/><br/>
+
+### Matriz Tabula Recta Dinámica de Vigenère ($27\times 27$)
+<img src="assets/readme/vigenere-tabula.png" alt="Tabula Recta de Vigenère real" width="85%" />
+
+<br/><br/>
+
+### Tablero Fraccionario de Polibio ($5\times 5$)
+<img src="assets/readme/polybius-grid.png" alt="Cuadrícula interactiva de Polibio" width="85%" />
+
+<br/><br/>
+
+### Cifrador Matricial de Hill ($2\times 2$ y $3\times 3$) con Inversión Modular
+<img src="assets/readme/hill-matrix.png" alt="Cifrado Hill real con cálculo de determinante" width="85%" />
+
+<br/><br/>
+
+### Criptoanálisis Estadístico y Distribución de Frecuencias (Recharts)
+<img src="assets/readme/frequency-analysis.png" alt="Panel de análisis de frecuencias y Kasiski" width="85%" />
+
+<br/><br/>
+
+### Simulador de Rondas Feistel (DES & 3DES)
+<img src="assets/readme/des-feistel.png" alt="Estructura de Feistel y permutaciones DES" width="85%" />
+
+<br/><br/>
+
+### Pipeline de Firma Digital RSA con Detección de Manipulación en Tránsito
+<img src="assets/readme/digital-signature.png" alt="Simulador pedagógico de firma digital RSA" width="85%" />
+
+<br/><br/>
+
+### Matriz de Decisión y Comparador de Criptosistemas
+<img src="assets/readme/decision-matrix.png" alt="Matriz de decisión comparativa" width="85%" />
+
+<br/><br/>
+
+### Diseño Adaptativo para Dispositivos Móviles
+<img src="assets/readme/mobile-view.png" alt="Captura real en vista móvil" width="45%" />
+
+</div>
+
+---
+
+## Stack Tecnológico
+
+<div align="center">
+  <img src="https://skillicons.dev/icons?i=react,ts,vite,tailwind,html,css,githubactions,git&theme=dark" alt="Stack tecnológico" />
+</div>
+
+<br/>
+
+| Capa | Tecnología | Propósito |
 | :--- | :--- | :--- |
-| **`src/crypto/`** *(Dominio Puro)* | TypeScript 5.7 (Agnóstico del DOM) | Lógica algebraica, transformaciones matriciales, algoritmos de cifrado y generador de ejercicios. |
-| **`src/components/tabs/`** *(Vistas)* | React 19, Lucide Icons, Recharts | Controladores de flujo y pantallas principales (Laboratorio, Práctica, Criptoanálisis con gráficos, Teoría). |
-| **`src/components/visualizers/`** *(Visualización)* | React 19, Tailwind CSS v4, Recharts, SVG | Componentes gráficos interactivos (Disco de Alberti SVG, Tabula Recta, Matrices de Hill, Histogramas Recharts). |
-| **`tests/`** *(Validación)* | Node.js Test Runner Nativo | Pruebas unitarias de invariantes matemáticos, simetría de descifrado y seguridad de entradas. |
-| **`.github/workflows/`** *(CI/CD)* | GitHub Actions | Automatización de integración continua, compilación y despliegue a GitHub Pages. |
-| **`docs/`** *(Documentación)* | Markdown, Mermaid UML, MathJax/KaTeX | Diagramas SSD, modelo STRIDE, fundamentos matemáticos y manuales de arquitectura. |
+| **Dominio puro** (`src/crypto/`) | TypeScript 5.7 | Lógica algebraica y modular agnóstica de React y del DOM. |
+| **Vistas** (`src/components/tabs/`) | React 19 + Lucide Icons + Recharts | Control de estado, vistas pedagógicas y autoevaluación guiada. |
+| **Visualizadores** (`src/components/visualizers/`) | React 19 + Tailwind CSS v4 + SVG | Discos giratorios vectoriales, Tabula Recta y matrices interactivas. |
+| **Tests de seguridad** (`tests/`) | Node.js Test Runner nativo | 23 pruebas de regresión, simetría e invariantes criptográficos. |
+| **CI/CD** (`.github/workflows/`) | GitHub Actions | Compilación determinista y despliegue automatizado a GitHub Pages. |
+| **Documentación** (`docs/`) | Markdown + Mermaid UML + MathJax | Especificación formal de arquitectura, modelos y normas APA 7. |
 
-La documentación técnica complementaria se encuentra detallada en:
-* [Guía Completa de Fundamentos Matemáticos y Algebraicos](docs/MATHEMATICAL_FOUNDATIONS.md)
-* [Especificación Técnica de Arquitectura, SSD y Seguridad](docs/ARCHITECTURE_AND_SECURITY.md)
+> **Arquitectura Limpia (Clean Architecture):** El núcleo criptográfico (`src/crypto/`) está completamente desacoplado de la interfaz gráfica. Los detalles de diseño se encuentran en la [Especificación de Arquitectura y Seguridad](docs/ARCHITECTURE_AND_SECURITY.md).
 
 ---
 
-## 4. Marco de Seguridad y Desarrollo Seguro (SSDLC)
-
-El proyecto aplica las pautas del **Marco de Desarrollo de Software Seguro (NIST SP 800-218 SSDF)** y análisis de amenazas **STRIDE**:
-
-* **Ejecución 100% Client-Side:** No existe persistencia remota ni transmisión de textos, mensajes en claro o claves criptográficas a través de la red.
-* **Sanitización Estricta:** Filtrado exhaustivo por listas blancas en la normalización de caracteres para neutralizar inyecciones de código (DOM XSS).
-* **Control de Límites Computacionales:** Restricción preventiva en análisis de patrones de texto para mitigar denegación de servicio local (DoS).
-* **Validación Matemática Defensiva:** Prevención de singularidades y cálculos indefinidos verificando la coprimalidad antes de operaciones con inversos modulares.
-
-Para consultar el análisis completo de amenazas STRIDE y la política de divulgación responsable, revise:
-* [Política de Seguridad y Marco SSDLC](SECURITY.md)
-
----
-
-## 5. Pruebas Automatizadas y Verificación de Calidad
-
-El proyecto incluye una suite de pruebas unitarias y de resiliencia ejecutadas mediante el runner nativo de Node.js:
-
-```bash
-# Ejecutar suite de pruebas de seguridad y consistencia criptográfica
-npm run test
-
-# Verificación de tipos estáticos en TypeScript
-npm run typecheck
-
-# Compilación para producción
-npm run build
-```
-
----
-
-## 6. Instalación y Ejecución Local
+## Instalación Rápida
 
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/luzylay/Cryptography-Interactive-Learning.git
+
+# 2. Acceder al directorio
 cd Cryptography-Interactive-Learning
 
-# 2. Instalar dependencias
+# 3. Instalar dependencias
 npm install
 
-# 3. Iniciar servidor de desarrollo
+# 4. Iniciar servidor de desarrollo local
 npm run dev
-
-# 4. Compilar aplicación
-npm run build
 ```
 
+### Comandos de Calidad
+
+| Comando | Descripción |
+| :--- | :--- |
+| `npm run dev` | Inicia el servidor de desarrollo local de Vite (`http://localhost:8443`). |
+| `npm run build` | Compila el empaquetado de producción optimizado en `dist/`. |
+| `npm test` | Ejecuta la suite de regresión matemática y pruebas de seguridad SSDLC. |
+| `npm run typecheck` | Ejecuta la verificación estricta de tipos de TypeScript (`tsc --noEmit`). |
+| `npm run format` | Aplica formateo consistente de código con `oxfmt`. |
+
 ---
 
-## 7. Despliegue en GitHub Pages
+## Seguridad y Calidad (SSDLC)
 
-El proyecto cuenta con un flujo de trabajo de integración continua automatizado mediante **GitHub Actions** en `.github/workflows/deploy.yml`.
+- **Marco de Desarrollo Seguro:** Alineado con el estándar **NIST SP 800-218 (SSDF)** y modelo de amenazas **STRIDE**.
+- **Ejecución 100% Client-Side:** Ningún texto, clave ni mensaje sale del navegador del usuario. Cero telemetría de contenido.
+- **Sanitización Estricta:** Filtrado por listas blancas (*whitelist*) de caracteres válidos para neutralizar DOM XSS.
+- **Aritmética Modular Defensiva:** Comprobación estricta de coprimalidad $\gcd(a, m) = 1$ antes de calcular inversos modulares o invertir matrices de Hill.
+- **Verificación Continua en CI:** La suite de tests automatizada valida la integridad criptográfica en cada *push*.
 
-Para activar el despliegue en su bifurcación (*fork*):
-1. Configure en **Settings** > **Pages** el origen de despliegue como **GitHub Actions**.
-2. Al realizar un `git push` a la rama `main`, la aplicación se compilará y desplegará automáticamente en `https://<usuario>.github.io/<repositorio>/`.
+Consulte las políticas completas en [SECURITY.md](SECURITY.md) y el análisis STRIDE en [docs/ARCHITECTURE_AND_SECURITY.md](docs/ARCHITECTURE_AND_SECURITY.md).
 
 ---
 
-## 8. Referencias Bibliográficas (Normas APA 7.ª Edición)
+## Documentación Completa
 
-1. **Ramió Aguirre, J.** (1999). *Aplicaciones criptográficas* (Capítulo 3: Criptosistemas clásicos, 2.ª ed., pp. 1–105). Departamento de Publicaciones de la Escuela Universitaria de Informática, Universidad Politécnica de Madrid (UPM). ISBN: 84-87238-57-2 / 83-87238-57-2. Depósito Legal M-23136-1999. https://dialnet.unirioja.es/servlet/libro?codigo=200844
+| Documento | Contenido Principal |
+| :--- | :--- |
+| [**Fundamentos Matemáticos**](docs/MATHEMATICAL_FOUNDATIONS.md) | Ecuaciones paso a paso, identidad de Bézout, matrices inversas y criptoanálisis. |
+| [**Arquitectura y Seguridad**](docs/ARCHITECTURE_AND_SECURITY.md) | Diagramas de secuencia UML (SSD), modelo STRIDE y capas Clean Architecture. |
+| [**Guía de Contribución**](CONTRIBUTING.md) | Flujo de trabajo con Git, estándares de código, commits convencionales y Pull Requests. |
+| [**Política de Seguridad**](SECURITY.md) | Modelo de ejecución local, mitigaciones STRIDE y reporte de vulnerabilidades. |
+| [**Historial de Cambios**](CHANGELOG.md) | Registro de versiones conforme a Keep a Changelog y SemVer. |
+
+---
+
+## Referencias Bibliográficas (Normas APA 7.ª Edición)
+
+1. **Ramió Aguirre, J.** (1999). *Aplicaciones criptográficas* (Capítulo 3: Criptosistemas clásicos, 2.ª ed., pp. 1–105). Departamento de Publicaciones de la Escuela Universitaria de Informática, Universidad Politécnica de Madrid (UPM). ISBN: 84-87238-57-2. Depósito Legal M-23136-1999. https://dialnet.unirioja.es/servlet/libro?codigo=200844
 2. **Alberti, L. B.** (1568). *De componendis cyfris [Tratado de cifras / De Cifris]*. En *Opuscoli morali di Leon Batista Alberti gentil'huomo firentino* (pp. 200–245). Appresso Francesco Franceschi. (Manuscrito original redactado c. 1466). https://archive.org/details/opvscolimoralidi00albe
 3. **Hill, L. S.** (1929). Cryptography in an algebraic alphabet. *The American Mathematical Monthly*, 36(6), 306–312. https://www.jstor.org/stable/2298294
 4. **Hill, L. S.** (1931). Concerning certain linear transformation apparatus of cryptography. *The American Mathematical Monthly*, 38(3), 135–154. https://www.jstor.org/stable/2300963
@@ -167,6 +189,20 @@ Para activar el despliegue en su bifurcación (*fork*):
 
 ---
 
+## Contribuciones
+
+Las contribuciones son bienvenidas. Revisa [CONTRIBUTING.md](CONTRIBUTING.md) para conocer el flujo de trabajo, estándares de código y directrices de Pull Requests.
+
+---
+
+## Licencia
+
+Distribuido bajo la Licencia **MIT**. Consulta [LICENSE](LICENSE) para más detalles.
+
+> *Nota:* El campo `"private": true` en `package.json` se utiliza únicamente para prevenir publicaciones accidentales al registro de npm. El proyecto es de código abierto.
+
+---
+
 ## ⭐ ¿Te gustó el proyecto? ¡Déjanos tu estrella!
 
 Si esta plataforma interactiva te ayudó a aprender, experimentar o te pareció interesante:
@@ -175,9 +211,3 @@ Si esta plataforma interactiva te ayudó a aprender, experimentar o te pareció 
 2. Haz clic en el botón **`Star`** (Estrella).
 
 > **¡Muchas gracias!** Tu apoyo con una estrella ayuda a que más estudiantes, docentes y apasionados de la seguridad informática puedan conocer y utilizar este recurso educativo abierto.
-
----
-
-## 9. Licencia
-
-Este proyecto se distribuye bajo la licencia **MIT**. Consulte el archivo `LICENSE` para más detalles.
