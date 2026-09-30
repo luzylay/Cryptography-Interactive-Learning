@@ -98,3 +98,53 @@ export function inv3x3(M: number[][], m: number): number[][] | null {
   return adj.map(row => row.map(val => mod(dInv * val, m)));
 }
 
+// N x N Matrix Utilities
+export function getSubMatrix(M: number[][], rowToRemove: number, colToRemove: number): number[][] {
+  return M.filter((_, r) => r !== rowToRemove).map(row => row.filter((_, c) => c !== colToRemove));
+}
+
+export function detNxN(M: number[][], m: number): number {
+  const n = M.length;
+  if (n === 1) return mod(M[0][0], m);
+  if (n === 2) return det2x2(M, m);
+  if (n === 3) return det3x3(M, m);
+  
+  let det = 0;
+  for (let c = 0; c < n; c++) {
+    const subMatrix = getSubMatrix(M, 0, c);
+    const sign = c % 2 === 0 ? 1 : -1;
+    det += sign * M[0][c] * detNxN(subMatrix, m);
+  }
+  return mod(det, m);
+}
+
+export function isHillMatrixValidNxN(M: number[][], m: number): boolean {
+  const d = detNxN(M, m);
+  return gcd(d, m) === 1;
+}
+
+export function invNxN(M: number[][], m: number): number[][] | null {
+  const n = M.length;
+  const d = detNxN(M, m);
+  const dInv = modInverse(d, m);
+  if (dInv === null) return null;
+
+  if (n === 1) return [[dInv]];
+  if (n === 2) return inv2x2(M, m);
+  if (n === 3) return inv3x3(M, m);
+
+  const adj: number[][] = [];
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const subMatrix = getSubMatrix(M, r, c);
+      const sign = (r + c) % 2 === 0 ? 1 : -1;
+      const cofactorDet = detNxN(subMatrix, m);
+      const val = mod(sign * cofactorDet, m);
+      
+      if (!adj[c]) adj[c] = [];
+      adj[c][r] = mod(val * dInv, m); // Transpose directly
+    }
+  }
+  return adj;
+}
+

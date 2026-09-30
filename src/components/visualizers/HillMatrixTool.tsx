@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { AlphabetMode, ALPHABETS, formatInBlocks } from '../../crypto/alphabets';
-import { processHill2x2, processHill3x3 } from '../../crypto/ciphers/hill';
-import { det2x2, inv2x2, isHillMatrixValid2x2, modInverse } from '../../crypto/mathUtils';
+import { processHillNxN } from '../../crypto/ciphers/hill';
+import { modInverse } from '../../crypto/mathUtils';
 import { Calculator, CheckCircle2, XCircle, ArrowRight, Layers } from 'lucide-react';
 
 interface HillMatrixToolProps {
@@ -9,7 +9,7 @@ interface HillMatrixToolProps {
 }
 
 export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
-  const [matrixDim, setMatrixDim] = useState<2 | 3>(2);
+  const [matrixDim, setMatrixDim] = useState<2 | 3 | 4 | 5>(2);
   const [m2, setM2] = useState<number[][]>([
     [2, 3],
     [1, 5],
@@ -19,18 +19,31 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
     [13, 16, 10],
     [20, 17, 15],
   ]);
+  const [m4, setM4] = useState<number[][]>([
+    [1, 0, 0, 0],
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+  ]);
+  const [m5, setM5] = useState<number[][]>([
+    [1, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0],
+    [0, 0, 1, 0, 0],
+    [0, 0, 0, 1, 0],
+    [0, 0, 0, 0, 1],
+  ]);
   const [inputText, setInputText] = useState<string>('HOLA A TODOS');
   const [direction, setDirection] = useState<'encrypt' | 'decrypt'>('encrypt');
 
   const m = ALPHABETS[mode].mod;
 
   const result = useMemo(() => {
-    if (matrixDim === 2) {
-      return processHill2x2(inputText, m2, mode, direction);
-    } else {
-      return processHill3x3(inputText, m3, mode, direction);
-    }
-  }, [matrixDim, m2, m3, inputText, mode, direction]);
+    let currentMatrix = m2;
+    if (matrixDim === 3) currentMatrix = m3;
+    else if (matrixDim === 4) currentMatrix = m4;
+    else if (matrixDim === 5) currentMatrix = m5;
+    return processHillNxN(inputText, currentMatrix, mode, direction);
+  }, [matrixDim, m2, m3, m4, m5, inputText, mode, direction]);
 
   const updateM2 = (r: number, c: number, val: number) => {
     const next = m2.map((row, ri) => row.map((col, ci) => (ri === r && ci === c ? val : col)));
@@ -40,6 +53,16 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
   const updateM3 = (r: number, c: number, val: number) => {
     const next = m3.map((row, ri) => row.map((col, ci) => (ri === r && ci === c ? val : col)));
     setM3(next);
+  };
+
+  const updateM4 = (r: number, c: number, val: number) => {
+    const next = m4.map((row, ri) => row.map((col, ci) => (ri === r && ci === c ? val : col)));
+    setM4(next);
+  };
+
+  const updateM5 = (r: number, c: number, val: number) => {
+    const next = m5.map((row, ri) => row.map((col, ci) => (ri === r && ci === c ? val : col)));
+    setM5(next);
   };
 
   return (
@@ -58,23 +81,18 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
           </div>
         </div>
 
-        <div className="flex rounded-xl bg-slate-950 p-1 border border-slate-800">
-          <button
-            onClick={() => setMatrixDim(2)}
-            className={`px-3 py-1.5 text-xs font-mono rounded-lg transition ${
-              matrixDim === 2 ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30' : 'text-slate-400'
-            }`}
-          >
-            Matriz 2×2
-          </button>
-          <button
-            onClick={() => setMatrixDim(3)}
-            className={`px-3 py-1.5 text-xs font-mono rounded-lg transition ${
-              matrixDim === 3 ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30' : 'text-slate-400'
-            }`}
-          >
-            Matriz 3×3
-          </button>
+        <div className="flex flex-wrap rounded-xl bg-slate-950 p-1 border border-slate-800 gap-1">
+          {[2, 3, 4, 5].map(dim => (
+            <button
+              key={`dim-${dim}`}
+              onClick={() => setMatrixDim(dim as 2 | 3 | 4 | 5)}
+              className={`px-3 py-1.5 text-xs font-mono rounded-lg transition ${
+                matrixDim === dim ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30' : 'text-slate-400 hover:bg-slate-900'
+              }`}
+            >
+              {dim}×{dim}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -99,9 +117,9 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
             Matriz Clave K ({matrixDim}×{matrixDim})
           </h3>
 
-          <div className="flex justify-center p-4 bg-slate-950 border border-slate-800 rounded-2xl">
-            {matrixDim === 2 ? (
-              <div className="grid grid-cols-2 gap-3">
+          <div className="flex justify-center p-4 bg-slate-950 border border-slate-800 rounded-2xl overflow-x-auto">
+            {matrixDim === 2 && (
+              <div className="grid grid-cols-2 gap-3 min-w-max">
                 {m2.map((row, r) =>
                   row.map((val, c) => (
                     <input
@@ -114,8 +132,9 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                   ))
                 )}
               </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2">
+            )}
+            {matrixDim === 3 && (
+              <div className="grid grid-cols-3 gap-2 min-w-max">
                 {m3.map((row, r) =>
                   row.map((val, c) => (
                     <input
@@ -124,6 +143,36 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                       value={val}
                       onChange={e => updateM3(r, c, parseInt(e.target.value, 10) || 0)}
                       className="w-12 h-12 text-center font-mono text-sm font-bold bg-slate-900 border border-slate-700 text-emerald-300 rounded-xl focus:outline-none focus:border-emerald-500"
+                    />
+                  ))
+                )}
+              </div>
+            )}
+            {matrixDim === 4 && (
+              <div className="grid grid-cols-4 gap-2 min-w-max">
+                {m4.map((row, r) =>
+                  row.map((val, c) => (
+                    <input
+                      key={`m4-${r}-${c}`}
+                      type="number"
+                      value={val}
+                      onChange={e => updateM4(r, c, parseInt(e.target.value, 10) || 0)}
+                      className="w-10 h-10 text-center font-mono text-xs font-bold bg-slate-900 border border-slate-700 text-emerald-300 rounded-lg focus:outline-none focus:border-emerald-500"
+                    />
+                  ))
+                )}
+              </div>
+            )}
+            {matrixDim === 5 && (
+              <div className="grid grid-cols-5 gap-1.5 min-w-max">
+                {m5.map((row, r) =>
+                  row.map((val, c) => (
+                    <input
+                      key={`m5-${r}-${c}`}
+                      type="number"
+                      value={val}
+                      onChange={e => updateM5(r, c, parseInt(e.target.value, 10) || 0)}
+                      className="w-8 h-8 text-center font-mono text-[10px] font-bold bg-slate-900 border border-slate-700 text-emerald-300 rounded-md focus:outline-none focus:border-emerald-500"
                     />
                   ))
                 )}

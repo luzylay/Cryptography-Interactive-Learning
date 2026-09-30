@@ -1,7 +1,7 @@
 // Hill 2x2 and 3x3 Matrix Cipher (mod m)
 
 import { ALPHABETS, AlphabetMode, normalizeText, formatInBlocks } from '../alphabets';
-import { mod, det2x2, inv2x2, det3x3, inv3x3, isHillMatrixValid2x2, isHillMatrixValid3x3, modInverse } from '../mathUtils';
+import { mod, det2x2, inv2x2, det3x3, inv3x3, isHillMatrixValid2x2, isHillMatrixValid3x3, modInverse, detNxN, invNxN, isHillMatrixValidNxN } from '../mathUtils';
 
 export interface HillVectorStep {
   blockIndex: number;
@@ -155,6 +155,101 @@ export function processHill3x3(
         `C₂ = (${effectiveMatrix[1][0]}·${v1} + ${effectiveMatrix[1][1]}·${v2} + ${effectiveMatrix[1][2]}·${v3}) ≡ ${r2} (mod ${m}) → '${out2}'`,
         `C₃ = (${effectiveMatrix[2][0]}·${v1} + ${effectiveMatrix[2][1]}·${v2} + ${effectiveMatrix[2][2]}·${v3}) ≡ ${r3} (mod ${m}) → '${out3}'`,
       ],
+    });
+  }
+
+  return {
+    isValid: true,
+    errorMessage: null,
+    inputText: padded,
+    outputText: outStr,
+    formattedOutput: formatInBlocks(outStr),
+    steps,
+    effectiveMatrix,
+    det,
+    detInv,
+    invMatrix,
+    m,
+    alpha,
+  };
+}
+
+export function processHillNxN(
+  text: string,
+  keyMatrix: number[][],
+  mode: AlphabetMode,
+  direction: 'encrypt' | 'decrypt' = 'encrypt',
+  filler = 'X'
+) {
+  const norm = normalizeText(text, mode);
+  const alpha = ALPHABETS[mode].chars;
+  const m = ALPHABETS[mode].mod;
+  const n = keyMatrix.length;
+
+  const isValid = isHillMatrixValidNxN(keyMatrix, m);
+  const det = detNxN(keyMatrix, m);
+  const detInv = modInverse(det, m);
+  const invMatrix = invNxN(keyMatrix, m);
+
+  if (!isValid || !invMatrix || detInv === null) {
+    return {
+      isValid: false,
+      errorMessage: `La matriz ${n}x${n} no es invertible en mod ${m}. det(K) = ${det} no es coprimo con ${m}.`,
+      inputText: norm,
+      outputText: '',
+      formattedOutput: '',
+      steps: [],
+      effectiveMatrix: keyMatrix,
+      det,
+      detInv,
+      invMatrix: null,
+      m,
+      alpha,
+    };
+  }
+
+  const effectiveMatrix = direction === 'encrypt' ? keyMatrix : invMatrix;
+
+  // Pad to multiple of n
+  let padded = norm;
+  while (padded.length % n !== 0) padded += filler;
+
+  const steps: HillVectorStep[] = [];
+  let outStr = '';
+
+  const subscripts = ['₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉', '₁₀'];
+
+  for (let i = 0; i < padded.length; i += n) {
+    const inBlockChars = padded.slice(i, i + n).split('');
+    const inVector = inBlockChars.map(c => alpha.indexOf(c));
+    const outVector: number[] = [];
+    const outBlockChars: string[] = [];
+    const dotProducts: string[] = [];
+
+    for (let r = 0; r < n; r++) {
+      let sum = 0;
+      let dotStrParts = [];
+      for (let c = 0; c < n; c++) {
+        sum += effectiveMatrix[r][c] * inVector[c];
+        dotStrParts.push(`${effectiveMatrix[r][c]}·${inVector[c]}`);
+      }
+      const val = mod(sum, m);
+      outVector.push(val);
+      outBlockChars.push(alpha[val]);
+      const sub = subscripts[r] || (r + 1).toString();
+      dotProducts.push(`C${sub} = (${dotStrParts.join(' + ')}) = ${sum} ≡ ${val} (mod ${m}) → '${alpha[val]}'`);
+    }
+
+    const outBlock = outBlockChars.join('');
+    outStr += outBlock;
+
+    steps.push({
+      blockIndex: i / n,
+      inBlock: inBlockChars.join(''),
+      inVector,
+      outVector,
+      outBlock,
+      dotProducts,
     });
   }
 
