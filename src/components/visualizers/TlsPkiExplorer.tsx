@@ -372,7 +372,7 @@ export const TlsPkiExplorer: React.FC = () => {
             </div>
 
             <p className="mt-4 text-xs text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-              💡 <span className="font-semibold text-slate-200">Explicación Técnica:</span> {activeHandshakeStep.explanation}
+              <span className="font-semibold text-slate-200">Explicación Técnica:</span> {activeHandshakeStep.explanation}
             </p>
           </GlassCard>
         </div>

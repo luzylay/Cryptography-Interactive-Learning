@@ -78,6 +78,19 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
         </div>
       </div>
 
+      {/* Alfabeto de Referencia */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 backdrop-blur-md overflow-x-auto">
+        <h3 className="text-xs font-mono text-slate-400 mb-2">Valores Numéricos del Alfabeto (Módulo {m}):</h3>
+        <div className="flex gap-1 w-max">
+          {ALPHABETS[mode].chars.split('').map((char, i) => (
+            <div key={char} className="flex flex-col items-center bg-slate-950 border border-slate-800 rounded-md p-1.5 min-w-[36px] hover:bg-emerald-900/30 transition-colors">
+              <span className="text-emerald-400 font-bold text-sm">{char}</span>
+              <span className="text-slate-400 text-[10px] font-mono">{i}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Matrix Inputs and Determinant Status */}
         <div className="lg:col-span-5 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 backdrop-blur-md flex flex-col gap-5">
@@ -193,9 +206,9 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
               {result.steps.map((st, i) => (
                 <div key={`hill-step-${i}`} className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/60 flex flex-col gap-1">
                   <div className="flex items-center gap-2 text-amber-400 font-bold">
-                    <span>Bloque #{st.blockIndex + 1}: [{st.inBlock}] = [{st.inVector.join(', ')}]</span>
+                    <span>Bloque #{st.blockIndex + 1}: Letras [{st.inBlock}] = Vector Entrada [{st.inVector.join(', ')}]</span>
                     <ArrowRight className="w-3 h-3 text-slate-600" />
-                    <span className="text-emerald-400">[{st.outBlock}]</span>
+                    <span className="text-emerald-400">Vector Salida [{st.outVector.join(', ')}] = Letras [{st.outBlock}]</span>
                   </div>
                   {st.dotProducts.map((dp, dpi) => (
                     <div key={`dp-${dpi}`} className="text-[11px] text-slate-400 pl-2 border-l border-slate-800">

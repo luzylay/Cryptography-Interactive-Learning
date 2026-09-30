@@ -22,6 +22,8 @@ import {
   SlidersHorizontal,
   Grid3X3,
   LayoutGrid,
+  Microscope,
+  BookOpen
 } from 'lucide-react';
 
 interface PracticeQuizTabProps {
@@ -462,14 +464,14 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode, onNaviga
                 className="px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-amber-300 font-mono text-[11px] transition"
                 title="Ir a leer la teoría completa antes de resolver"
               >
-                📖 Ver Teoría
+                <BookOpen className="w-4 h-4 mr-2" /> Ver Teoría
               </button>
               <button
                 onClick={() => onNavigateTab('lab')}
                 className="px-2.5 py-1 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-amber-300 font-mono text-[11px] transition"
                 title="Ir al simulador de laboratorio"
               >
-                🔬 Simulador
+                <Microscope className="w-4 h-4 mr-2" /> Simulador
               </button>
             </div>
           )}

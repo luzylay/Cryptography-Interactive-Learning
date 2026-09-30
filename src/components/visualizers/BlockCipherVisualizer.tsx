@@ -464,7 +464,7 @@ export const BlockCipherVisualizer: React.FC = () => {
               </div>
 
               <p className="mt-3 text-[11px] text-rose-300 bg-rose-500/10 p-2.5 rounded-lg border border-rose-500/20">
-                ⚠️ Observa cómo el Criptograma del Bloque 1 es <strong>100% IDÉNTICO</strong> al Criptograma del Bloque 2. Un atacante puede inferir repeticiones sin conocer la clave.
+                Observa cómo el Criptograma del Bloque 1 es <strong>100% IDÉNTICO</strong> al Criptograma del Bloque 2. Un atacante puede inferir repeticiones sin conocer la clave.
               </p>
             </GlassCard>
 
@@ -486,7 +486,7 @@ export const BlockCipherVisualizer: React.FC = () => {
               </div>
 
               <p className="mt-3 text-[11px] text-emerald-300 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20">
-                ✅ Aunque los dos bloques de entrada son idénticos, los criptogramas son <strong>COMPLETAMENTE DISTINTOS</strong> gracias a la propagación del vector IV.
+                Aunque los dos bloques de entrada son idénticos, los criptogramas son <strong>COMPLETAMENTE DISTINTOS</strong> gracias a la propagación del vector IV.
               </p>
             </GlassCard>
           </div>

@@ -349,7 +349,7 @@ export const BaseConverterTool: React.FC = () => {
             </div>
 
             <p className="mt-4 text-xs text-slate-400 bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-              💡 <span className="font-semibold text-slate-200">Fundamento Criptográfico:</span> {bitwiseResult.explanation}
+              <span className="font-semibold text-slate-200">Fundamento Criptográfico:</span> {bitwiseResult.explanation}
             </p>
           </GlassCard>
         </div>
@@ -405,7 +405,7 @@ export const BaseConverterTool: React.FC = () => {
             </div>
 
             <div className="mt-4 p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-slate-300">
-              📌 <span className="font-semibold text-amber-300">Propiedad de Simetría Perfecta:</span> Si vuelves a ingresar el criptograma con la misma clave <code className="bg-slate-800 px-1 py-0.5 rounded text-amber-200">{streamKey}</code>, obtendrás exactamente el mensaje original <code className="bg-slate-800 px-1 py-0.5 rounded text-sky-200">{streamText}</code> debido a la propiedad algebraica <code className="text-emerald-300 font-bold">(M ⊕ K) ⊕ K = M</code>.
+              <span className="font-semibold text-amber-300">Propiedad de Simetría Perfecta:</span> Si vuelves a ingresar el criptograma con la misma clave <code className="bg-slate-800 px-1 py-0.5 rounded text-amber-200">{streamKey}</code>, obtendrás exactamente el mensaje original <code className="bg-slate-800 px-1 py-0.5 rounded text-sky-200">{streamText}</code> debido a la propiedad algebraica <code className="text-emerald-300 font-bold">(M ⊕ K) ⊕ K = M</code>.
             </div>
           </GlassCard>
         </div>

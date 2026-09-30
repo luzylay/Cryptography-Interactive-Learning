@@ -334,7 +334,7 @@ export const HashIntegrityLab: React.FC = () => {
               {calculatedHmac}
             </div>
             <p className="mt-3 text-xs text-slate-400">
-              🛡️ Si un atacante altera cualquier carácter del mensaje o no posee la clave exacta, el receptor obtendrá un HMAC divergente y descartará el paquete de inmediato.
+              Si un atacante altera cualquier carácter del mensaje o no posee la clave exacta, el receptor obtendrá un HMAC divergente y descartará el paquete de inmediato.
             </p>
           </GlassCard>
         </div>

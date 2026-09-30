@@ -9,6 +9,9 @@ import {
   ChevronDown,
   ChevronUp,
   Tag,
+  Lightbulb,
+  Microscope,
+  Edit3
 } from 'lucide-react';
 import {
   KNOWLEDGE_BASE_QA,
@@ -263,7 +266,7 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
                         {/* Key Takeaways */}
                         <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3.5 flex flex-col gap-1.5">
                           <h4 className="text-[11px] font-mono font-bold text-amber-300 uppercase">
-                            💡 Puntos Clave &amp; Conclusiones
+                            <Lightbulb className="w-4 h-4 text-emerald-400 inline-block mr-2" />Puntos Clave &amp; Conclusiones
                           </h4>
                           <ul className="space-y-1 text-xs text-amber-200/90 font-mono">
                             {item.keyTakeaways.map((takeaway, tIdx) => (
@@ -350,14 +353,14 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
                       className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-xs font-mono font-semibold transition"
                       title="Probar este algoritmo de forma visual e interactiva"
                     >
-                      🔬 Abrir Laboratorio
+                      <Microscope className="w-4 h-4 mr-2" /> Abrir Laboratorio
                     </button>
                     <button
                       onClick={() => onNavigateTab('practice')}
                       className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 text-xs font-mono transition"
                       title="Ir a resolver ejercicios de autoevaluación"
                     >
-                      📝 Ir a Práctica
+                      <Edit3 className="w-4 h-4 mr-2" /> Ir a Práctica
                     </button>
                   </>
                 )}

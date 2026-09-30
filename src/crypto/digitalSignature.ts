@@ -176,7 +176,7 @@ export function simulateDigitalSignaturePipeline(
       inputData: `Mensaje enviado: "${finalTransmittedMsg}"`,
       outputData: `Firma transmitida: 0x${finalSignatureHex}`,
       explanation: isTampered
-        ? `⚠️ ALERTA: Un atacante interceptó la transmisión. ${tamperReason}`
+        ? `ALERTA: Un atacante interceptó la transmisión. ${tamperReason}`
         : 'Los datos transitaron por la red sin interferencias ni modificaciones de terceros.',
     },
     {
@@ -187,7 +187,7 @@ export function simulateDigitalSignaturePipeline(
       inputData: `Firma S: 0x${finalSignatureHex}, Clave Pública: (e=${keyPair.e}, n=${keyPair.n})`,
       outputData: `Hash recuperado h': 0x${recoveredHash} | Hash local h'': 0x${expectedHashReduced}`,
       explanation: verificationSuccess
-        ? '✅ FIRMA VÁLIDA: El hash recuperado coincide matemáticamente con el hash del mensaje recibido. Se confirman Integridad, Autenticidad y No Repudio.'
+        ? 'FIRMA VÁLIDA: El hash recuperado coincide matemáticamente con el hash del mensaje recibido. Se confirman Integridad, Autenticidad y No Repudio.'
         : `❌ FIRMA INVÁLIDA: h' (${recoveredHash}) ≠ h'' (${expectedHashReduced}). Bob rechaza el mensaje por falta de autenticidad o corrupción de datos.`,
     },
   ];
