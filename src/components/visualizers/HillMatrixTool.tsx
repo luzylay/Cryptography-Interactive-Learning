@@ -384,11 +384,14 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                     <span className="text-slate-600 hidden sm:inline">Sin caracteres inválidos</span>
                   </label>
                   <div className="w-full text-xs font-mono break-words flex flex-wrap gap-x-2 gap-y-1">
-                    {formatInBlocks(result.inputText, matrixDim).split(' ').map((block, i) => (
-                      <span key={`norm-${i}`} className="bg-slate-950 text-slate-300 px-1.5 py-0.5 rounded border border-slate-800/60 tracking-widest shadow-sm">
-                        {block.replace(/ /g, '␣')}
-                      </span>
-                    ))}
+                    {Array.from({ length: Math.ceil(result.inputText.length / matrixDim) }).map((_, i) => {
+                      const block = result.inputText.slice(i * matrixDim, (i + 1) * matrixDim);
+                      return (
+                        <span key={`norm-${i}`} className="bg-slate-950 text-slate-300 px-1.5 py-0.5 rounded border border-slate-800/60 tracking-widest shadow-sm">
+                          {block.replace(/ /g, '␣')}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -398,12 +401,21 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                 <label className="text-[11px] font-mono text-slate-500 uppercase">
                   Resultado {direction === 'encrypt' ? 'Cifrado (C)' : 'Descifrado (M)'}:
                 </label>
-                <div className={`w-full min-h-[5.5rem] border rounded-xl p-3 text-sm font-mono flex items-start justify-between break-words relative shadow-inner leading-relaxed ${
+                <div className={`w-full min-h-[5.5rem] border rounded-xl p-3 text-sm font-mono flex items-start justify-between break-words relative shadow-inner leading-relaxed whitespace-pre-wrap ${
                   direction === 'encrypt' ? 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300' : 'bg-amber-950/10 border-amber-900/30 text-amber-300'
                 }`}>
-                  <span className="font-semibold tracking-wide w-full">{result.formattedOutput || '---'}</span>
+                  <span className="font-semibold tracking-wide w-full flex flex-wrap gap-2">
+                    {Array.from({ length: Math.ceil(result.outputText.length / matrixDim) }).map((_, i) => {
+                      const block = result.outputText.slice(i * matrixDim, (i + 1) * matrixDim);
+                      return (
+                        <span key={`out-block-${i}`}>
+                          {block.replace(/ /g, '␣')}
+                        </span>
+                      );
+                    })}
+                  </span>
                   
-                  {direction === 'encrypt' && result.inputText.length > inputText.trim().length && result.formattedOutput && (
+                  {direction === 'encrypt' && result.inputText.length > inputText.trim().length && result.outputText && (
                     <span className="absolute bottom-2 right-2 text-[10px] font-medium text-emerald-500/70 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-900/50 shadow-sm backdrop-blur-sm" title="Caracteres de relleno añadidos para completar el bloque">
                       + {result.inputText.length - result.inputText.replace(new RegExp(`${fillerChar}+$`), '').length} pad
                     </span>
@@ -420,10 +432,10 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
               <div className="max-h-60 overflow-y-auto space-y-2 font-mono text-xs text-slate-300 pr-1">
                 {result.steps.map((st, i) => (
                   <div key={`hill-step-${i}`} className="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/60 flex flex-col gap-1">
-                    <div className="flex items-center gap-2 text-amber-400 font-bold">
-                      <span>Bloque #{st.blockIndex + 1}: Letras [{st.inBlock}] = Vector Entrada [{st.inVector.join(', ')}]</span>
+                    <div className="flex flex-wrap items-center gap-2 text-amber-400 font-bold">
+                      <span>Bloque #{st.blockIndex + 1}: Letras [{st.inBlock.replace(/ /g, '␣')}] = Vector Entrada [{st.inVector.join(', ')}]</span>
                       <ArrowRight className="w-3 h-3 text-slate-600" />
-                      <span className="text-emerald-400">Vector Salida [{st.outVector.join(', ')}] = Letras [{st.outBlock}]</span>
+                      <span className="text-emerald-400">Vector Salida [{st.outVector.join(', ')}] = Letras [{st.outBlock.replace(/ /g, '␣')}]</span>
                     </div>
                     {st.dotProducts.map((dp, dpi) => (
                       <div key={`dp-${dpi}`} className="text-[11px] text-slate-400 pl-2 border-l border-slate-800">
