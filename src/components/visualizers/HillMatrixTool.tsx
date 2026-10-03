@@ -324,50 +324,73 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
 
           {/* Right Column: Sandbox and Vector Dot Product Derivations */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur-md flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-mono text-slate-400">Texto ({direction === 'encrypt' ? 'Claro' : 'Cifrado'}):</span>
-                <div className="flex rounded-lg bg-slate-950 p-0.5 border border-slate-800">
+            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur-md flex flex-col gap-4 shadow-xl">
+              {/* Header with Switch */}
+              <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
+                <span className="text-xs font-mono text-slate-400 font-bold uppercase tracking-wider">
+                  Mensaje a Procesar
+                </span>
+                <div className="flex rounded-lg bg-slate-950 p-0.5 border border-slate-800 shadow-inner">
                   <button
                     onClick={() => setDirection('encrypt')}
-                    className={`px-3 py-1 text-xs font-mono rounded-md ${direction === 'encrypt' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'text-slate-400'}`}
+                    className={`px-3 py-1.5 text-xs font-mono rounded-md transition-all ${direction === 'encrypt' ? 'bg-emerald-500/20 text-emerald-400 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
                   >
                     Cifrar
                   </button>
                   <button
                     onClick={() => setDirection('decrypt')}
-                    className={`px-3 py-1 text-xs font-mono rounded-md ${direction === 'decrypt' ? 'bg-amber-500/20 text-amber-400 font-bold' : 'text-slate-400'}`}
+                    className={`px-3 py-1.5 text-xs font-mono rounded-md transition-all ${direction === 'decrypt' ? 'bg-amber-500/20 text-amber-400 font-bold shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
                   >
                     Descifrar
                   </button>
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <input
-                  type="text"
+              {/* Text Input Area */}
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-end">
+                  <label className="text-[11px] font-mono text-slate-500 uppercase">
+                    Texto en {direction === 'encrypt' ? 'Claro (M)' : 'Cifrado (C)'}:
+                  </label>
+                  {direction === 'encrypt' && (
+                    <div className="flex items-center gap-2 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800/60">
+                      <span className="text-[10px] text-slate-400 font-mono">Relleno (Pad):</span>
+                      <select
+                        value={fillerChar}
+                        onChange={(e) => setFillerChar(e.target.value)}
+                        className="bg-transparent text-[11px] text-emerald-400 font-mono font-bold focus:outline-none cursor-pointer"
+                        title="Usado si la longitud no es múltiplo de la dimensión matricial"
+                      >
+                        {alphaChars.split('').map(c => (
+                          <option key={`filler-${c}`} value={c} className="bg-slate-900">{c === ' ' ? 'Espacio (␣)' : c}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+                <textarea
                   value={inputText}
                   onChange={e => setInputText(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
+                  className="w-full h-24 bg-slate-950/80 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500/50 resize-none shadow-inner placeholder-slate-700 leading-relaxed"
+                  placeholder={`Escribe el texto a ${direction === 'encrypt' ? 'cifrar' : 'descifrar'}...`}
                 />
-                <div className="flex flex-col">
-                  <select
-                    value={fillerChar}
-                    onChange={(e) => setFillerChar(e.target.value)}
-                    className="h-full bg-slate-950 border border-slate-800 rounded-xl px-3 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
-                    title="Carácter de Relleno"
-                  >
-                    {alphaChars.split('').map(c => (
-                      <option key={`filler-${c}`} value={c}>Pad: {c === ' ' ? '␣' : c}</option>
-                    ))}
-                  </select>
-                </div>
               </div>
 
-              <div>
-                <span className="text-xs font-mono text-slate-400 block mb-1">Resultado:</span>
-                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between font-mono text-sm text-emerald-400 font-bold">
-                  <span>{result.formattedOutput || '---'}</span>
+              {/* Result Area */}
+              <div className="flex flex-col gap-2 mt-2">
+                <label className="text-[11px] font-mono text-slate-500 uppercase">
+                  Resultado {direction === 'encrypt' ? 'Cifrado (C)' : 'Descifrado (M)'}:
+                </label>
+                <div className={`w-full min-h-[5.5rem] border rounded-xl p-3 text-sm font-mono flex items-start justify-between break-words relative shadow-inner leading-relaxed ${
+                  direction === 'encrypt' ? 'bg-emerald-950/10 border-emerald-900/30 text-emerald-300' : 'bg-amber-950/10 border-amber-900/30 text-amber-300'
+                }`}>
+                  <span className="font-semibold tracking-wide w-full">{result.formattedOutput || '---'}</span>
+                  
+                  {direction === 'encrypt' && result.inputText.length > inputText.trim().length && result.formattedOutput && (
+                    <span className="absolute bottom-2 right-2 text-[10px] font-medium text-emerald-500/70 bg-emerald-950/80 px-2 py-0.5 rounded-md border border-emerald-900/50 shadow-sm backdrop-blur-sm" title="Caracteres de relleno añadidos para completar el bloque">
+                      + {result.inputText.length - result.inputText.replace(new RegExp(`${fillerChar}+$`), '').length} pad
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
