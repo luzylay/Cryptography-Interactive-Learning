@@ -44,18 +44,31 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
   const [cryptoPlain, setCryptoPlain] = useState<string>('DELA YOPE');
   const [cryptoCipher, setCryptoCipher] = useState<string>('JCOW ZLVB');
 
-  const m = ALPHABETS[mode].mod;
+  const [localAlphabetType, setLocalAlphabetType] = useState<string>('global');
+  const [customAlphabetStr, setCustomAlphabetStr] = useState<string>('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ');
+
+  const alphaChars = useMemo(() => {
+    if (localAlphabetType === 'global') return ALPHABETS[mode].chars;
+    if (localAlphabetType === 'es27') return ALPHABETS['es27'].chars;
+    if (localAlphabetType === 'en26') return ALPHABETS['en26'].chars;
+    if (localAlphabetType === 'es28') return ALPHABETS['es27'].chars + ' ';
+    
+    const uniqueChars = Array.from(new Set(customAlphabetStr.toUpperCase().split('')));
+    return uniqueChars.length > 1 ? uniqueChars.join('') : 'AB';
+  }, [mode, localAlphabetType, customAlphabetStr]);
+
+  const m = alphaChars.length;
 
   const result = useMemo(() => {
     let currentMatrix = m2;
     if (matrixDim === 3) currentMatrix = m3;
     else if (matrixDim === 4) currentMatrix = m4;
     else if (matrixDim === 5) currentMatrix = m5;
-    return processHillNxN(inputText, currentMatrix, mode, direction, fillerChar);
-  }, [matrixDim, m2, m3, m4, m5, inputText, mode, direction, fillerChar]);
+    return processHillNxN(inputText, currentMatrix, alphaChars, direction, fillerChar);
+  }, [matrixDim, m2, m3, m4, m5, inputText, alphaChars, direction, fillerChar]);
 
   const handleKeyFromStr = () => {
-    const derived = deriveHillMatrixFromText(keyInputStr, mode, fillerChar);
+    const derived = deriveHillMatrixFromText(keyInputStr, alphaChars, fillerChar);
     if (derived) {
       setMatrixDim(derived.dimension);
       if (derived.dimension === 2) setM2(derived.matrix);
@@ -67,8 +80,8 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
 
   const cryptanalysisResult = useMemo(() => {
     if (activeTab !== 'cryptanalysis') return null;
-    return cryptanalysisHillNxN(cryptoPlain, cryptoCipher, matrixDim, mode);
-  }, [cryptoPlain, cryptoCipher, matrixDim, mode, activeTab]);
+    return cryptanalysisHillNxN(cryptoPlain, cryptoCipher, matrixDim, alphaChars);
+  }, [cryptoPlain, cryptoCipher, matrixDim, alphaChars, activeTab]);
 
   const updateM2 = (r: number, c: number, val: number) => {
     const next = m2.map((row, ri) => row.map((col, ci) => (ri === r && ci === c ? val : col)));
@@ -144,15 +157,43 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
             ))}
           </div>
         </div>
+
+        {/* Local Alphabet Selector */}
+        <div className="flex flex-col gap-3 mt-2">
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-400 font-mono">Alfabeto (n={m}):</span>
+            <select
+              value={localAlphabetType}
+              onChange={(e) => setLocalAlphabetType(e.target.value)}
+              className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1 text-xs text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
+            >
+              <option value="global">Heredar Global ({ALPHABETS[mode].name})</option>
+              <option value="es27">Castellano - 27 símbolos con Ñ</option>
+              <option value="en26">Latino - 26 símbolos sin Ñ</option>
+              <option value="es28">Castellano + espacio - 28 símbolos</option>
+              <option value="custom">Arbitrario - definido por el usuario</option>
+            </select>
+          </div>
+          
+          {localAlphabetType === 'custom' && (
+            <input
+              type="text"
+              value={customAlphabetStr}
+              onChange={(e) => setCustomAlphabetStr(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-amber-300 font-mono focus:outline-none focus:border-amber-500"
+              placeholder="Ingresa tus caracteres únicos..."
+            />
+          )}
+        </div>
       </div>
 
       {/* Alfabeto de Referencia */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-4 backdrop-blur-md overflow-x-auto">
         <h3 className="text-xs font-mono text-slate-400 mb-2">Valores Numéricos del Alfabeto (Módulo {m}):</h3>
         <div className="flex gap-1 w-max">
-          {ALPHABETS[mode].chars.split('').map((char, i) => (
+          {alphaChars.split('').map((char, i) => (
             <div key={char} className="flex flex-col items-center bg-slate-950 border border-slate-800 rounded-md p-1.5 min-w-[36px] hover:bg-emerald-900/30 transition-colors">
-              <span className="text-emerald-400 font-bold text-sm">{char}</span>
+              <span className="text-emerald-400 font-bold text-sm">{char === ' ' ? '␣' : char}</span>
               <span className="text-slate-400 text-[10px] font-mono">{i}</span>
             </div>
           ))}
@@ -316,8 +357,8 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                     className="h-full bg-slate-950 border border-slate-800 rounded-xl px-3 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
                     title="Carácter de Relleno"
                   >
-                    {ALPHABETS[mode].chars.split('').map(c => (
-                      <option key={`filler-${c}`} value={c}>Pad: {c}</option>
+                    {alphaChars.split('').map(c => (
+                      <option key={`filler-${c}`} value={c}>Pad: {c === ' ' ? '␣' : c}</option>
                     ))}
                   </select>
                 </div>

@@ -1,6 +1,6 @@
 // Hill 2x2 and 3x3 Matrix Cipher (mod m)
 
-import { ALPHABETS, AlphabetMode, normalizeText, formatInBlocks } from '../alphabets';
+import { formatInBlocks } from '../alphabets';
 import { mod, gcd, det2x2, inv2x2, det3x3, inv3x3, isHillMatrixValid2x2, isHillMatrixValid3x3, modInverse, detNxN, invNxN, isHillMatrixValidNxN } from '../mathUtils';
 
 export interface HillVectorStep {
@@ -12,16 +12,32 @@ export interface HillVectorStep {
   dotProducts: string[];
 }
 
+function normalizeCustom(text: string, alphaChars: string): string {
+  const charMap: Record<string, string> = {
+    Á: 'A', É: 'E', Í: 'I', Ó: 'O', Ú: 'U', Ü: 'U',
+    á: 'A', é: 'E', í: 'I', ó: 'O', ú: 'U', ü: 'U',
+    Ñ: alphaChars.includes('Ñ') ? 'Ñ' : 'N',
+    ñ: alphaChars.includes('Ñ') ? 'Ñ' : 'n',
+  };
+
+  return text
+    .toUpperCase()
+    .split('')
+    .map(c => charMap[c] ?? c)
+    .filter(c => alphaChars.includes(c))
+    .join('');
+}
+
 export function processHill2x2(
   text: string,
   keyMatrix: number[][],
-  mode: AlphabetMode,
+  alphaChars: string,
   direction: 'encrypt' | 'decrypt' = 'encrypt',
   filler = 'X'
 ) {
-  const norm = normalizeText(text, mode);
-  const alpha = ALPHABETS[mode].chars;
-  const m = ALPHABETS[mode].mod;
+  const norm = normalizeCustom(text, alphaChars);
+  const m = alphaChars.length;
+  const alpha = alphaChars;
 
   const isValid = isHillMatrixValid2x2(keyMatrix, m);
   const det = det2x2(keyMatrix, m);
@@ -47,7 +63,6 @@ export function processHill2x2(
 
   const effectiveMatrix = direction === 'encrypt' ? keyMatrix : invMatrix;
 
-  // Pad to even length
   const padded = norm.length % 2 !== 0 ? norm + filler : norm;
   const steps: HillVectorStep[] = [];
   let outStr = '';
@@ -94,13 +109,13 @@ export function processHill2x2(
 export function processHill3x3(
   text: string,
   keyMatrix: number[][],
-  mode: AlphabetMode,
+  alphaChars: string,
   direction: 'encrypt' | 'decrypt' = 'encrypt',
   filler = 'X'
 ) {
-  const norm = normalizeText(text, mode);
-  const alpha = ALPHABETS[mode].chars;
-  const m = ALPHABETS[mode].mod;
+  const norm = normalizeCustom(text, alphaChars);
+  const m = alphaChars.length;
+  const alpha = alphaChars;
 
   const isValid = isHillMatrixValid3x3(keyMatrix, m);
   const det = det3x3(keyMatrix, m);
@@ -126,7 +141,6 @@ export function processHill3x3(
 
   const effectiveMatrix = direction === 'encrypt' ? keyMatrix : invMatrix;
 
-  // Pad to multiple of 3
   let padded = norm;
   while (padded.length % 3 !== 0) padded += filler;
 
@@ -176,24 +190,23 @@ export function processHill3x3(
 
 export function deriveHillMatrixFromText(
   keyInput: string,
-  mode: AlphabetMode,
+  alphaChars: string,
   paddingSymbol: string
 ) {
-  const alpha = ALPHABETS[mode].chars;
-  const m = ALPHABETS[mode].mod;
+  const m = alphaChars.length;
   
-  const cleanChars = normalizeText(keyInput, mode).split('');
+  const cleanChars = normalizeCustom(keyInput, alphaChars).split('');
   if (cleanChars.length === 0) return null;
   
   const dimension = Math.max(2, Math.ceil(Math.sqrt(cleanChars.length)));
-  if (dimension > 5) return null; // Limitar a 5x5 por la UI
+  if (dimension > 5) return null; 
   
   const requiredLength = dimension * dimension;
   const paddedChars = [...cleanChars, ...Array(requiredLength - cleanChars.length).fill(paddingSymbol)];
   
   let matrix = Array.from({ length: dimension }, (_, r) =>
     Array.from({ length: dimension }, (_, c) =>
-      alpha.indexOf(paddedChars[r * dimension + c])
+      alphaChars.indexOf(paddedChars[r * dimension + c])
     )
   );
 
@@ -202,7 +215,6 @@ export function deriveHillMatrixFromText(
     return { dimension: dimension as 2 | 3 | 4 | 5, matrix, adjusted: false };
   }
 
-  // Ajuste automático como en la calculadora original
   const baseMatrix = matrix.map(row => [...row]);
   for (let offset = 1; offset < m; offset++) {
     const candidate = baseMatrix.map((row, r) =>
@@ -213,7 +225,6 @@ export function deriveHillMatrixFromText(
     }
   }
 
-  // Si aún falla, forzamos matriz triangular (backup)
   matrix = baseMatrix.map((row, r) =>
     row.map((val, c) => {
       if (c < r) return 0;
@@ -232,13 +243,13 @@ export function deriveHillMatrixFromText(
 export function processHillNxN(
   text: string,
   keyMatrix: number[][],
-  mode: AlphabetMode,
+  alphaChars: string,
   direction: 'encrypt' | 'decrypt' = 'encrypt',
   filler = 'X'
 ) {
-  const norm = normalizeText(text, mode);
-  const alpha = ALPHABETS[mode].chars;
-  const m = ALPHABETS[mode].mod;
+  const norm = normalizeCustom(text, alphaChars);
+  const m = alphaChars.length;
+  const alpha = alphaChars;
   const n = keyMatrix.length;
 
   const isValid = isHillMatrixValidNxN(keyMatrix, m);
@@ -265,7 +276,6 @@ export function processHillNxN(
 
   const effectiveMatrix = direction === 'encrypt' ? keyMatrix : invMatrix;
 
-  // Pad to multiple of n using the selected filler
   let padded = norm;
   while (padded.length % n !== 0) padded += filler;
 
@@ -328,12 +338,12 @@ export function cryptanalysisHillNxN(
   plaintext: string,
   ciphertext: string,
   n: number,
-  mode: AlphabetMode
+  alphaChars: string
 ) {
-  const normP = normalizeText(plaintext, mode);
-  const normC = normalizeText(ciphertext, mode);
-  const alpha = ALPHABETS[mode].chars;
-  const m = ALPHABETS[mode].mod;
+  const normP = normalizeCustom(plaintext, alphaChars);
+  const normC = normalizeCustom(ciphertext, alphaChars);
+  const m = alphaChars.length;
+  const alpha = alphaChars;
 
   if (normP.length < n * n || normC.length < n * n) {
     return {
@@ -343,7 +353,6 @@ export function cryptanalysisHillNxN(
     };
   }
 
-  // Form matrices M and C. Vectors are columns.
   const M: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
   const C: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
 
@@ -367,7 +376,6 @@ export function cryptanalysisHillNxN(
     };
   }
 
-  // K = C * M^-1
   const resultK = Array.from({ length: n }, () => Array(n).fill(0));
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
