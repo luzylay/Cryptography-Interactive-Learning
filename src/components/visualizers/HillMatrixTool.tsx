@@ -376,6 +376,23 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                 />
               </div>
 
+              {/* Processed Text (Normalized & Padded) */}
+              {inputText.trim().length > 0 && result.inputText.length > 0 && (
+                <div className="flex flex-col gap-1.5 mt-1 border-l-2 border-slate-700/50 pl-3 ml-1">
+                  <label className="text-[10px] font-mono text-slate-500 uppercase flex items-center justify-between">
+                    <span>Vectores Normalizados ({result.inputText.length} símbolos)</span>
+                    <span className="text-slate-600 hidden sm:inline">Sin caracteres inválidos</span>
+                  </label>
+                  <div className="w-full text-xs font-mono break-words flex flex-wrap gap-x-2 gap-y-1">
+                    {formatInBlocks(result.inputText, matrixDim).split(' ').map((block, i) => (
+                      <span key={`norm-${i}`} className="bg-slate-950 text-slate-300 px-1.5 py-0.5 rounded border border-slate-800/60 tracking-widest shadow-sm">
+                        {block.replace(/ /g, '␣')}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Result Area */}
               <div className="flex flex-col gap-2 mt-2">
                 <label className="text-[11px] font-mono text-slate-500 uppercase">

@@ -323,7 +323,7 @@ export function processHillNxN(
     errorMessage: null,
     inputText: padded,
     outputText: outStr,
-    formattedOutput: formatInBlocks(outStr),
+    formattedOutput: formatInBlocks(outStr, n),
     steps,
     effectiveMatrix,
     det,
