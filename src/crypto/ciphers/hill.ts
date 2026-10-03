@@ -268,3 +268,68 @@ export function processHillNxN(
     alpha,
   };
 }
+
+export function cryptanalysisHillNxN(
+  plaintext: string,
+  ciphertext: string,
+  n: number,
+  mode: AlphabetMode
+) {
+  const normP = normalizeText(plaintext, mode);
+  const normC = normalizeText(ciphertext, mode);
+  const alpha = ALPHABETS[mode].chars;
+  const m = ALPHABETS[mode].mod;
+
+  if (normP.length < n * n || normC.length < n * n) {
+    return {
+      success: false,
+      errorMessage: `Se requieren al menos ${n * n} caracteres para encontrar la clave de ${n}x${n}.`,
+      matrixK: null,
+    };
+  }
+
+  // Form matrices M and C. Vectors are columns.
+  const M: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+  const C: number[][] = Array.from({ length: n }, () => Array(n).fill(0));
+
+  let charIdx = 0;
+  for (let col = 0; col < n; col++) {
+    for (let row = 0; row < n; row++) {
+      M[row][col] = alpha.indexOf(normP[charIdx]);
+      C[row][col] = alpha.indexOf(normC[charIdx]);
+      charIdx++;
+    }
+  }
+
+  const detM = detNxN(M, m);
+  const mInv = invNxN(M, m);
+
+  if (!mInv) {
+    return {
+      success: false,
+      errorMessage: `La matriz de texto en claro M no es invertible (det = ${detM}). Intenta con otro texto.`,
+      matrixK: null,
+    };
+  }
+
+  // K = C * M^-1
+  const resultK = Array.from({ length: n }, () => Array(n).fill(0));
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      let sum = 0;
+      for (let k = 0; k < n; k++) {
+        sum += C[r][k] * mInv[k][c];
+      }
+      resultK[r][c] = mod(sum, m);
+    }
+  }
+
+  return {
+    success: true,
+    errorMessage: null,
+    matrixK: resultK,
+    M,
+    C,
+    mInv,
+  };
+}

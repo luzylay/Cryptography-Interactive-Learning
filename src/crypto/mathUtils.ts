@@ -148,3 +148,19 @@ export function invNxN(M: number[][], m: number): number[][] | null {
   return adj;
 }
 
+export function multiplyNxN(A: number[][], B: number[][], m: number): number[][] {
+  const n = A.length;
+  const p = B[0].length;
+  const result: number[][] = Array.from({ length: n }, () => Array(p).fill(0));
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < p; c++) {
+      let sum = 0;
+      for (let k = 0; k < A[0].length; k++) {
+        sum += A[r][k] * B[k][c];
+      }
+      result[r][c] = mod(sum, m);
+    }
+  }
+  return result;
+}
+
