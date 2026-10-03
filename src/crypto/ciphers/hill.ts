@@ -1,7 +1,7 @@
 // Hill 2x2 and 3x3 Matrix Cipher (mod m)
 
 import { ALPHABETS, AlphabetMode, normalizeText, formatInBlocks } from '../alphabets';
-import { mod, det2x2, inv2x2, det3x3, inv3x3, isHillMatrixValid2x2, isHillMatrixValid3x3, modInverse, detNxN, invNxN, isHillMatrixValidNxN } from '../mathUtils';
+import { mod, gcd, det2x2, inv2x2, det3x3, inv3x3, isHillMatrixValid2x2, isHillMatrixValid3x3, modInverse, detNxN, invNxN, isHillMatrixValidNxN } from '../mathUtils';
 
 export interface HillVectorStep {
   blockIndex: number;
@@ -174,6 +174,61 @@ export function processHill3x3(
   };
 }
 
+export function deriveHillMatrixFromText(
+  keyInput: string,
+  mode: AlphabetMode,
+  paddingSymbol: string
+) {
+  const alpha = ALPHABETS[mode].chars;
+  const m = ALPHABETS[mode].mod;
+  
+  const cleanChars = normalizeText(keyInput, mode).split('');
+  if (cleanChars.length === 0) return null;
+  
+  const dimension = Math.max(2, Math.ceil(Math.sqrt(cleanChars.length)));
+  if (dimension > 5) return null; // Limitar a 5x5 por la UI
+  
+  const requiredLength = dimension * dimension;
+  const paddedChars = [...cleanChars, ...Array(requiredLength - cleanChars.length).fill(paddingSymbol)];
+  
+  let matrix = Array.from({ length: dimension }, (_, r) =>
+    Array.from({ length: dimension }, (_, c) =>
+      alpha.indexOf(paddedChars[r * dimension + c])
+    )
+  );
+
+  let det = detNxN(matrix, m);
+  if (gcd(det, m) === 1) {
+    return { dimension: dimension as 2 | 3 | 4 | 5, matrix, adjusted: false };
+  }
+
+  // Ajuste automático como en la calculadora original
+  const baseMatrix = matrix.map(row => [...row]);
+  for (let offset = 1; offset < m; offset++) {
+    const candidate = baseMatrix.map((row, r) =>
+      row.map((val, c) => r === c ? mod(val + offset, m) : val)
+    );
+    if (gcd(detNxN(candidate, m), m) === 1) {
+      return { dimension: dimension as 2 | 3 | 4 | 5, matrix: candidate, adjusted: true };
+    }
+  }
+
+  // Si aún falla, forzamos matriz triangular (backup)
+  matrix = baseMatrix.map((row, r) =>
+    row.map((val, c) => {
+      if (c < r) return 0;
+      if (c === r) {
+        let nxt = val;
+        while (gcd(nxt, m) !== 1) nxt = mod(nxt + 1, m);
+        return nxt;
+      }
+      return val;
+    })
+  );
+  
+  return { dimension: dimension as 2 | 3 | 4 | 5, matrix, adjusted: true };
+}
+
 export function processHillNxN(
   text: string,
   keyMatrix: number[][],
@@ -210,7 +265,7 @@ export function processHillNxN(
 
   const effectiveMatrix = direction === 'encrypt' ? keyMatrix : invMatrix;
 
-  // Pad to multiple of n
+  // Pad to multiple of n using the selected filler
   let padded = norm;
   while (padded.length % n !== 0) padded += filler;
 

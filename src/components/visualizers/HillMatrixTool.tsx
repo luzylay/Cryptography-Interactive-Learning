@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { AlphabetMode, ALPHABETS, formatInBlocks } from '../../crypto/alphabets';
-import { processHillNxN, cryptanalysisHillNxN } from '../../crypto/ciphers/hill';
+import { AlphabetMode, ALPHABETS, formatInBlocks, normalizeText } from '../../crypto/alphabets';
+import { processHillNxN, cryptanalysisHillNxN, deriveHillMatrixFromText } from '../../crypto/ciphers/hill';
 import { modInverse } from '../../crypto/mathUtils';
-import { Calculator, CheckCircle2, XCircle, ArrowRight, Layers, Unlock } from 'lucide-react';
+import { Calculator, CheckCircle2, XCircle, ArrowRight, Layers, Unlock, Wand2 } from 'lucide-react';
 
 interface HillMatrixToolProps {
   mode: AlphabetMode;
@@ -33,6 +33,10 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
     [0, 0, 0, 1, 0],
     [0, 0, 0, 0, 1],
   ]);
+  
+  const [keyInputStr, setKeyInputStr] = useState<string>('');
+  const [fillerChar, setFillerChar] = useState<string>('X');
+  
   const [inputText, setInputText] = useState<string>('HOLA A TODOS');
   const [direction, setDirection] = useState<'encrypt' | 'decrypt'>('encrypt');
 
@@ -47,8 +51,19 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
     if (matrixDim === 3) currentMatrix = m3;
     else if (matrixDim === 4) currentMatrix = m4;
     else if (matrixDim === 5) currentMatrix = m5;
-    return processHillNxN(inputText, currentMatrix, mode, direction);
-  }, [matrixDim, m2, m3, m4, m5, inputText, mode, direction]);
+    return processHillNxN(inputText, currentMatrix, mode, direction, fillerChar);
+  }, [matrixDim, m2, m3, m4, m5, inputText, mode, direction, fillerChar]);
+
+  const handleKeyFromStr = () => {
+    const derived = deriveHillMatrixFromText(keyInputStr, mode, fillerChar);
+    if (derived) {
+      setMatrixDim(derived.dimension);
+      if (derived.dimension === 2) setM2(derived.matrix);
+      if (derived.dimension === 3) setM3(derived.matrix);
+      if (derived.dimension === 4) setM4(derived.matrix);
+      if (derived.dimension === 5) setM5(derived.matrix);
+    }
+  };
 
   const cryptanalysisResult = useMemo(() => {
     if (activeTab !== 'cryptanalysis') return null;
@@ -152,6 +167,26 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
               <Layers className="w-4 h-4 text-emerald-400" />
               Matriz Clave K ({matrixDim}×{matrixDim})
             </h3>
+            
+            <div className="flex flex-col gap-3 p-4 bg-slate-950/50 border border-slate-800/60 rounded-2xl">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Derivar K desde frase (Ej: PELIGROSO)"
+                  value={keyInputStr}
+                  onChange={(e) => setKeyInputStr(e.target.value)}
+                  className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500"
+                />
+                <button
+                  onClick={handleKeyFromStr}
+                  title="Autocompletar matriz"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white p-1.5 rounded-lg transition"
+                >
+                  <Wand2 className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-500">Si K no es invertible, se ajustará automáticamente.</p>
+            </div>
 
             <div className="flex justify-center p-4 bg-slate-950 border border-slate-800 rounded-2xl overflow-x-auto">
               {matrixDim === 2 && (
@@ -267,12 +302,26 @@ export const HillMatrixTool: React.FC<HillMatrixToolProps> = ({ mode }) => {
                 </div>
               </div>
 
-              <input
-                type="text"
-                value={inputText}
-                onChange={e => setInputText(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
-              />
+              <div className="flex gap-4">
+                <input
+                  type="text"
+                  value={inputText}
+                  onChange={e => setInputText(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
+                />
+                <div className="flex flex-col">
+                  <select
+                    value={fillerChar}
+                    onChange={(e) => setFillerChar(e.target.value)}
+                    className="h-full bg-slate-950 border border-slate-800 rounded-xl px-3 text-sm text-slate-100 font-mono focus:outline-none focus:border-emerald-500"
+                    title="Carácter de Relleno"
+                  >
+                    {ALPHABETS[mode].chars.split('').map(c => (
+                      <option key={`filler-${c}`} value={c}>Pad: {c}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
               <div>
                 <span className="text-xs font-mono text-slate-400 block mb-1">Resultado:</span>
