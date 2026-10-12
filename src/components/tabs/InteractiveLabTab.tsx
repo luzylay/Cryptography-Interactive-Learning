@@ -61,7 +61,7 @@ export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onMo
     { id: 'vigenere', label: 'Tabula Vigenère', category: 'clasica', icon: Grid, color: 'text-cyan-400', badge: 'Polialfabético' },
     { id: 'playfair', label: 'Playfair 5×5', category: 'clasica', icon: LayoutGrid, color: 'text-violet-400', badge: 'Digrámico' },
     { id: 'hill', label: 'Cifrador de Hill', category: 'clasica', icon: Calculator, color: 'text-emerald-400', badge: 'Matricial' },
-    { id: 'transposicion', label: 'Transposición', category: 'clasica', icon: Columns, color: 'text-rose-400', badge: 'Geométrico' },
+    { id: 'transposicion', label: 'Transposición (Calculadora)', category: 'clasica', icon: Columns, color: 'text-rose-400', badge: 'Geométrico' },
 
     // Modern Cryptography (S11 - S15)
     { id: 'bases', label: 'Bases & Bitwise', category: 'moderna', icon: Binary, color: 'text-sky-400', badge: 'S11 · Bases' },
@@ -115,7 +115,7 @@ export const InteractiveLabTab: React.FC<InteractiveLabTabProps> = ({ mode, onMo
       </div>
 
       {/* Sub-Navigation Tool Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-7xl mx-auto w-full px-2 lg:px-4 scrollbar-none">
+      <div className="flex items-center lg:flex-wrap gap-2 overflow-x-auto pb-1 max-w-7xl mx-auto w-full px-2 lg:px-4 scrollbar-none">
         {filteredItems.map(item => {
           const Icon = item.icon;
           const isActive = activeCipher === item.id;

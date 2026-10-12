@@ -828,4 +828,40 @@ Cita académica: (NIST SP 800-207, 2020; Katsikeas et al., 2021; ISO/IEC 27001:2
      3. Principio de Menor Privilegio (PoLP): Concesión estricta de permisos temporales mínimos necesarios.
      4. Cifrado integral de todos los datos, tanto en tránsito (TLS 1.3 / mTLS) como en reposo (AES-256-XTS).`,
   },
+  {
+    id: 'cifrado_transposicion_clasico',
+    title: 'Cifradores por Transposición: Series (m1, m2, m3), Columnas, Filas y Escítala',
+    category: 'Criptosistemas Clásicos',
+    citation: '(Ramió Aguirre, 1999, pp. 88–96; Kahn, 1996)',
+    content: `CIFRADORES POR TRANSPOSICIÓN Y PERMUTACIÓN GEOMÉTRICA (S04)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Ramió Aguirre, 1999, pp. 88–96; Kahn, 1996)
+
+1. PRINCIPIO FUNDAMENTAL DE LA TRANSPOSICIÓN
+   • A diferencia de los cifrados por sustitución (donde las letras se reemplazan por otras), en la transposición los caracteres originales del texto en claro se conservan intactos, pero sus posiciones son reordenadas (permutadas).
+   • El histograma unigramático es idéntico al del texto en claro, por lo que el criptoanalista detecta el método y recurre a técnicas de anagramación o análisis de digramas.
+
+2. TRANSPOSICIÓN POR SERIES (MS1, MS2, MS3)
+   • El mensaje M = m₁m₂m₃...m_N se particiona en subseries disjuntas:
+     - MS1: Posiciones que son Números Primos.
+     - MS2: Posiciones que son Números Pares.
+     - MS3: Posiciones que son Números Impares restantes.
+   • El Debate del Número 1:
+     - En el texto clásico de Ramió Aguirre (1999, p. 90), el número 1 fue catalogado dentro de la serie de números primos (MS1).
+     - En la teoría de números moderna y por criterio docente (Criterio del Profesor), el número 1 NO es primo (tiene un solo divisor), por lo que pertenece a la serie de impares (MS3).
+   • Cifrado: M' = MS1 + MS2 + MS3.
+   • Descifrado: Se reconstruye la permutación inversa mapeando cada C_k a su posición original m_{p_k}.
+
+3. TRANSPOSICIÓN POR COLUMNAS Y COMODÍN DE RELLENO (NULL / PADDING)
+   • Se escribe el texto en claro horizontalmente en una cuadrícula de NC columnas (clave por palabra o número fijo).
+   • Si la última fila queda incompleta, se rellena con un comodín o carácter nulo ('X').
+   • Se permutan las columnas según el orden alfabético de la clave y se extraen verticalmente de arriba hacia abajo.
+   • Descifrado: Se calcula el número de filas NF = ceil(LC / NC), se reconstruyen las columnas y se lee horizontalmente fila por fila.
+
+4. TRANSPOSICIÓN POR FILAS (NF NIVELES)
+   • El mensaje se escribe verticalmente de arriba hacia abajo en tantas filas como indique la clave NF.
+   • Se completa con el comodín ('X') si no es múltiplo de NF.
+   • El criptograma se obtiene leyendo horizontalmente fila por fila (Fila 1, Fila 2, ..., Fila NF).
+   • Descifrado: Con LC y NF, se calcula NC = LC / NF. Se escribe horizontalmente en NF filas de NC columnas y se lee verticalmente de arriba hacia abajo columna por columna.`,
+  },
 ];

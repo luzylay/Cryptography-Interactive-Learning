@@ -472,4 +472,145 @@ describe('10. Digital Signatures and PKI Trust Chain Invariants (S14 & S15)', ()
   });
 });
 
+describe('11. Transposition Ciphers (Series m1/m2/m3, Columnar & Row Invariants)', () => {
+  function isPrime(n, oneIsPrime) {
+    if (n === 1) return oneIsPrime;
+    if (n < 2) return false;
+    if (n === 2) return true;
+    if (n % 2 === 0) return false;
+    for (let i = 3; i * i <= n; i += 2) {
+      if (n % i === 0) return false;
+    }
+    return true;
+  }
+
+  function partitionSeries(len, oneIsPrime) {
+    const ms1 = [], ms2 = [], ms3 = [];
+    for (let i = 1; i <= len; i++) {
+      if (isPrime(i, oneIsPrime)) ms1.push(i);
+      else if (i % 2 === 0) ms2.push(i);
+      else ms3.push(i);
+    }
+    return { ms1, ms2, ms3, order: [...ms1, ...ms2, ...ms3] };
+  }
+
+  test('Series Transposition: Partition preserves all indices without gaps or duplicates', () => {
+    for (const len of [15, 27, 40]) {
+      for (const onePrime of [true, false]) {
+        const { order, ms1, ms2, ms3 } = partitionSeries(len, onePrime);
+        assert.equal(order.length, len);
+        assert.equal(new Set(order).size, len);
+        if (onePrime) {
+          assert.ok(ms1.includes(1), 'When 1 is prime, 1 must be in MS1');
+          assert.ok(!ms3.includes(1), 'When 1 is prime, 1 must not be in MS3');
+        } else {
+          assert.ok(!ms1.includes(1), 'When 1 is odd (professor), 1 must not be in MS1');
+          assert.ok(ms3.includes(1), 'When 1 is odd (professor), 1 must be in MS3');
+        }
+      }
+    }
+  });
+
+  test('Series Transposition: Ramió Aguirre Example 1.58 encrypt & decrypt roundtrip', () => {
+    const msg = 'ERRARESHUMANOPERDONARDIVINO';
+    const { order } = partitionSeries(msg.length, true);
+    const cipher = order.map(i => msg[i - 1]).join('');
+    assert.equal(cipher, 'ERRRSAODNIAEHMNPROADVNUERIO');
+
+    // Decrypt
+    const plain = new Array(msg.length).fill('');
+    for (let k = 0; k < msg.length; k++) {
+      plain[order[k] - 1] = cipher[k];
+    }
+    assert.equal(plain.join(''), msg);
+  });
+
+  test('Series Transposition: Professor convention (1 is Odd) encrypt & decrypt roundtrip', () => {
+    const msg = 'ERRARESHUMANOPERDONARDIVINO';
+    const { order } = partitionSeries(msg.length, false);
+    const cipher = order.map(i => msg[i - 1]).join('');
+    assert.equal(cipher, 'RRRSAODNIAEHMNPROADVNEUERIO');
+
+    // Decrypt
+    const plain = new Array(msg.length).fill('');
+    for (let k = 0; k < msg.length; k++) {
+      plain[order[k] - 1] = cipher[k];
+    }
+    assert.equal(plain.join(''), msg);
+  });
+
+  test('Row Transposition: Ramió Aguirre Example 1.64 & 1.65 with comodin padding', () => {
+    // Example 1.64: M = ELPRISIONEROSEENTREGARAENELLUGARYAINDICADO, NF = 3
+    const msg = 'ELPRISIONEROSEENTREGARAENELLUGARYAINDICADO';
+    const nf = 3;
+    const nc = Math.ceil(msg.length / nf);
+    const padded = msg.padEnd(nf * nc, 'X');
+    const grid = Array.from({ length: nf }, () => new Array(nc));
+    for (let c = 0; c < nc; c++) {
+      for (let r = 0; r < nf; r++) {
+        grid[r][c] = padded[c * nf + r];
+      }
+    }
+    const cipher = grid.map(r => r.join('')).join('');
+    assert.equal(cipher, 'ERIESNERNLAADALIORETGAEURIIDPSNOERAELGYNCO');
+
+    // Example 1.65: Decrypt C = MAPDDITOOERURNX with NF = 3
+    const c65 = 'MAPDDITOOERURNX';
+    const nc65 = c65.length / nf;
+    const grid65 = Array.from({ length: nf }, () => new Array(nc65));
+    for (let r = 0; r < nf; r++) {
+      for (let c = 0; c < nc65; c++) {
+        grid65[r][c] = c65[r * nc65 + c];
+      }
+    }
+    let dec65 = '';
+    for (let c = 0; c < nc65; c++) {
+      for (let r = 0; r < nf; r++) {
+        dec65 += grid65[r][c];
+      }
+    }
+    assert.equal(dec65, 'MIRATUPORDONDEX');
+  });
+
+  test('Columnar Transposition: Encrypt & Decrypt roundtrip with keyword & comodin', () => {
+    const msg = 'ELPATIODEMICASAESPARTICULAR';
+    const key = 'RELOJ';
+    const numCols = key.length;
+    const numRows = Math.ceil(msg.length / numCols);
+    const padded = msg.padEnd(numRows * numCols, 'X');
+
+    const keyChars = [...key].map((char, originalIndex) => ({ char, originalIndex }));
+    const sorted = [...keyChars].sort((a, b) => a.char.localeCompare(b.char));
+    const colIndicesSorted = sorted.map(s => s.originalIndex);
+
+    // Grid row-major
+    const grid = [];
+    for (let r = 0; r < numRows; r++) {
+      grid.push([...padded.slice(r * numCols, (r + 1) * numCols)]);
+    }
+
+    const cols = colIndicesSorted.map(c => grid.map(r => r[c]).join(''));
+    const cipher = cols.join('');
+
+    // Decrypt
+    const decCols = new Array(numCols).fill('');
+    let ptr = 0;
+    for (const c of colIndicesSorted) {
+      decCols[c] = cipher.slice(ptr, ptr + numRows);
+      ptr += numRows;
+    }
+
+    let dec = '';
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numCols; c++) {
+        dec += decCols[c][r];
+      }
+    }
+
+    assert.equal(dec, padded);
+    assert.ok(dec.startsWith(msg));
+  });
+});
+
+
 
