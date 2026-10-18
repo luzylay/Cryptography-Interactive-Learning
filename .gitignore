@@ -30,11 +30,13 @@ logs/
 *.log
 .claude-replay.*
 .tmp-*
+*.tmp
 
-# OS-generated files
+# OS-generated files & temporary office lock files
 .DS_Store
 Thumbs.db
 desktop.ini
+~$*
 
 # IDE & Editor files
 .vscode/*
@@ -66,3 +68,4 @@ scratch/
 *.docx
 *.doc
 *.xlsx
+docs/references/

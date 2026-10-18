@@ -1,21 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import { AlphabetMode } from '../../crypto/alphabets';
 import {
+  processGroupTransposition,
   processSeriesTransposition,
   processColumnarTransposition,
   processRowTransposition,
   processScytale,
+  SeriesOrderType,
 } from '../../crypto/ciphers/transposition';
 import {
   Columns,
   Rows,
   Layers,
   Cylinder,
+  Shuffle,
   Sparkles,
   ArrowUpDown,
   BookOpen,
   Info,
-  HelpCircle,
+  AlertTriangle,
+  CheckCircle2,
 } from 'lucide-react';
 import { CopyButton } from '../common/CopyButton';
 
@@ -23,7 +27,7 @@ interface ScytaleColumnarProps {
   mode: AlphabetMode;
 }
 
-type TranspositionType = 'series' | 'columnar' | 'row' | 'scytale';
+type TranspositionType = 'groups' | 'series' | 'columnar' | 'row' | 'scytale';
 
 export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
   const [subType, setSubType] = useState<TranspositionType>('series');
@@ -31,8 +35,12 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
   const [inputText, setInputText] = useState<string>('ERRAR ES HUMANO, PERDONAR DIVINO');
   const [padChar, setPadChar] = useState<string>('X');
 
+  // Groups params
+  const [groupKey, setGroupKey] = useState<string>('24531');
+
   // Series params
   const [oneIsPrime, setOneIsPrime] = useState<boolean>(false); // Default: Criterio del profesor (1 es impar)
+  const [seriesOrder, setSeriesOrder] = useState<SeriesOrderType>('primos-pares-impares');
 
   // Columnar params
   const [keyword, setKeyword] = useState<string>('RELOJ');
@@ -44,9 +52,13 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
   const [diameter, setDiameter] = useState<number>(4);
 
   // Computations
+  const groupRes = useMemo(() => {
+    return processGroupTransposition(inputText, groupKey, mode, direction, padChar);
+  }, [inputText, groupKey, mode, direction, padChar]);
+
   const seriesRes = useMemo(() => {
-    return processSeriesTransposition(inputText, oneIsPrime, mode, direction, padChar);
-  }, [inputText, oneIsPrime, mode, direction, padChar]);
+    return processSeriesTransposition(inputText, oneIsPrime, mode, direction, padChar, seriesOrder);
+  }, [inputText, oneIsPrime, mode, direction, padChar, seriesOrder]);
 
   const columnarRes = useMemo(() => {
     return processColumnarTransposition(inputText, keyword, mode, direction, padChar);
@@ -63,6 +75,8 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
   // Current active result
   const currentResult = useMemo(() => {
     switch (subType) {
+      case 'groups':
+        return groupRes;
       case 'series':
         return seriesRes;
       case 'columnar':
@@ -72,25 +86,85 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
       case 'scytale':
         return scytaleRes;
     }
-  }, [subType, seriesRes, columnarRes, rowRes, scytaleRes]);
+  }, [subType, groupRes, seriesRes, columnarRes, rowRes, scytaleRes]);
 
-  // Preset loader
-  const loadPreset = (preset: TranspositionType) => {
-    setSubType(preset);
-    if (preset === 'series') {
+  // Preset loaders for specific academic / exam exercises
+  const loadGroupPreset = (type: 'ramio' | 'mermelada') => {
+    setSubType('groups');
+    setDirection('encrypt');
+    if (type === 'ramio') {
+      setInputText('MANOS ARRIBA, ESTO ES UN ATRACO');
+      setGroupKey('24531');
+    } else {
+      setInputText('MERMELADA DE FRESA');
+      setGroupKey('24531');
+    }
+  };
+
+  const loadSeriesPreset = (type: 'ramio' | 'pc2' | 'diapo15' | 'diapo16') => {
+    setSubType('series');
+    setDirection('encrypt');
+    if (type === 'ramio') {
       setInputText('ERRAR ES HUMANO, PERDONAR DIVINO');
-      setDirection('encrypt');
-    } else if (preset === 'columnar') {
-      setInputText('EL PATIO DE MI CASA ES PARTICULAR');
+      setSeriesOrder('primos-pares-impares');
+      setOneIsPrime(true);
+    } else if (type === 'pc2') {
+      setInputText('ERRAR ES HUMANO PERDONAR ES DIVINO');
+      setSeriesOrder('pares-primos-impares');
+      setOneIsPrime(false);
+    } else if (type === 'diapo15') {
+      setInputText('AUTOMATIZAR ES BUENO');
+      setSeriesOrder('primos-pares-impares');
+      setOneIsPrime(true);
+    } else if (type === 'diapo16') {
+      setInputText('AUN NECESITAMOS DINERO');
+      setSeriesOrder('primos-pares-impares');
+      setOneIsPrime(true);
+    }
+  };
+
+  const loadColumnarPreset = (type: 'reloj' | 'pc2_col6' | 'pc2_puedo' | 'frase' | 'cneam') => {
+    setSubType('columnar');
+    if (type === 'reloj') {
+      setInputText('EL PATIO DE MI CASA ES PARTICULAR, CUANDO LLUEVE SE MOJA COMO LOS DEMAS');
       setKeyword('RELOJ');
       setDirection('encrypt');
-    } else if (preset === 'row') {
+    } else if (type === 'pc2_col6') {
+      setInputText('AHORA A RESOLVER LOS EJERCICIOS');
+      setKeyword('6');
+      setDirection('encrypt');
+    } else if (type === 'pc2_puedo') {
+      setInputText('EL DINERO NO COMPRA LA VIDA');
+      setKeyword('32415');
+      setDirection('encrypt');
+    } else if (type === 'frase') {
+      setInputText('LA CARIDAD TRAE LA PESTE');
+      setKeyword('25431');
+      setDirection('encrypt');
+    } else if (type === 'cneam') {
+      setInputText('CNEAM SAANY IXMNO CNXIT HAOX');
+      setKeyword('4');
+      setDirection('decrypt');
+    }
+  };
+
+  const loadRowPreset = (type: 'prisionero' | 'mapdd' | 'soqna' | 'aprende') => {
+    setSubType('row');
+    if (type === 'prisionero') {
       setInputText('EL PRISIONERO SE ENTREGARA EN EL LUGAR YA INDICADO');
       setNumRows(3);
       setDirection('encrypt');
-    } else if (preset === 'scytale') {
-      setInputText('AL GRITO DE VIVA ZAPATA');
-      setDiameter(4);
+    } else if (type === 'mapdd') {
+      setInputText('MAPDD ITOOE RURNX');
+      setNumRows(3);
+      setDirection('decrypt');
+    } else if (type === 'soqna') {
+      setInputText('SOQNA OSUAS LEEDE');
+      setNumRows(3);
+      setDirection('decrypt');
+    } else if (type === 'aprende') {
+      setInputText('APRENDE A VIVIR Y SABRAS MORIR BIEN');
+      setNumRows(4);
       setDirection('encrypt');
     }
   };
@@ -109,6 +183,7 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
       <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/60 border border-slate-800 p-4 rounded-2xl shadow-xl backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500/20 to-indigo-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
+            {subType === 'groups' && <Shuffle className="w-5 h-5" />}
             {subType === 'series' && <Layers className="w-5 h-5" />}
             {subType === 'columnar' && <Columns className="w-5 h-5" />}
             {subType === 'row' && <Rows className="w-5 h-5" />}
@@ -116,21 +191,32 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-100">Cifradores por Transposición</h2>
+              <h2 className="text-base font-bold text-slate-100">Cifradores por Transposición Clásica</h2>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30 font-mono">
-                Calculadora Interactiva
+                Calculadora Didáctica Completa
               </span>
             </div>
             <p className="text-xs text-slate-400 font-mono flex items-center gap-1 mt-0.5">
-              <span>Reordenamiento geométrico sin sustitución</span>
+              <span>Difusión de Shannon sin alteración de frecuencias monográmicas</span>
               <span>·</span>
-              <span className="text-rose-400 font-mono text-[11px]">Fuente APA 7: Ramió Aguirre (1999, pp. 88–96); Kahn (1996)</span>
+              <span className="text-rose-400 font-mono text-[11px]">Ramió Aguirre (1999, pp. 88–96)</span>
             </p>
           </div>
         </div>
 
         {/* Subtype Selector Tabs */}
         <div className="flex flex-wrap rounded-xl bg-slate-950 p-1 border border-slate-800 gap-1">
+          <button
+            onClick={() => setSubType('groups')}
+            className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all flex items-center gap-1.5 ${
+              subType === 'groups'
+                ? 'bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30 shadow-sm'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Shuffle className="w-3.5 h-3.5" />
+            Por Grupos (Π_M)
+          </button>
           <button
             onClick={() => setSubType('series')}
             className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all flex items-center gap-1.5 ${
@@ -140,7 +226,7 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
-            Series (m1, m2, m3)
+            Series (MS1, MS2, MS3)
           </button>
           <button
             onClick={() => setSubType('columnar')}
@@ -183,6 +269,116 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
         {/* Left Visualizer / Setup Panel */}
         <div className="lg:col-span-7 bg-slate-900/60 border border-slate-800 rounded-2xl p-5 backdrop-blur-md flex flex-col gap-5">
           {/* ============================================================== */}
+          {/* TAB 0: TRANSPOSICIÓN POR GRUPOS (Π_M)                          */}
+          {/* ============================================================== */}
+          {subType === 'groups' && (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <Shuffle className="w-4 h-4 text-emerald-400" />
+                    Transposición Periódica por Grupos (Π_M)
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Permutación en bloques discretos de tamaño p = {groupRes.groupInfo.blockSize}.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => loadGroupPreset('ramio')}
+                    className="px-2.5 py-1 text-[11px] font-mono bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg transition"
+                  >
+                    Ej. 1.57 (MANOS ARRIBA)
+                  </button>
+                  <button
+                    onClick={() => loadGroupPreset('mermelada')}
+                    className="px-2.5 py-1 text-[11px] font-mono bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg transition"
+                  >
+                    Diapo 10 (MERMELADA)
+                  </button>
+                </div>
+              </div>
+
+              {/* Input Permutación */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs font-mono text-slate-300 font-bold">
+                    Permutación Periódica Π_M:
+                  </span>
+                  <input
+                    type="text"
+                    value={groupKey}
+                    onChange={e => setGroupKey(e.target.value)}
+                    placeholder="Ej. 24531 o 2 4 5 3 1"
+                    className="bg-slate-950 border border-slate-800 text-emerald-300 font-mono text-sm px-3 py-2 rounded-xl focus:outline-none focus:border-emerald-500 font-bold"
+                  />
+                  <span className="text-[10px] text-slate-500 font-mono">
+                    Vector de permutación 1..p (longitud = período p).
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xs font-mono text-slate-400">Comodín de Relleno (Padding):</span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      maxLength={1}
+                      value={padChar}
+                      onChange={e => setPadChar(e.target.value.toUpperCase() || 'X')}
+                      className="w-16 bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs px-3 py-2 rounded-xl text-center focus:outline-none focus:border-amber-500"
+                    />
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      Rellena bloques incompletos ({groupRes.groupInfo.numBlocks} bloques de {groupRes.groupInfo.blockSize})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visualización de Bloques Permutados */}
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-mono text-slate-300 font-bold">
+                  Desglose Bloque a Bloque ({groupRes.groupInfo.blocks.length} bloques):
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto p-1">
+                  {groupRes.groupInfo.blocks.map(block => (
+                    <div
+                      key={`blk-${block.blockIndex}`}
+                      className="p-3 bg-slate-950 border border-slate-800 rounded-xl flex flex-col gap-2 font-mono text-xs"
+                    >
+                      <div className="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800/80 pb-1">
+                        <span className="font-bold text-emerald-400">Bloque #{block.blockIndex + 1}</span>
+                        <span className="text-slate-500">Π = [{groupRes.groupInfo.permutation.join('')}]</span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] text-slate-500">Entrada</span>
+                          <span className="text-sm font-bold text-slate-200 tracking-wider">
+                            {block.inBlock}
+                          </span>
+                        </div>
+                        <span className="text-emerald-400 font-bold">→</span>
+                        <div className="flex flex-col items-center">
+                          <span className="text-[10px] text-slate-500">Salida</span>
+                          <span className="text-sm font-bold text-emerald-300 tracking-wider">
+                            {block.outBlock}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-[10px] text-slate-400 bg-slate-900/60 p-1.5 rounded border border-slate-800/60">
+                        {block.mappings.map((m, mi) => (
+                          <span key={`map-${mi}`} className="inline-block mr-2">
+                            m<sub>{m.fromPos}</sub>({m.char})→c<sub>{m.toPos}</sub>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================== */}
           {/* TAB 1: TRANSPOSICIÓN POR SERIES (m1, m2, m3)                   */}
           {/* ============================================================== */}
           {subType === 'series' && (
@@ -197,18 +393,66 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                     Descomposición en subseries según la naturaleza matemática de la posición.
                   </p>
                 </div>
-                <button
-                  onClick={() => loadPreset('series')}
-                  className="px-2.5 py-1 text-[11px] font-mono bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg transition"
-                >
-                  Cargar Ejemplo 1.58
-                </button>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => loadSeriesPreset('ramio')}
+                    className="px-2 py-1 text-[11px] font-mono bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg transition"
+                  >
+                    Ej. 1.58 Ramió
+                  </button>
+                  <button
+                    onClick={() => loadSeriesPreset('pc2')}
+                    className="px-2 py-1 text-[11px] font-mono bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg transition"
+                  >
+                    Examen PC2 (Ej. 01)
+                  </button>
+                  <button
+                    onClick={() => loadSeriesPreset('diapo15')}
+                    className="px-2 py-1 text-[11px] font-mono bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg transition"
+                  >
+                    Diapo 15
+                  </button>
+                  <button
+                    onClick={() => loadSeriesPreset('diapo16')}
+                    className="px-2 py-1 text-[11px] font-mono bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg transition"
+                  >
+                    Diapo 16
+                  </button>
+                </div>
               </div>
 
-              {/* TOGGLE DEL NÚMERO 1: PRIMO VS IMPAR */}
-              <div className="p-3.5 rounded-xl bg-slate-950/80 border border-purple-500/30 flex flex-col gap-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+              {/* ORDEN DE SERIES Y TOGGLE DEL 1 */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {/* Configuración de Orden */}
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col gap-2">
+                  <span className="text-xs font-bold text-slate-200">Orden de las Series:</span>
+                  <div className="flex flex-col gap-1.5">
+                    <button
+                      onClick={() => setSeriesOrder('primos-pares-impares')}
+                      className={`px-3 py-1.5 text-xs font-mono rounded-lg text-left transition ${
+                        seriesOrder === 'primos-pares-impares'
+                          ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
+                          : 'text-slate-400 hover:bg-slate-900 border border-transparent'
+                      }`}
+                    >
+                      1. Primos → 2. Pares → 3. Impares (Ramió / Diapo 11)
+                    </button>
+                    <button
+                      onClick={() => setSeriesOrder('pares-primos-impares')}
+                      className={`px-3 py-1.5 text-xs font-mono rounded-lg text-left transition ${
+                        seriesOrder === 'pares-primos-impares'
+                          ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
+                          : 'text-slate-400 hover:bg-slate-900 border border-transparent'
+                      }`}
+                    >
+                      1. Pares → 2. Primos → 3. Impares (Examen PC2)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tratamiento del 1 */}
+                <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 flex flex-col justify-between gap-2">
+                  <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-200">Tratamiento del número 1:</span>
                     <span className="text-[10px] px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 font-mono">
                       Posición m₁
@@ -217,110 +461,89 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                   <div className="flex rounded-lg bg-slate-900 p-0.5 border border-slate-800">
                     <button
                       onClick={() => setOneIsPrime(false)}
-                      className={`px-3 py-1 text-xs font-mono rounded-md transition-all ${
+                      className={`flex-1 py-1 text-xs font-mono rounded-md transition-all ${
                         !oneIsPrime
                           ? 'bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
-                      title="Definición moderna: 1 no es primo, se clasifica en impares (MS3)"
                     >
                       1 es Impar (Profesor)
                     </button>
                     <button
                       onClick={() => setOneIsPrime(true)}
-                      className={`px-3 py-1 text-xs font-mono rounded-md transition-all ${
+                      className={`flex-1 py-1 text-xs font-mono rounded-md transition-all ${
                         oneIsPrime
                           ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40'
                           : 'text-slate-400 hover:text-slate-200'
                       }`}
-                      title="Libro clásico: Ramió Aguirre (1999) clasifica 1 en serie de primos (MS1)"
                     >
-                      1 es Primo (Ramió Aguirre)
+                      1 es Primo (Ramió)
                     </button>
                   </div>
-                </div>
-
-                <div className="text-[11px] text-slate-400 flex items-start gap-1.5 font-sans leading-relaxed">
-                  <Info className="w-3.5 h-3.5 text-purple-400 mt-0.5 shrink-0" />
-                  <span>
-                    {!oneIsPrime ? (
-                      <>
-                        <strong className="text-amber-300">Criterio del Profesor (Estándar Moderno):</strong> El número 1 solo tiene 1 divisor, por lo que <em>no es primo</em>. Pasa a formar parte de los números impares en la serie <span className="text-amber-400 font-mono font-bold">MS3</span> (m₁, m₉, m₁₅...).
-                      </>
-                    ) : (
-                      <>
-                        <strong className="text-purple-300">Criterio Ramió Aguirre (1999, p. 90):</strong> El autor incluye el 1 en la relación de primos en la serie <span className="text-purple-400 font-mono font-bold">MS1</span> (m₁, m₂, m₃, m₅, m₇...).
-                      </>
-                    )}
-                  </span>
+                  <p className="text-[10px] text-slate-400">
+                    {oneIsPrime
+                      ? 'Ramió Aguirre (p. 90) incluye m₁ en la serie de números primos (MS1).'
+                      : 'El estándar moderno clasifica m₁ en los números impares (MS3).'}
+                  </p>
                 </div>
               </div>
 
               {/* 3 SERIES CARDS */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {/* MS1: PRIMOS */}
+                {/* MS1 */}
                 <div className="p-3 rounded-xl bg-purple-950/20 border border-purple-800/40 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-purple-300 flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-purple-400"></span>
-                      Serie MS1
+                      MS1: {seriesRes.seriesInfo.ms1Name}
                     </span>
                     <span className="text-[10px] font-mono text-purple-400">
                       {seriesRes.seriesInfo.ms1Indices.length} elems
                     </span>
                   </div>
-                  <span className="text-[10px] text-purple-200/70 font-mono">
-                    Números Primos {oneIsPrime ? '(incluye 1)' : '(inicia en 2)'}
-                  </span>
                   <div className="text-xs font-mono text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-purple-900/40 break-all max-h-20 overflow-y-auto">
                     {seriesRes.seriesInfo.ms1Indices.map(i => `m${i}`).join(', ') || 'Ninguno'}
                   </div>
                   <div className="text-xs font-mono font-bold text-purple-300 bg-purple-900/20 px-2 py-1 rounded border border-purple-700/30">
-                    Caracteres: &quot;{seriesRes.seriesInfo.ms1Chars || '-'}&quot;
+                    &quot;{seriesRes.seriesInfo.ms1Chars || '-'}&quot;
                   </div>
                 </div>
 
-                {/* MS2: PARES */}
+                {/* MS2 */}
                 <div className="p-3 rounded-xl bg-sky-950/20 border border-sky-800/40 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-sky-300 flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                      Serie MS2
+                      MS2: {seriesRes.seriesInfo.ms2Name}
                     </span>
                     <span className="text-[10px] font-mono text-sky-400">
                       {seriesRes.seriesInfo.ms2Indices.length} elems
                     </span>
                   </div>
-                  <span className="text-[10px] text-sky-200/70 font-mono">
-                    Números Pares (4, 6, 8, 10...)
-                  </span>
                   <div className="text-xs font-mono text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-sky-900/40 break-all max-h-20 overflow-y-auto">
                     {seriesRes.seriesInfo.ms2Indices.map(i => `m${i}`).join(', ') || 'Ninguno'}
                   </div>
                   <div className="text-xs font-mono font-bold text-sky-300 bg-sky-900/20 px-2 py-1 rounded border border-sky-700/30">
-                    Caracteres: &quot;{seriesRes.seriesInfo.ms2Chars || '-'}&quot;
+                    &quot;{seriesRes.seriesInfo.ms2Chars || '-'}&quot;
                   </div>
                 </div>
 
-                {/* MS3: IMPARES */}
+                {/* MS3 */}
                 <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-800/40 flex flex-col gap-1.5">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-amber-300 flex items-center gap-1">
                       <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                      Serie MS3
+                      MS3: {seriesRes.seriesInfo.ms3Name}
                     </span>
                     <span className="text-[10px] font-mono text-amber-400">
                       {seriesRes.seriesInfo.ms3Indices.length} elems
                     </span>
                   </div>
-                  <span className="text-[10px] text-amber-200/70 font-mono">
-                    Impares Restantes {!oneIsPrime ? '(incluye 1)' : '(9, 15, 21...)'}
-                  </span>
                   <div className="text-xs font-mono text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-amber-900/40 break-all max-h-20 overflow-y-auto">
                     {seriesRes.seriesInfo.ms3Indices.map(i => `m${i}`).join(', ') || 'Ninguno'}
                   </div>
                   <div className="text-xs font-mono font-bold text-amber-300 bg-amber-900/20 px-2 py-1 rounded border border-amber-700/30">
-                    Caracteres: &quot;{seriesRes.seriesInfo.ms3Chars || '-'}&quot;
+                    &quot;{seriesRes.seriesInfo.ms3Chars || '-'}&quot;
                   </div>
                 </div>
               </div>
@@ -375,33 +598,72 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                 <div>
                   <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
                     <Columns className="w-4 h-4 text-rose-400" />
-                    Transposición por Columnas
+                    Transposición por Columnas Simple y con Clave
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Reordenamiento en rejilla matricial con clave alfabética o conteo de columnas.
+                    Reordenamiento en rejilla con clave alfabética, permutación numérica o número de columnas.
                   </p>
                 </div>
-                <button
-                  onClick={() => loadPreset('columnar')}
-                  className="px-2.5 py-1 text-[11px] font-mono bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-lg transition"
-                >
-                  Cargar Ejemplo 1.63
-                </button>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => loadColumnarPreset('reloj')}
+                    className="px-2 py-1 text-[11px] font-mono bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-lg transition"
+                  >
+                    Ej. 1.63 (RELOJ)
+                  </button>
+                  <button
+                    onClick={() => loadColumnarPreset('pc2_col6')}
+                    className="px-2 py-1 text-[11px] font-mono bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg transition"
+                  >
+                    Examen PC2 (NC=6)
+                  </button>
+                  <button
+                    onClick={() => loadColumnarPreset('pc2_puedo')}
+                    className="px-2 py-1 text-[11px] font-mono bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg transition"
+                  >
+                    Examen PC2 (PUEDO / 32415)
+                  </button>
+                  <button
+                    onClick={() => loadColumnarPreset('frase')}
+                    className="px-2 py-1 text-[11px] font-mono bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg transition"
+                  >
+                    Diapo 39 (FRASE / 25431)
+                  </button>
+                  <button
+                    onClick={() => loadColumnarPreset('cneam')}
+                    className="px-2 py-1 text-[11px] font-mono bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg transition"
+                  >
+                    Descifrar (Diapo 35)
+                  </button>
+                </div>
+              </div>
+
+              {/* Advertencia Académica Crítica sobre la lectura por columnas */}
+              <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-200/90 leading-relaxed font-sans">
+                  <strong>Regla Académica Fundamental:</strong> En el cifrado por columnas (tanto simple como con clave/permutación), tras escribir el texto horizontalmente por filas y permutar las columnas, el criptograma <strong>SIEMPRE se lee de arriba hacia abajo columna por columna</strong>.
+                  <span className="block mt-1 text-[11px] text-amber-300/80">
+                    💡 <em>Nota sobre PC2:</em> En el Ejercicio 03, permutar las columnas y leer horizontalmente por filas es el error más recurrente; el método oficial exige lectura columnar vertical.
+                  </span>
+                </div>
               </div>
 
               {/* Clave y Configuración */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-xs font-mono text-slate-400">Clave de Columna (Palabra o Número):</span>
+                  <span className="text-xs font-mono text-slate-300 font-bold">
+                    Clave de Columna (Palabra, Permutación o Número):
+                  </span>
                   <input
                     type="text"
                     value={keyword}
                     onChange={e => setKeyword(e.target.value.toUpperCase())}
-                    placeholder="Ej. RELOJ o 5"
-                    className="bg-slate-950 border border-slate-800 text-rose-300 font-mono text-xs px-3 py-2 rounded-xl focus:outline-none focus:border-rose-500"
+                    placeholder="Ej. RELOJ, 32415 o 6"
+                    className="bg-slate-950 border border-slate-800 text-rose-300 font-mono text-xs px-3 py-2 rounded-xl focus:outline-none focus:border-rose-500 font-bold"
                   />
-                  <span className="text-[10px] text-slate-500">
-                    Ingresa una palabra (ej. RELOJ) o el número de columnas (ej. 5).
+                  <span className="text-[10px] text-slate-500 font-mono">
+                    Acepta palabras (RELOJ), permutaciones (32415) o número simple (6).
                   </span>
                 </div>
 
@@ -416,7 +678,7 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                       className="w-16 bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs px-3 py-2 rounded-xl text-center focus:outline-none focus:border-amber-500"
                     />
                     <span className="text-[11px] text-slate-400 font-mono">
-                      Carácter nulo para completar la matriz ({columnarRes.gridInfo.numRows} × {columnarRes.gridInfo.numCols} = {columnarRes.gridInfo.numRows * columnarRes.gridInfo.numCols} celdas)
+                      Celdas de relleno ({columnarRes.gridInfo.numRows} filas × {columnarRes.gridInfo.numCols} columnas = {columnarRes.gridInfo.numRows * columnarRes.gridInfo.numCols} celdas)
                     </span>
                   </div>
                 </div>
@@ -488,85 +750,82 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
                 <div>
                   <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                    <Rows className="w-4 h-4 text-emerald-400" />
-                    Transposición por Filas (NF Niveles)
+                    <Rows className="w-4 h-4 text-sky-400" />
+                    Transposición por Filas (Escritura Vertical, Lectura Horizontal)
                   </h3>
                   <p className="text-xs text-slate-400">
-                    Escritura vertical en NF filas y lectura horizontal (Ramió Aguirre p. 95, Ej. 1.64 y 1.65).
+                    Se escribe verticalmente en NF niveles y se lee horizontalmente fila a fila.
                   </p>
                 </div>
-                <button
-                  onClick={() => loadPreset('row')}
-                  className="px-2.5 py-1 text-[11px] font-mono bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg transition"
-                >
-                  Cargar Ejemplo 1.64
-                </button>
-              </div>
-
-              {/* Clave NF y Comodín */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-xs font-mono text-slate-400">Clave Número de Filas (NF):</span>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      min={2}
-                      max={20}
-                      value={numRows}
-                      onChange={e => setNumRows(parseInt(e.target.value, 10) || 2)}
-                      className="w-20 bg-slate-950 border border-slate-800 text-emerald-300 font-mono text-xs px-3 py-2 rounded-xl text-center focus:outline-none focus:border-emerald-500 font-bold"
-                    />
-                    <span className="text-[11px] text-slate-500">
-                      {rowRes.gridInfo.numRows} niveles verticales
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <span className="text-xs font-mono text-slate-400">Comodín de Relleno:</span>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      maxLength={1}
-                      value={padChar}
-                      onChange={e => setPadChar(e.target.value.toUpperCase() || 'X')}
-                      className="w-16 bg-slate-950 border border-slate-800 text-amber-300 font-mono text-xs px-3 py-2 rounded-xl text-center focus:outline-none focus:border-amber-500 font-bold"
-                    />
-                    <span className="text-[11px] text-slate-400 font-mono">
-                      Carácter de relleno para completar {rowRes.gridInfo.numRows} × {rowRes.gridInfo.numCols} celdas
-                    </span>
-                  </div>
+                <div className="flex flex-wrap gap-1.5">
+                  <button
+                    onClick={() => loadRowPreset('prisionero')}
+                    className="px-2 py-1 text-[11px] font-mono bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 border border-sky-500/30 rounded-lg transition"
+                  >
+                    Ej. 1.64 (NF=3)
+                  </button>
+                  <button
+                    onClick={() => loadRowPreset('mapdd')}
+                    className="px-2 py-1 text-[11px] font-mono bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg transition"
+                  >
+                    Descifrar 1.65 (MAPDD)
+                  </button>
+                  <button
+                    onClick={() => loadRowPreset('soqna')}
+                    className="px-2 py-1 text-[11px] font-mono bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-lg transition"
+                  >
+                    Diapo 48 (SOQNA)
+                  </button>
+                  <button
+                    onClick={() => loadRowPreset('aprende')}
+                    className="px-2 py-1 text-[11px] font-mono bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-lg transition"
+                  >
+                    Diapo 43 (NF=4)
+                  </button>
                 </div>
               </div>
 
-              {/* Rejilla de Filas */}
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-mono text-slate-400">Clave Número de Filas (NF):</span>
+                <input
+                  type="number"
+                  min="2"
+                  max="15"
+                  value={numRows}
+                  onChange={e => setNumRows(parseInt(e.target.value, 10) || 3)}
+                  className="w-16 bg-slate-950 border border-slate-800 text-sky-300 font-mono text-xs px-2.5 py-1.5 rounded-lg focus:outline-none focus:border-sky-500 text-center font-bold"
+                />
+                <span className="text-xs font-mono text-slate-500">
+                  Columnas resultantes: NC = {rowRes.gridInfo.numCols}
+                </span>
+              </div>
+
+              {/* Matriz de Filas */}
               <div className="overflow-x-auto p-3 bg-slate-950 border border-slate-800 rounded-xl">
                 <table className="border-collapse font-mono text-xs w-full text-center">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 text-[11px]">
-                      <th className="p-2 bg-slate-900 text-emerald-400 font-bold">Fila</th>
-                      {Array.from({ length: rowRes.gridInfo.numCols }).map((_, ci) => (
-                        <th key={`head-c-${ci}`} className="p-1 text-slate-500">
-                          C{ci + 1}
+                    <tr className="border-b border-slate-800 text-sky-400">
+                      <th className="p-1.5 text-slate-500">Fila</th>
+                      {Array.from({ length: rowRes.gridInfo.numCols }, (_, c) => (
+                        <th key={`hdr-c-${c}`} className="p-1.5 bg-slate-900/60">
+                          C{c + 1}
                         </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {rowRes.gridInfo.grid.map((row, ri) => (
-                      <tr key={`r-row-${ri}`} className="border-b border-slate-800/40">
-                        <td className="p-2 font-bold bg-slate-900/60 text-emerald-300 border-r border-slate-800">
-                          Fila {ri + 1}
-                        </td>
+                      <tr key={`row-${ri}`} className="border-b border-slate-800/40">
+                        <td className="p-1.5 font-bold text-sky-400 bg-slate-900/40">F{ri + 1}</td>
                         {row.map((cell, ci) => {
                           const isPad = cell === padChar && direction === 'encrypt';
                           return (
                             <td
-                              key={`cell-${ri}-${ci}`}
-                              className={`p-2 transition ${
+                              key={`rc-${ri}-${ci}`}
+                              className={`p-1.5 transition ${
                                 isPad
                                   ? 'text-amber-400 bg-amber-500/10 font-bold'
-                                  : 'text-slate-200 hover:bg-emerald-500/10'
+                                  : 'text-slate-200 hover:bg-sky-500/10'
                               }`}
                             >
                               {cell}
@@ -577,23 +836,6 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                     ))}
                   </tbody>
                 </table>
-              </div>
-
-              {/* Guía didáctica de dirección */}
-              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 font-mono flex flex-col gap-1">
-                {direction === 'encrypt' ? (
-                  <>
-                    <span className="text-emerald-400 font-bold">Modo Cifrado:</span>
-                    <span>1. El texto se escribe en vertical (de arriba hacia abajo en cada columna).</span>
-                    <span>2. El criptograma se obtiene leyendo en horizontal fila por fila (Fila 1, Fila 2, ...).</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-amber-400 font-bold">Modo Descifrado:</span>
-                    <span>1. El criptograma se escribe en horizontal fila por fila en {rowRes.gridInfo.numCols} columnas.</span>
-                    <span>2. El texto original se recupera leyendo verticalmente de arriba hacia abajo por columnas.</span>
-                  </>
-                )}
               </div>
             </div>
           )}
@@ -614,7 +856,11 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                   </p>
                 </div>
                 <button
-                  onClick={() => loadPreset('scytale')}
+                  onClick={() => {
+                    setInputText('AL GRITO DE VIVA ZAPATA');
+                    setDiameter(4);
+                    setDirection('encrypt');
+                  }}
                   className="px-2.5 py-1 text-[11px] font-mono bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg transition"
                 >
                   Cargar Ejemplo
@@ -661,13 +907,15 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
               Pasos del Procedimiento Criptográfico:
             </span>
             <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 flex flex-col gap-1 font-mono text-[11px] text-slate-300">
+              {subType === 'groups' && groupRes.groupInfo.steps.map((st, i) => <div key={`st-${i}`}>• {st}</div>)}
               {subType === 'series' && seriesRes.seriesInfo.steps.map((st, i) => <div key={`st-${i}`}>• {st}</div>)}
               {subType === 'columnar' && (
                 <>
                   <div>• Longitud del texto: {inputText.length} caracteres</div>
                   <div>• Clave de columnas: &quot;{keyword}&quot; ({columnarRes.gridInfo.numCols} columnas, {columnarRes.gridInfo.numRows} filas)</div>
                   <div>• Comodín de relleno: &quot;{padChar}&quot;</div>
-                  <div>• Modo {direction === 'encrypt' ? 'Cifrado' : 'Descifrado'}: Reconstrucción matricial exacta</div>
+                  <div>• Orden de columnas: {columnarRes.gridInfo.colIndicesSorted.map(i => `#${columnarRes.gridInfo.colOrder[i]}`).join(', ')}</div>
+                  <div>• Lectura: De arriba hacia abajo (vertical) por columna</div>
                 </>
               )}
               {subType === 'row' && rowRes.gridInfo.steps.map((st, i) => <div key={`st-${i}`}>• {st}</div>)}
@@ -750,58 +998,30 @@ export const ScytaleColumnar: React.FC<ScytaleColumnarProps> = ({ mode }) => {
                 title="Copiar resultado a entrada e invertir dirección"
               >
                 <ArrowUpDown className="w-3.5 h-3.5 text-rose-400" />
-                Intercambiar Entrada ⇄ Salida
+                Intercambiar Cifra / Claro
               </button>
             </div>
 
-            {/* Result Display */}
+            {/* Output Display */}
             <div className="flex flex-col gap-2 pt-2 border-t border-slate-800/80">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-mono text-slate-400">
-                  Resultado ({direction === 'encrypt' ? 'Criptograma C' : 'Texto Claro M'}):
+                  Resultado {direction === 'encrypt' ? 'Cifrado (C)' : 'en Claro (M)'}:
                 </span>
-                <CopyButton text={currentResult.outputText} label="Copiar" />
+                <CopyButton text={currentResult.outputText} label="Copiar Texto" />
               </div>
 
-              {/* Formatted Blocks */}
-              <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-1 font-mono">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">
-                  Bloques militares de 5 letras:
-                </span>
-                <div className="text-sm font-bold text-emerald-400 tracking-wider break-all">
-                  {currentResult.formattedOutput || '—'}
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-3 flex flex-col gap-2">
+                <div className="text-base font-bold font-mono text-rose-300 break-all select-all">
+                  {currentResult.outputText || <span className="text-slate-600 font-normal italic">Sin salida</span>}
                 </div>
+                {currentResult.formattedOutput && (
+                  <div className="text-xs font-mono text-slate-400 pt-1 border-t border-slate-900 flex items-center justify-between">
+                    <span>En bloques de 5:</span>
+                    <span className="text-amber-400 font-semibold">{currentResult.formattedOutput}</span>
+                  </div>
+                )}
               </div>
-
-              {/* Continuous Stream */}
-              <div className="bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 flex flex-col gap-1 font-mono">
-                <span className="text-[10px] text-slate-500 uppercase tracking-wider">
-                  Flujo continuo sin espacios:
-                </span>
-                <div className="text-xs font-bold text-slate-200 tracking-normal break-all">
-                  {currentResult.outputText || '—'}
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Summary Box */}
-            <div className="p-3 bg-slate-950/40 border border-slate-800/60 rounded-xl flex flex-col gap-1 text-[11px] text-slate-400 font-mono">
-              <div className="flex justify-between">
-                <span>Algoritmo activo:</span>
-                <strong className="text-slate-200 capitalize">{subType}</strong>
-              </div>
-              <div className="flex justify-between">
-                <span>Longitud resultante:</span>
-                <strong className="text-slate-200">{currentResult.outputText.length} caracteres</strong>
-              </div>
-              {subType === 'series' && (
-                <div className="flex justify-between">
-                  <span>Convención número 1:</span>
-                  <strong className={oneIsPrime ? 'text-purple-300' : 'text-amber-300'}>
-                    {oneIsPrime ? 'Primo (Ramió)' : 'Impar (Profesor)'}
-                  </strong>
-                </div>
-              )}
             </div>
           </div>
         </div>

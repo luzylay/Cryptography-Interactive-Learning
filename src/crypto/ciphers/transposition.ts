@@ -1,18 +1,170 @@
-// Transposition Ciphers: Series (m1, m2, m3), Columnar, Row & Spartan Scytale
+// Transposition Ciphers: Groups, Series (m1, m2, m3), Columnar, Row & Spartan Scytale
 // Academic Reference: Ramió Aguirre (1999, pp. 88–96)
 
 import { AlphabetMode, normalizeText, formatInBlocks } from '../alphabets';
 
 // ==========================================
-// 1. TRANSPOSICIÓN POR SERIES (m1, m2, m3)
+// 1. TRANSPOSICIÓN POR GRUPOS (Π_M)
+// Ramió Aguirre (1999, pp. 89-90)
 // ==========================================
+
+export interface GroupBlockDetail {
+  blockIndex: number;
+  inBlock: string;
+  outBlock: string;
+  mappings: { fromPos: number; toPos: number; char: string }[];
+}
+
+export interface GroupTranspositionInfo {
+  permutation: number[]; // 1-based indices, ej: [2, 4, 5, 3, 1]
+  permutationStr: string;
+  blockSize: number;
+  paddedText: string;
+  padChar: string;
+  numBlocks: number;
+  direction: 'encrypt' | 'decrypt';
+  blocks: GroupBlockDetail[];
+  steps: string[];
+}
+
+export function parsePermutationKey(keyStr: string): number[] | null {
+  const clean = keyStr.trim();
+  let nums: number[] = [];
+  if (/[\s,]+/.test(clean)) {
+    nums = clean.split(/[\s,]+/).map(s => parseInt(s, 10)).filter(n => !isNaN(n));
+  } else if (/^\d+$/.test(clean)) {
+    nums = clean.split('').map(s => parseInt(s, 10));
+  } else {
+    return null;
+  }
+  if (nums.length < 2) return null;
+  const k = nums.length;
+  const numSet = new Set(nums);
+  if (numSet.size !== k) return null;
+  for (let i = 1; i <= k; i++) {
+    if (!numSet.has(i)) return null;
+  }
+  return nums;
+}
+
+export function processGroupTransposition(
+  text: string,
+  permKey: string,
+  mode: AlphabetMode = 'es27',
+  direction: 'encrypt' | 'decrypt' = 'encrypt',
+  padChar = 'X'
+) {
+  const norm = normalizeText(text, mode);
+  const cleanPad = padChar ? normalizeText(padChar, mode)[0] || 'X' : 'X';
+  const permutation = parsePermutationKey(permKey) || [2, 4, 5, 3, 1];
+  const k = permutation.length;
+
+  if (norm.length === 0) {
+    return {
+      groupInfo: {
+        permutation,
+        permutationStr: permutation.join(''),
+        blockSize: k,
+        paddedText: '',
+        padChar: cleanPad,
+        numBlocks: 0,
+        direction,
+        blocks: [],
+        steps: ['Texto vacío'],
+      },
+      outputText: '',
+      formattedOutput: '',
+    };
+  }
+
+  // Padding
+  const numBlocks = Math.max(1, Math.ceil(norm.length / k));
+  const paddedText = direction === 'encrypt' ? norm.padEnd(numBlocks * k, cleanPad) : norm.padEnd(numBlocks * k, cleanPad);
+  const blocks: GroupBlockDetail[] = [];
+  let outputText = '';
+
+  for (let b = 0; b < numBlocks; b++) {
+    const chunk = paddedText.slice(b * k, (b + 1) * k);
+    let outChunk = '';
+    const mappings: { fromPos: number; toPos: number; char: string }[] = [];
+
+    if (direction === 'encrypt') {
+      // C[i] = chunk[permutation[i] - 1]
+      const outChars: string[] = [];
+      for (let i = 0; i < k; i++) {
+        const fromIdx = permutation[i] - 1;
+        const char = chunk[fromIdx];
+        outChars.push(char);
+        mappings.push({ fromPos: permutation[i], toPos: i + 1, char });
+      }
+      outChunk = outChars.join('');
+    } else {
+      // Plain[permutation[i] - 1] = chunk[i]
+      const plainArr = new Array(k).fill('');
+      for (let i = 0; i < k; i++) {
+        const destIdx = permutation[i] - 1;
+        plainArr[destIdx] = chunk[i];
+        mappings.push({ fromPos: i + 1, toPos: permutation[i], char: chunk[i] });
+      }
+      outChunk = plainArr.join('');
+    }
+
+    blocks.push({
+      blockIndex: b,
+      inBlock: chunk,
+      outBlock: outChunk,
+      mappings,
+    });
+    outputText += outChunk;
+  }
+
+  const steps = [
+    `Permutación periódica Π_M: [${permutation.join(', ')}] (Periodo p = ${k})`,
+    `Longitud del texto: ${norm.length} caracteres ⇒ ${numBlocks} bloque(s) de ${k} posiciones`,
+    direction === 'encrypt'
+      ? `Cifrado: Cada bloque (m₁...m_${k}) se reordena en las posiciones [${permutation.join(', ')}]`
+      : `Descifrado: Se aplica la permutación inversa para reconstruir el bloque original`,
+    `Texto final procesado: "${outputText}"`,
+  ];
+
+  const groupInfo: GroupTranspositionInfo = {
+    permutation,
+    permutationStr: permutation.join(''),
+    blockSize: k,
+    paddedText,
+    padChar: cleanPad,
+    numBlocks,
+    direction,
+    blocks,
+    steps,
+  };
+
+  return {
+    groupInfo,
+    outputText,
+    formattedOutput: formatInBlocks(outputText),
+  };
+}
+
+// ==========================================
+// 2. TRANSPOSICIÓN POR SERIES (m1, m2, m3)
+// ==========================================
+
+export type SeriesOrderType =
+  | 'primos-pares-impares'  // Estándar Ramió Aguirre (MS1: Primos, MS2: Pares, MS3: Impares)
+  | 'pares-primos-impares'  // Estándar Examen PC2 (MS1: Pares, MS2: Primos, MS3: Impares)
+  | 'impares-primos-pares'; // Alternativo
 
 export interface SeriesTranspositionInfo {
   numChars: number;
   oneIsPrime: boolean;
-  ms1Indices: number[]; // 1-based indices: Números primos (m_i)
-  ms2Indices: number[]; // 1-based indices: Números pares (m_i)
-  ms3Indices: number[]; // 1-based indices: Números impares restantes (m_i)
+  seriesOrder: SeriesOrderType;
+  ms1Name: string;
+  ms2Name: string;
+  ms3Name: string;
+  ms1Indices: number[]; // 1-based indices (m_i)
+  ms2Indices: number[]; // 1-based indices (m_i)
+  ms3Indices: number[]; // 1-based indices (m_i)
   fullOrder: number[];  // concatenated indices [ms1, ms2, ms3]
   ms1Chars: string;
   ms2Chars: string;
@@ -41,28 +193,68 @@ export function isNumberPrime(n: number, oneIsPrime = false): boolean {
 }
 
 /**
- * Calcula la partición de índices 1..length en las 3 series:
- * MS1: Números primos
- * MS2: Números pares (excluyendo el 2 que ya está en MS1)
- * MS3: Números impares restantes (incluye el 1 si oneIsPrime es false)
+ * Calcula la partición de índices 1..length en las 3 series según el orden configurado.
  */
-export function partitionSeriesIndices(length: number, oneIsPrime = false) {
+export function partitionSeriesIndices(
+  length: number,
+  oneIsPrime = false,
+  order: SeriesOrderType = 'primos-pares-impares'
+) {
   const ms1Indices: number[] = [];
   const ms2Indices: number[] = [];
   const ms3Indices: number[] = [];
 
-  for (let i = 1; i <= length; i++) {
-    if (isNumberPrime(i, oneIsPrime)) {
-      ms1Indices.push(i);
-    } else if (i % 2 === 0) {
-      ms2Indices.push(i);
-    } else {
-      ms3Indices.push(i);
+  let ms1Name = 'Primos';
+  let ms2Name = 'Pares';
+  let ms3Name = 'Impares Restantes';
+
+  if (order === 'pares-primos-impares') {
+    ms1Name = 'Pares';
+    ms2Name = 'Primos Impares';
+    ms3Name = 'Impares Restantes';
+
+    for (let i = 1; i <= length; i++) {
+      if (i % 2 === 0) {
+        ms1Indices.push(i);
+      } else if (isNumberPrime(i, oneIsPrime)) {
+        ms2Indices.push(i);
+      } else {
+        ms3Indices.push(i);
+      }
+    }
+  } else if (order === 'impares-primos-pares') {
+    ms1Name = 'Impares';
+    ms2Name = 'Primos Restantes';
+    ms3Name = 'Pares';
+
+    for (let i = 1; i <= length; i++) {
+      if (i % 2 !== 0 && !isNumberPrime(i, oneIsPrime)) {
+        ms1Indices.push(i);
+      } else if (isNumberPrime(i, oneIsPrime)) {
+        ms2Indices.push(i);
+      } else {
+        ms3Indices.push(i);
+      }
+    }
+  } else {
+    // 'primos-pares-impares' (Ramió Aguirre p. 90)
+    ms1Name = 'Primos';
+    ms2Name = 'Pares';
+    ms3Name = 'Impares Restantes';
+
+    for (let i = 1; i <= length; i++) {
+      if (isNumberPrime(i, oneIsPrime)) {
+        ms1Indices.push(i);
+      } else if (i % 2 === 0) {
+        ms2Indices.push(i);
+      } else {
+        ms3Indices.push(i);
+      }
     }
   }
 
   const fullOrder = [...ms1Indices, ...ms2Indices, ...ms3Indices];
-  return { ms1Indices, ms2Indices, ms3Indices, fullOrder };
+  return { ms1Indices, ms2Indices, ms3Indices, fullOrder, ms1Name, ms2Name, ms3Name };
 }
 
 export function processSeriesTransposition(
@@ -70,17 +262,25 @@ export function processSeriesTransposition(
   oneIsPrime = false,
   mode: AlphabetMode = 'es27',
   direction: 'encrypt' | 'decrypt' = 'encrypt',
-  padChar = 'X'
+  padChar = 'X',
+  order: SeriesOrderType = 'primos-pares-impares'
 ) {
   const norm = normalizeText(text, mode);
   const cleanPad = padChar ? normalizeText(padChar, mode)[0] || 'X' : 'X';
   const numChars = norm.length;
+
+  const { ms1Indices, ms2Indices, ms3Indices, fullOrder, ms1Name, ms2Name, ms3Name } =
+    partitionSeriesIndices(numChars, oneIsPrime, order);
 
   if (numChars === 0) {
     return {
       seriesInfo: {
         numChars: 0,
         oneIsPrime,
+        seriesOrder: order,
+        ms1Name,
+        ms2Name,
+        ms3Name,
         ms1Indices: [],
         ms2Indices: [],
         ms3Indices: [],
@@ -98,8 +298,6 @@ export function processSeriesTransposition(
     };
   }
 
-  const { ms1Indices, ms2Indices, ms3Indices, fullOrder } = partitionSeriesIndices(numChars, oneIsPrime);
-
   if (direction === 'encrypt') {
     const ms1Chars = ms1Indices.map(idx => norm[idx - 1]).join('');
     const ms2Chars = ms2Indices.map(idx => norm[idx - 1]).join('');
@@ -108,16 +306,21 @@ export function processSeriesTransposition(
 
     const steps = [
       `Longitud del mensaje: N = ${numChars} caracteres`,
+      `Orden de series: MS1 (${ms1Name}) → MS2 (${ms2Name}) → MS3 (${ms3Name})`,
       `Convención del número 1: ${oneIsPrime ? '1 es Primo (Ramió Aguirre)' : '1 es Impar (Criterio del Profesor)'}`,
-      `Serie MS1 (Primos) [${ms1Indices.length} posiciones]: ${ms1Indices.join(', ')} ⇒ "${ms1Chars}"`,
-      `Serie MS2 (Pares) [${ms2Indices.length} posiciones]: ${ms2Indices.join(', ')} ⇒ "${ms2Chars}"`,
-      `Serie MS3 (Impares) [${ms3Indices.length} posiciones]: ${ms3Indices.join(', ')} ⇒ "${ms3Chars}"`,
+      `Serie MS1 (${ms1Name}) [${ms1Indices.length} posiciones]: ${ms1Indices.join(', ')} ⇒ "${ms1Chars}"`,
+      `Serie MS2 (${ms2Name}) [${ms2Indices.length} posiciones]: ${ms2Indices.join(', ')} ⇒ "${ms2Chars}"`,
+      `Serie MS3 (${ms3Name}) [${ms3Indices.length} posiciones]: ${ms3Indices.join(', ')} ⇒ "${ms3Chars}"`,
       `Criptograma concatenado: M' = MS1 + MS2 + MS3 ⇒ "${outputText}"`,
     ];
 
     const seriesInfo: SeriesTranspositionInfo = {
       numChars,
       oneIsPrime,
+      seriesOrder: order,
+      ms1Name,
+      ms2Name,
+      ms3Name,
       ms1Indices,
       ms2Indices,
       ms3Indices,
@@ -151,8 +354,9 @@ export function processSeriesTransposition(
 
     const steps = [
       `Longitud del criptograma recibido: LC = ${numChars}`,
+      `Orden de series: MS1 (${ms1Name}) → MS2 (${ms2Name}) → MS3 (${ms3Name})`,
       `Convención del número 1: ${oneIsPrime ? '1 es Primo (Ramió Aguirre)' : '1 es Impar (Criterio del Profesor)'}`,
-      `Partición de índices original generada (${ms1Indices.length} primos, ${ms2Indices.length} pares, ${ms3Indices.length} impares)`,
+      `Partición de índices original generada (${ms1Indices.length} en MS1, ${ms2Indices.length} en MS2, ${ms3Indices.length} en MS3)`,
       `Reubicación posicional: Cada carácter C_k se mapea a su posición original m_{p_k}`,
       `Mensaje claro reconstruido: "${outputText}"`,
     ];
@@ -160,6 +364,10 @@ export function processSeriesTransposition(
     const seriesInfo: SeriesTranspositionInfo = {
       numChars,
       oneIsPrime,
+      seriesOrder: order,
+      ms1Name,
+      ms2Name,
+      ms3Name,
       ms1Indices,
       ms2Indices,
       ms3Indices,
@@ -182,12 +390,13 @@ export function processSeriesTransposition(
 }
 
 // ==========================================
-// 2. TRANSPOSICIÓN POR COLUMNAS
+// 3. TRANSPOSICIÓN POR COLUMNAS
 // ==========================================
 
 export interface ColumnarGridInfo {
   keyword: string;
   isNumericKey: boolean;
+  isPermutationKey?: boolean;
   numCols: number;
   numRows: number;
   colOrder: number[]; // 1-based ranks [2, 4, 1, 5, 3]
@@ -208,27 +417,37 @@ export function buildColumnarGrid(
 ): ColumnarGridInfo {
   const cleanPad = padChar ? normalizeText(padChar, mode)[0] || 'X' : 'X';
   const trimmedKey = keyword.trim().toUpperCase();
-  const isNumeric = /^\d+$/.test(trimmedKey) && parseInt(trimmedKey, 10) > 0;
+
+  // 1. Verificar si es una clave de permutación directa (ej. "32415", "25431", "2 5 4 7 1 3 6")
+  const permNumbers = parsePermutationKey(trimmedKey);
+
+  // 2. Verificar si es un número entero simple de columnas (ej. "6")
+  const isSingleInt = /^\d+$/.test(trimmedKey) && !permNumbers && parseInt(trimmedKey, 10) > 0;
 
   let normKey = '';
   let numCols = 1;
-
-  if (isNumeric) {
-    numCols = Math.max(1, Math.min(20, parseInt(trimmedKey, 10)));
-    normKey = Array.from({ length: numCols }, (_, i) => `${i + 1}`).join(' ');
-  } else {
-    normKey = normalizeText(trimmedKey, mode);
-    numCols = Math.max(1, normKey.length);
-  }
-
+  let isNumeric = false;
+  let isPermutation = false;
   let colOrder: number[] = [];
   let colIndicesSorted: number[] = [];
 
-  if (isNumeric) {
-    // Columnas simples numeradas: lectura natural 1, 2, ..., NC
+  if (permNumbers) {
+    numCols = permNumbers.length;
+    colOrder = [...permNumbers];
+    colIndicesSorted = permNumbers.map(n => n - 1);
+    normKey = permNumbers.join(' ');
+    isNumeric = true;
+    isPermutation = true;
+  } else if (isSingleInt) {
+    numCols = Math.max(1, Math.min(25, parseInt(trimmedKey, 10)));
     colOrder = Array.from({ length: numCols }, (_, i) => i + 1);
     colIndicesSorted = Array.from({ length: numCols }, (_, i) => i);
+    normKey = Array.from({ length: numCols }, (_, i) => `${i + 1}`).join(' ');
+    isNumeric = true;
   } else {
+    normKey = normalizeText(trimmedKey, mode) || 'CLAVE';
+    numCols = Math.max(1, normKey.length);
+
     // Rank columns based on alphabetical sort of key characters
     const keyChars = [...normKey].map((char, originalIndex) => ({ char, originalIndex }));
     const sorted = [...keyChars].sort((a, b) => a.char.localeCompare(b.char));
@@ -239,6 +458,7 @@ export function buildColumnarGrid(
     });
 
     colIndicesSorted = sorted.map(s => s.originalIndex);
+    isNumeric = false;
   }
 
   if (direction === 'encrypt') {
@@ -264,6 +484,7 @@ export function buildColumnarGrid(
     return {
       keyword: normKey,
       isNumericKey: isNumeric,
+      isPermutationKey: isPermutation,
       numCols,
       numRows,
       colOrder,
@@ -305,6 +526,7 @@ export function buildColumnarGrid(
     return {
       keyword: normKey,
       isNumericKey: isNumeric,
+      isPermutationKey: isPermutation,
       numCols,
       numRows,
       colOrder,

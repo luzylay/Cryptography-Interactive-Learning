@@ -610,6 +610,70 @@ describe('11. Transposition Ciphers (Series m1/m2/m3, Columnar & Row Invariants)
     assert.equal(dec, padded);
     assert.ok(dec.startsWith(msg));
   });
+
+  test('Group Transposition: Ramió Aguirre Example 1.57 (MANOS ARRIBA with Π = 24531)', () => {
+    const perm = [2, 4, 5, 3, 1];
+    const k = perm.length;
+    const msg = 'MANOSARRIBAESTOESUNATRACO'; // 25 letters
+    const expectedCipher = 'AOSNMRIBRAETOSASNAUERCOAT';
+
+    // Encrypt
+    let cipher = '';
+    const numBlocks = msg.length / k;
+    for (let b = 0; b < numBlocks; b++) {
+      const block = msg.slice(b * k, (b + 1) * k);
+      cipher += perm.map(pos => block[pos - 1]).join('');
+    }
+    assert.equal(cipher, expectedCipher);
+
+    // Decrypt
+    let plain = '';
+    for (let b = 0; b < numBlocks; b++) {
+      const chunk = cipher.slice(b * k, (b + 1) * k);
+      const reconstructed = new Array(k);
+      for (let i = 0; i < k; i++) {
+        reconstructed[perm[i] - 1] = chunk[i];
+      }
+      plain += reconstructed.join('');
+    }
+    assert.equal(plain, msg);
+  });
+
+  test('Series Transposition: Pares-Primos-Impares order (PC2 Ejercicio 01)', () => {
+    const text = 'ERRARESHUMANOPERDONARDIVINO'; // 27 chars
+    const length = text.length;
+
+    // MS1: Pares
+    const ms1 = [];
+    for (let i = 1; i <= length; i++) {
+      if (i % 2 === 0) ms1.push(i);
+    }
+    // MS2: Primos (excluding 2 which was in Pares)
+    const ms2 = [];
+    const isPrime = n => {
+      if (n < 2) return false;
+      if (n === 2) return true;
+      if (n % 2 === 0) return false;
+      for (let i = 3; i * i <= n; i += 2) {
+        if (n % i === 0) return false;
+      }
+      return true;
+    };
+    for (let i = 1; i <= length; i++) {
+      if (i % 2 !== 0 && isPrime(i)) ms2.push(i);
+    }
+    // MS3: Impares restantes
+    const ms3 = [];
+    for (let i = 1; i <= length; i++) {
+      if (i % 2 !== 0 && !isPrime(i)) ms3.push(i);
+    }
+
+    const fullOrder = [...ms1, ...ms2, ...ms3];
+    assert.equal(fullOrder.length, length);
+    // Every index 1..length must be present exactly once
+    const set = new Set(fullOrder);
+    assert.equal(set.size, length);
+  });
 });
 
 

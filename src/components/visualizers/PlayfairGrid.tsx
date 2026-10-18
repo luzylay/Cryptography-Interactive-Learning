@@ -100,6 +100,16 @@ const ACTIVITY_PRESETS: ActivityPreset[] = [
     filler: 'X',
     description: 'Ejemplo de sustitución digrámica para verificar las reglas en una clave con letras repetidas.',
   },
+  {
+    label: 'Examen PC2: PLAYFAIR (Z)',
+    name: 'Ejercicio 05 PC2: Clave PLAYFAIR con Relleno Z',
+    badge: 'Relleno Z + Ruptura SS',
+    key: 'PLAYFAIR',
+    text: 'LOS MENSAJES ESCRITOS SON SECRETOS',
+    direction: 'encrypt',
+    filler: 'Z',
+    description: 'Ejercicio de examen PC2: clave PLAYFAIR, relleno con letra nula Z (rompe la repetición SS entre ESCRITOS y SON → SZ, y rellena la última letra S → SZ).',
+  },
 ];
 
 interface PlayfairGridProps {
