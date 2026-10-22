@@ -103,19 +103,32 @@ export function modPowBigInt(base: bigint, exp: bigint, modulus: bigint): bigint
  * Educational BigInt RSA Signature of a hash digest
  */
 export function signHashBigInt(digestHex: string, d: number, n: number): string {
-  // Convert first 4 bytes of hash to a numeric representation mod n
-  const hashNum = BigInt(parseInt(digestHex.slice(0, 8), 16) % n);
-  const sigBig = modPowBigInt(hashNum, BigInt(d), BigInt(n));
-  return sigBig.toString(16).toUpperCase();
+  if (!digestHex || n <= 0) return '0';
+  try {
+    const slice = digestHex.slice(0, 8);
+    const parsed = parseInt(slice, 16);
+    const hashNum = BigInt((isNaN(parsed) ? 0 : parsed) % n);
+    const sigBig = modPowBigInt(hashNum, BigInt(d), BigInt(n));
+    return sigBig.toString(16).toUpperCase();
+  } catch {
+    return '0';
+  }
 }
 
 /**
  * Educational BigInt RSA Verification
  */
 export function verifySignatureBigInt(sigHex: string, e: number, n: number): string {
-  const sigBig = BigInt(parseInt(sigHex, 16));
-  const recoveredBig = modPowBigInt(sigBig, BigInt(e), BigInt(n));
-  return recoveredBig.toString(16).toUpperCase();
+  if (!sigHex || typeof sigHex !== 'string' || !/^[0-9a-fA-F]+$/.test(sigHex.trim()) || n <= 0) {
+    return '0';
+  }
+  try {
+    const sigBig = BigInt('0x' + sigHex.trim());
+    const recoveredBig = modPowBigInt(sigBig, BigInt(e), BigInt(n));
+    return recoveredBig.toString(16).toUpperCase();
+  } catch {
+    return '0';
+  }
 }
 
 /**

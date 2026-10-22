@@ -69,22 +69,24 @@ export function performKasiski(text: string, mode: AlphabetMode, minLen = 3, max
   const MAX_KASISKI_LENGTH = 10000;
   const rawNorm = normalizeText(text, mode);
   const norm = rawNorm.length > MAX_KASISKI_LENGTH ? rawNorm.slice(0, MAX_KASISKI_LENGTH) : rawNorm;
-  const patterns: Record<string, number[]> = {};
-
+  const patterns = new Map<string, number[]>();
 
   for (let len = minLen; len <= maxLen; len++) {
     for (let i = 0; i <= norm.length - len; i++) {
       const sub = norm.slice(i, i + len);
-      if (!patterns[sub]) patterns[sub] = [];
-      patterns[sub].push(i);
+      const existing = patterns.get(sub);
+      if (existing) {
+        existing.push(i);
+      } else {
+        patterns.set(sub, [i]);
+      }
     }
   }
 
   const repetitions: KasiskiRepetition[] = [];
   const distanceCounts: Record<number, number> = {};
 
-  for (const pattern in patterns) {
-    const pos = patterns[pattern];
+  for (const [pattern, pos] of patterns.entries()) {
     if (pos.length >= 2) {
       const distances: number[] = [];
       for (let j = 0; j < pos.length - 1; j++) {

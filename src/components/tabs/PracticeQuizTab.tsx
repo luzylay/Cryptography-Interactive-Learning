@@ -410,9 +410,17 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode, onNaviga
     let cleanUser = '';
     let cleanExpected = '';
 
-    if (currentExercise.mode === 'find_key') {
-      cleanUser = userAnswer.trim().replace(/\s+/g, '');
-      cleanExpected = currentExercise.expectedAnswer.trim().replace(/\s+/g, '');
+    const normalizeAnswer = (str: string) => {
+      return str
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim();
+    };
+
+    if (currentExercise.cipherType === 'conceptos' || currentExercise.mode === 'find_key') {
+      cleanUser = normalizeAnswer(userAnswer).replace(/[\s\-_%.,;:()]+/g, '');
+      cleanExpected = normalizeAnswer(currentExercise.expectedAnswer).replace(/[\s\-_%.,;:()]+/g, '');
     } else if (isPolybiusEncrypt) {
       cleanUser = userAnswer.replace(/[^0-9]/g, '');
       cleanExpected = currentExercise.expectedAnswer.replace(/[^0-9]/g, '');
@@ -424,7 +432,7 @@ export const PracticeQuizTab: React.FC<PracticeQuizTabProps> = ({ mode, onNaviga
       cleanExpected = normalizeText(currentExercise.expectedAnswer, mode);
     }
 
-    if (cleanUser === cleanExpected) {
+    if (cleanUser.length > 0 && cleanUser === cleanExpected) {
       setStatus('correct');
       setScore(s => s + 100 + streak * 20);
       setStreak(st => st + 1);

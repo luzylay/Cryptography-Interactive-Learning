@@ -1,12 +1,14 @@
 // Mathematical and modular arithmetic utilities for classical cryptography
 
 export function mod(n: number, m: number): number {
+  if (m === 0 || !Number.isFinite(m)) return 0;
   return ((n % m) + m) % m;
 }
 
 export function gcd(a: number, b: number): number {
-  a = Math.abs(a);
-  b = Math.abs(b);
+  a = Math.floor(Math.abs(a));
+  b = Math.floor(Math.abs(b));
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return 1;
   while (b) {
     [a, b] = [b, a % b];
   }
@@ -14,7 +16,7 @@ export function gcd(a: number, b: number): number {
 }
 
 export function extendedGcd(a: number, b: number): { gcd: number; x: number; y: number } {
-  let [oldR, r] = [a, b];
+  let [oldR, r] = [Math.floor(a), Math.floor(b)];
   let [oldS, s] = [1, 0];
   let [oldT, t] = [0, 1];
 
@@ -29,6 +31,7 @@ export function extendedGcd(a: number, b: number): { gcd: number; x: number; y: 
 }
 
 export function modInverse(a: number, m: number): number | null {
+  if (!Number.isFinite(a) || !Number.isFinite(m) || m <= 1) return null;
   const normA = mod(a, m);
   const { gcd: g, x } = extendedGcd(normA, m);
   if (g !== 1) return null;
@@ -105,9 +108,11 @@ export function getSubMatrix(M: number[][], rowToRemove: number, colToRemove: nu
 
 export function detNxN(M: number[][], m: number): number {
   const n = M.length;
+  if (n === 0) return 0;
   if (n === 1) return mod(M[0][0], m);
   if (n === 2) return det2x2(M, m);
   if (n === 3) return det3x3(M, m);
+  if (n > 6) return 0; // Safeguard against factorial explosion DoS
   
   let det = 0;
   for (let c = 0; c < n; c++) {

@@ -83,5 +83,8 @@ export function normalizeText(text: string, mode: AlphabetMode): string {
 }
 
 export function formatInBlocks(text: string, blockSize = 5): string {
-  return text.match(new RegExp(`.{1,${blockSize}}`, 'g'))?.join(' ') ?? text;
+  if (!text) return '';
+  const size = Math.floor(blockSize);
+  if (!Number.isFinite(size) || size <= 0) return text;
+  return text.match(new RegExp(`.{1,${size}}`, 'g'))?.join(' ') ?? text;
 }

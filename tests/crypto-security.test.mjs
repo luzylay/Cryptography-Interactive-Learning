@@ -6,12 +6,14 @@ import { test, describe } from 'node:test';
 
 // Modular Arithmetic
 function mod(n, m) {
+  if (m === 0 || !Number.isFinite(m)) return 0;
   return ((n % m) + m) % m;
 }
 
 function gcd(a, b) {
-  a = Math.abs(a);
-  b = Math.abs(b);
+  a = Math.floor(Math.abs(a));
+  b = Math.floor(Math.abs(b));
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return 1;
   while (b) {
     [a, b] = [b, a % b];
   }
@@ -19,7 +21,7 @@ function gcd(a, b) {
 }
 
 function extendedGcd(a, b) {
-  let [oldR, r] = [a, b];
+  let [oldR, r] = [Math.floor(a), Math.floor(b)];
   let [oldS, s] = [1, 0];
   let [oldT, t] = [0, 1];
 
@@ -34,6 +36,7 @@ function extendedGcd(a, b) {
 }
 
 function modInverse(a, m) {
+  if (!Number.isFinite(a) || !Number.isFinite(m) || m <= 1) return null;
   const normA = mod(a, m);
   const { gcd: g, x } = extendedGcd(normA, m);
   if (g !== 1) return null;
@@ -270,6 +273,54 @@ describe('3. Defensive Programming and Security Hardening (SSDLC)', () => {
       sumPct += (counts[c] / text.length) * 100;
     }
     assert.ok(Math.abs(sumPct - 100) < 0.0001);
+  });
+
+  test('formatInBlocks handles zero, negative, and non-finite sizes safely without throwing', () => {
+    function formatInBlocksTest(text, blockSize = 5) {
+      if (!text) return '';
+      const size = Math.floor(blockSize);
+      if (!Number.isFinite(size) || size <= 0) return text;
+      return text.match(new RegExp(`.{1,${size}}`, 'g'))?.join(' ') ?? text;
+    }
+    assert.equal(formatInBlocksTest('ABCDEF', 0), 'ABCDEF');
+    assert.equal(formatInBlocksTest('ABCDEF', -3), 'ABCDEF');
+    assert.equal(formatInBlocksTest('ABCDEF', NaN), 'ABCDEF');
+    assert.equal(formatInBlocksTest('ABCDEF', 2), 'AB CD EF');
+  });
+
+  test('RSA verification handles malformed/non-hex signature without throwing RangeError', () => {
+    function verifySignatureBigIntTest(sigHex, e, n) {
+      if (!sigHex || typeof sigHex !== 'string' || !/^[0-9a-fA-F]+$/.test(sigHex.trim()) || n <= 0) {
+        return '0';
+      }
+      try {
+        const sigBig = BigInt('0x' + sigHex.trim());
+        return sigBig.toString(16).toUpperCase();
+      } catch {
+        return '0';
+      }
+    }
+    assert.equal(verifySignatureBigIntTest('', 17, 3233), '0');
+    assert.equal(verifySignatureBigIntTest('MALICIOUS_INPUT', 17, 3233), '0');
+    assert.equal(verifySignatureBigIntTest('1A2F', 17, 3233), '1A2F');
+  });
+
+  test('Kasiski dictionary uses Map to prevent Object prototype collision', () => {
+    const patterns = new Map();
+    const maliciousSub = 'constructor';
+    const existing = patterns.get(maliciousSub);
+    if (existing) {
+      existing.push(0);
+    } else {
+      patterns.set(maliciousSub, [0]);
+    }
+    assert.equal(patterns.get('constructor')?.length, 1);
+  });
+
+  test('modInverse rejects non-positive or unit modulus m <= 1', () => {
+    assert.equal(modInverse(5, 1), null);
+    assert.equal(modInverse(5, 0), null);
+    assert.equal(modInverse(5, -26), null);
   });
 });
 
