@@ -31,53 +31,54 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header className="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
-        {/* Top bar with Logo & Global Alphabet Toggle */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-2.5 sm:py-3 border-b border-slate-800/40">
+        {/* Top bar with Logo & Global Controls */}
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-3 py-2 sm:py-2.5 border-b border-slate-800/40">
           {/* Logo & Title */}
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 p-0.5 shadow-lg shadow-amber-500/20 flex-shrink-0">
-              <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center text-amber-400">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-amber-600 to-amber-400 p-0.5 shadow-lg shadow-amber-500/20 flex-shrink-0">
+              <div className="w-full h-full bg-slate-950 rounded-[10px] sm:rounded-[14px] flex items-center justify-center text-amber-400">
                 <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
               </div>
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-sm sm:text-base font-bold text-slate-100 tracking-tight truncate">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <h1 className="text-xs sm:text-base font-bold text-slate-100 tracking-tight truncate">
                   Criptografía Interactiva
                 </h1>
-                <span className="text-[9px] sm:text-[10px] font-mono px-1.5 sm:px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30 flex-shrink-0">
+                <span className="text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/30 flex-shrink-0">
                   v2.0 Pro
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-400 font-mono truncate">
+              <p className="text-[10px] sm:text-xs text-slate-400 font-mono truncate hidden xs:block">
                 Plataforma de Criptosistemas Clásicos y Discos Cifradores
               </p>
             </div>
           </div>
 
           {/* Right Controls: Exam Query Button & Global Alphabet Mode Selector */}
-          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-between sm:justify-end">
+          <div className="flex items-center gap-1.5 sm:gap-2 w-full md:w-auto justify-between md:justify-end">
             {onOpenExamModal && (
               <button
                 onClick={onOpenExamModal}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 hover:border-amber-400 text-xs font-mono font-bold shadow-md shadow-amber-500/10 transition-all flex-shrink-0"
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 hover:border-amber-400 text-[11px] sm:text-xs font-mono font-bold shadow-md shadow-amber-500/10 transition-all whitespace-nowrap"
                 title="Abrir buscador rápido para preguntas de examen (Ctrl+K)"
               >
-                <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-                <span>Consultar en Examen</span>
-                <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[9px] bg-slate-950/80 border border-amber-500/30 rounded text-amber-300/80">
+                <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse flex-shrink-0" />
+                <span className="xs:hidden">Examen</span>
+                <span className="hidden xs:inline">Consultar en Examen</span>
+                <kbd className="hidden lg:inline-block px-1.5 py-0.2 text-[9px] bg-slate-950/80 border border-amber-500/30 rounded text-amber-300/80">
                   Ctrl+K
                 </kbd>
               </button>
             )}
 
             {/* Global Alphabet Mode Selector */}
-            <div className="flex items-center justify-between sm:justify-end gap-1.5 bg-slate-900/90 border border-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl shadow-inner overflow-x-auto">
-              <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 pl-1.5 sm:pl-2 flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1 bg-slate-900/90 border border-slate-800 p-1 rounded-xl sm:rounded-2xl shadow-inner overflow-x-auto flex-shrink-0">
+              <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 pl-1 sm:pl-1.5 flex items-center gap-1 flex-shrink-0">
                 <SlidersHorizontal className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
-                <span className="hidden xs:inline">Alfabeto:</span>
+                <span className="hidden sm:inline">Alfabeto:</span>
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5 sm:gap-1">
                 {(['es27', 'en26', 'alberti24'] as AlphabetMode[]).map(mKey => {
                   const cfg = ALPHABETS[mKey];
                   const isSelected = alphabetMode === mKey;
@@ -86,7 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       key={mKey}
                       onClick={() => onAlphabetModeChange(mKey)}
-                      className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-mono text-[11px] sm:text-xs whitespace-nowrap transition-all ${
+                      className={`px-1.5 sm:px-2.5 py-1 rounded-lg sm:rounded-xl font-mono text-[10px] sm:text-xs whitespace-nowrap transition-all ${
                         isSelected
                           ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
                           : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
@@ -102,8 +103,8 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto py-2 scrollbar-none">
+        {/* Navigation Tabs with smooth scroll */}
+        <nav className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto py-1.5 sm:py-2 scrollbar-none scroll-smooth">
           {tabs.map(tab => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -112,15 +113,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id as MainTabType)}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl font-mono text-xs whitespace-nowrap transition-all border flex-shrink-0 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-xl font-mono text-[11px] sm:text-xs whitespace-nowrap transition-all border flex-shrink-0 ${
                   isActive
                     ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 font-bold shadow-sm'
                     : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                 }`}
               >
-                <Icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isActive ? 'text-amber-400' : 'text-slate-500'}`} />
-                <span className="hidden md:inline">{tab.label}</span>
-                <span className="inline md:hidden">{tab.shortLabel}</span>
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-400' : 'text-slate-500'}`} />
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="inline sm:hidden">{tab.shortLabel}</span>
                 <span
                   className={`text-[8px] sm:text-[9px] px-1.5 py-0.5 rounded-full ${
                     isActive ? 'bg-amber-500/20 text-amber-300' : 'bg-slate-900 text-slate-500'
