@@ -11,7 +11,15 @@ import {
   Tag,
   Lightbulb,
   Microscope,
-  Edit3
+  Edit3,
+  Key,
+  Shield,
+  Layers,
+  Database,
+  Cpu,
+  Terminal,
+  Network,
+  RotateCw
 } from 'lucide-react';
 import {
   KNOWLEDGE_BASE_QA,
@@ -28,11 +36,139 @@ interface EncyclopediaTabProps {
   onNavigateTab?: (tab: MainTabType) => void;
 }
 
+interface QuickTopic {
+  id: string;
+  title: string;
+  subtitle: string;
+  category: QACategory;
+  qaId: string;
+  articleId: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tag: string;
+}
+
+const CANONICAL_CONSULTATION_TOPICS: QuickTopic[] = [
+  {
+    id: 'simetrico_clave_secreta',
+    title: 'Criptografía Simétrica',
+    subtitle: 'Clave única, Kerckhoffs y distribución',
+    category: 'simetrico',
+    qaId: 'qa-simetrico-clave-secreta',
+    articleId: 'cripto_simetrica_des_3des_aes',
+    icon: Key,
+    tag: 'Criptografía Simétrica',
+  },
+  {
+    id: 'simetrica_vs_asimetrica',
+    title: 'Simétrica vs Asimétrica',
+    subtitle: 'Pública cifra, privada descifra y roles',
+    category: 'asimetrico',
+    qaId: 'qa-diferencia-simetrica-asimetrica',
+    articleId: 'cripto_asimetrica_cleopatra_hibrido',
+    icon: Shield,
+    tag: 'Simétrica vs Asimétrica',
+  },
+  {
+    id: 'des_3des_aes',
+    title: 'Algoritmos DES, 3DES y AES',
+    subtitle: 'Bloques 64/128b, Feistel, cajas S y SPN',
+    category: 'simetrico',
+    qaId: 'qa-algoritmos-simetricos-aes',
+    articleId: 'cripto_simetrica_des_3des_aes',
+    icon: Layers,
+    tag: 'AES',
+  },
+  {
+    id: 'ventajas_desventajas',
+    title: 'Ventajas: AES, DES y 3DES',
+    subtitle: 'Comparativa de rendimiento y Sweet32',
+    category: 'simetrico',
+    qaId: 'qa-ventajas-desventajas-aes-des-3des',
+    articleId: 'cripto_simetrica_des_3des_aes',
+    icon: Layers,
+    tag: 'Comparativa',
+  },
+  {
+    id: 'fuerza_bruta',
+    title: 'Ataques de Fuerza Bruta',
+    subtitle: 'Wordlists, Hashcat, John y espacio 2^k',
+    category: 'fuerza_bruta',
+    qaId: 'qa-ataque-fuerza-bruta-longitud',
+    articleId: 'fuerza_bruta_espacio_claves',
+    icon: RotateCw,
+    tag: 'Fuerza Bruta',
+  },
+  {
+    id: 'asimetrica_cleopatra',
+    title: 'Asimétrica y Cleopatra',
+    subtitle: 'RSA, DSA, ElGamal y exportación .asc',
+    category: 'asimetrico',
+    qaId: 'qa-criptografia-asimetrica-cleopatra',
+    articleId: 'cripto_asimetrica_cleopatra_hibrido',
+    icon: Key,
+    tag: 'Cleopatra',
+  },
+  {
+    id: 'repaso_aes_rsa',
+    title: 'Repaso: AES vs RSA',
+    subtitle: 'Simétrico recomendado vs asimétrico',
+    category: 'asimetrico',
+    qaId: 'qa-repaso-simetrica-asimetrica',
+    articleId: 'cripto_asimetrica_cleopatra_hibrido',
+    icon: Shield,
+    tag: 'Repaso',
+  },
+  {
+    id: 'openssl_cyberchef',
+    title: 'OpenSSL & CyberChef',
+    subtitle: 'AES-256-CBC, RSA-OAEP e Híbrido',
+    category: 'herramientas_lab',
+    qaId: 'qa-exposiciones-openssl-cyberchef-hibrido',
+    articleId: 'laboratorio_openssl_cyberchef',
+    icon: Terminal,
+    tag: 'OpenSSL',
+  },
+  {
+    id: 'distribuidos_rpc',
+    title: 'Sistemas Distribuidos & RPC',
+    subtitle: 'Cliente-servidor, stubs e integridad',
+    category: 'distribuidos_dnie',
+    qaId: 'qa-comunicaciones-sistemas-distribuidos-rpc',
+    articleId: 'sistemas_distribuidos_rpc_dnie',
+    icon: Network,
+    tag: 'RPC',
+  },
+  {
+    id: 'dnie',
+    title: 'DNI Electrónico (DNIe)',
+    subtitle: 'Chip, PIN, biometría, PDF y AES/3DES',
+    category: 'distribuidos_dnie',
+    qaId: 'qa-dnie-chip-biometria-firmapdf',
+    articleId: 'sistemas_distribuidos_rpc_dnie',
+    icon: Cpu,
+    tag: 'DNI electrónico',
+  },
+  {
+    id: 'hashes_nosql',
+    title: 'Hashes, Colisiones & NoSQL',
+    subtitle: 'SHA-256, tablas hash O(1) y clave-valor',
+    category: 'hashes',
+    qaId: 'qa-hash-definicion-propiedades-colisiones',
+    articleId: 'funciones_hash_tablas_nosql',
+    icon: Database,
+    tag: 'Funciones Hash',
+  },
+];
+
 export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab }) => {
-  const [activeTab, setActiveTab] = useState<'qa' | 'articles' | 'bibliography'>('articles');
-  const [activeArticle, setActiveArticle] = useState<string>('playfair');
+  const [activeTab, setActiveTab] = useState<'qa' | 'articles' | 'bibliography'>('qa');
+  const [activeArticle, setActiveArticle] = useState<string>('cripto_simetrica_des_3des_aes');
   const [selectedQACategory, setSelectedQACategory] = useState<QACategory>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [articleSearch, setArticleSearch] = useState<string>('');
+  const [bibSearch, setBibSearch] = useState<string>('');
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+
   const [expandedQAIds, setExpandedQAIds] = useState<Set<string>>(
     new Set(KNOWLEDGE_BASE_QA.map(q => q.id))
   );
@@ -49,6 +185,26 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
       }
       return next;
     });
+  };
+
+  const handleSelectQuickTopic = (topic: QuickTopic) => {
+    setSelectedTopicId(topic.id);
+    setSelectedQACategory(topic.category);
+    setSearchQuery(topic.tag);
+    setActiveArticle(topic.articleId);
+
+    // Expand the matching QA card
+    setExpandedQAIds(prev => {
+      const next = new Set(prev);
+      next.add(topic.qaId);
+      return next;
+    });
+  };
+
+  const handleClearFilters = () => {
+    setSelectedTopicId(null);
+    setSelectedQACategory('all');
+    setSearchQuery('');
   };
 
   const handleCopyQA = (item: QAItem) => {
@@ -75,6 +231,30 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
     });
   }, [selectedQACategory, searchQuery]);
 
+  const filteredArticles = useMemo(() => {
+    const q = articleSearch.toLowerCase().trim();
+    if (!q) return ENCYCLOPEDIA_ARTICLES;
+    return ENCYCLOPEDIA_ARTICLES.filter(
+      art =>
+        art.title.toLowerCase().includes(q) ||
+        art.category.toLowerCase().includes(q) ||
+        art.content.toLowerCase().includes(q)
+    );
+  }, [articleSearch]);
+
+  const filteredBib = useMemo(() => {
+    const q = bibSearch.toLowerCase().trim();
+    if (!q) return APA_REFERENCES;
+    return APA_REFERENCES.filter(
+      ref =>
+        ref.topic.toLowerCase().includes(q) ||
+        ref.author.toLowerCase().includes(q) ||
+        ref.title.toLowerCase().includes(q) ||
+        ref.category.toLowerCase().includes(q) ||
+        ref.notes.toLowerCase().includes(q)
+    );
+  }, [bibSearch]);
+
   const currentArticle =
     ENCYCLOPEDIA_ARTICLES.find(a => a.id === activeArticle) || ENCYCLOPEDIA_ARTICLES[0];
 
@@ -88,10 +268,10 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
           </div>
           <div>
             <h2 className="text-base font-bold text-slate-100 flex items-center gap-2">
-              Enciclopedia, Banco de Preguntas y Referencias APA 7
+              Enciclopedia, Banco de Consultas Exactas y Referencias APA 7
             </h2>
             <p className="text-xs text-slate-400 font-mono">
-              Fundamentos teóricos, cuestionario conceptual escalable y fuentes académicas verificadas
+              Criptografía Simétrica, Asimétrica, DES, 3DES, AES, Fuerza Bruta, RPC, DNIe y Hashes
             </p>
           </div>
         </div>
@@ -107,7 +287,7 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
             }`}
           >
             <HelpCircle className="w-3.5 h-3.5 text-amber-400" />
-            Preguntas y Fundamentos ({KNOWLEDGE_BASE_QA.length})
+            Consultas Exactas ({KNOWLEDGE_BASE_QA.length})
           </button>
           <button
             onClick={() => setActiveTab('articles')}
@@ -118,7 +298,7 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
             }`}
           >
             <FileText className="w-3.5 h-3.5" />
-            Artículos Teóricos ({ENCYCLOPEDIA_ARTICLES.length})
+            Tratados Teóricos ({ENCYCLOPEDIA_ARTICLES.length})
           </button>
           <button
             onClick={() => setActiveTab('bibliography')}
@@ -131,6 +311,54 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
             <BookmarkCheck className="w-3.5 h-3.5" />
             Bibliografía APA 7 ({APA_REFERENCES.length})
           </button>
+        </div>
+      </GlassCard>
+
+      {/* ── INTERACTIVE CANONICAL CONSULTATION QUICK SELECTOR ── */}
+      <GlassCard className="flex flex-col gap-3 border-amber-500/20 bg-slate-950/70">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-amber-400" />
+            <span className="text-xs font-mono font-bold text-amber-300 uppercase tracking-wider">
+              Consultas Rápidas por Tema Exacto (Programa del Curso)
+            </span>
+          </div>
+          {selectedTopicId && (
+            <button
+              onClick={handleClearFilters}
+              className="text-[11px] font-mono text-slate-400 hover:text-amber-300 underline underline-offset-2 transition"
+            >
+              Restablecer todos los filtros
+            </button>
+          )}
+        </div>
+
+        {/* Quick topic buttons grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+          {CANONICAL_CONSULTATION_TOPICS.map(topic => {
+            const IconComponent = topic.icon;
+            const isSelected = selectedTopicId === topic.id;
+
+            return (
+              <button
+                key={topic.id}
+                onClick={() => handleSelectQuickTopic(topic)}
+                className={`p-2.5 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                  isSelected
+                    ? 'bg-amber-500/25 border-amber-500/60 text-amber-200 shadow-md ring-1 ring-amber-500/30'
+                    : 'bg-slate-900/50 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 hover:border-slate-700'
+                }`}
+              >
+                <div className="flex items-center gap-1.5">
+                  <IconComponent className={`w-3.5 h-3.5 ${isSelected ? 'text-amber-300' : 'text-slate-500'}`} />
+                  <span className="text-xs font-bold leading-tight line-clamp-1">{topic.title}</span>
+                </div>
+                <span className="text-[10px] text-slate-400 font-mono line-clamp-1 leading-tight">
+                  {topic.subtitle}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </GlassCard>
 
@@ -150,7 +378,10 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
                 return (
                   <button
                     key={cat.id}
-                    onClick={() => setSelectedQACategory(cat.id)}
+                    onClick={() => {
+                      setSelectedQACategory(cat.id);
+                      setSelectedTopicId(null);
+                    }}
                     className={`px-3 py-1.5 rounded-xl font-mono text-xs whitespace-nowrap transition border flex items-center gap-1.5 flex-shrink-0 ${
                       selectedQACategory === cat.id
                         ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-bold shadow-sm'
@@ -170,7 +401,7 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
             <SearchBar
               value={searchQuery}
               onChange={setSearchQuery}
-              placeholder="Buscar preguntas o conceptos..."
+              placeholder="Buscar por concepto, algoritmo o término..."
               className="min-w-[240px] sm:max-w-xs"
             />
           </GlassCard>
@@ -180,6 +411,14 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
             {filteredQA.length === 0 ? (
               <GlassCard className="text-center py-12 text-slate-500 font-mono text-sm">
                 No se encontraron preguntas que coincidan con &ldquo;{searchQuery}&rdquo;.
+                <div className="mt-3">
+                  <button
+                    onClick={handleClearFilters}
+                    className="px-3 py-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-lg text-xs"
+                  >
+                    Limpiar Filtros
+                  </button>
+                </div>
               </GlassCard>
             ) : (
               filteredQA.map((item, idx) => {
@@ -209,7 +448,7 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
                             </span>
                             {item.apaCitation && (
                               <span className="text-[10px] font-mono text-slate-500">
-                                Ref: {item.apaCitation}
+                                Cita: {item.apaCitation}
                               </span>
                             )}
                           </div>
@@ -290,7 +529,7 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
                           </div>
                           {item.apaCitation && (
                             <span className="text-[10px] text-slate-500">
-                              Cita formal: {item.apaCitation}
+                              Referencia canónica: {item.apaCitation}
                             </span>
                           )}
                         </div>
@@ -309,28 +548,44 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Article Selector Column */}
           <div className="md:col-span-1 flex flex-col gap-2">
-            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-1">
-              Temas y Tratados ({ENCYCLOPEDIA_ARTICLES.length})
-            </span>
-            {ENCYCLOPEDIA_ARTICLES.map(art => {
-              const isSelected = art.id === currentArticle.id;
-              return (
-                <button
-                  key={art.id}
-                  onClick={() => setActiveArticle(art.id)}
-                  className={`text-left p-3 rounded-xl border text-xs font-mono transition-all flex flex-col gap-1 ${
-                    isSelected
-                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-200 shadow-sm font-bold'
-                      : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }`}
-                >
-                  <span className="text-[10px] text-amber-400/80 font-normal">
-                    {art.category}
-                  </span>
-                  <span className="line-clamp-2 leading-snug">{art.title}</span>
-                </button>
-              );
-            })}
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">
+                Tratados ({filteredArticles.length})
+              </span>
+            </div>
+
+            {/* Article Search Filter */}
+            <div className="mb-2">
+              <input
+                type="text"
+                value={articleSearch}
+                onChange={e => setArticleSearch(e.target.value)}
+                placeholder="Filtrar tratados..."
+                className="w-full px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5 max-h-[700px] overflow-y-auto pr-1">
+              {filteredArticles.map(art => {
+                const isSelected = art.id === currentArticle.id;
+                return (
+                  <button
+                    key={art.id}
+                    onClick={() => setActiveArticle(art.id)}
+                    className={`text-left p-2.5 rounded-xl border text-xs font-mono transition-all flex flex-col gap-0.5 ${
+                      isSelected
+                        ? 'bg-amber-500/20 border-amber-500/40 text-amber-200 shadow-sm font-bold'
+                        : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <span className="text-[10px] text-amber-400/80 font-normal">
+                      {art.category}
+                    </span>
+                    <span className="line-clamp-2 leading-snug">{art.title}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Article Content Viewer */}
@@ -350,17 +605,17 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
                   <>
                     <button
                       onClick={() => onNavigateTab('lab')}
-                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-xs font-mono font-semibold transition"
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-xs font-mono font-semibold transition flex items-center"
                       title="Probar este algoritmo de forma visual e interactiva"
                     >
-                      <Microscope className="w-4 h-4 mr-2" /> Abrir Laboratorio
+                      <Microscope className="w-4 h-4 mr-1.5" /> Laboratorio
                     </button>
                     <button
                       onClick={() => onNavigateTab('practice')}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 text-xs font-mono transition"
+                      className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 text-xs font-mono transition flex items-center"
                       title="Ir a resolver ejercicios de autoevaluación"
                     >
-                      <Edit3 className="w-4 h-4 mr-2" /> Ir a Práctica
+                      <Edit3 className="w-4 h-4 mr-1.5" /> Práctica
                     </button>
                   </>
                 )}
@@ -383,22 +638,31 @@ export const EncyclopediaTab: React.FC<EncyclopediaTabProps> = ({ onNavigateTab 
       {/* ── VIEW 3: APA 7 BIBLIOGRAPHY DIRECTORY ── */}
       {activeTab === 'bibliography' && (
         <div className="flex flex-col gap-4">
-          <GlassCard className="flex items-center justify-between gap-4">
+          <GlassCard className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-sm font-bold text-slate-100">
                 Directorio Bibliográfico en Formato APA 7.ª Edición
               </h3>
               <p className="text-xs text-slate-400 font-mono mt-0.5">
-                Fuentes primarias históricas, estándares internacionales (NIST, IETF RFC, BSI) y textos base del curso
+                Fuentes primarias históricas, estándares internacionales (NIST, IETF RFC, BSI, ICAO) y tratados base
               </p>
             </div>
-            <Badge variant="amber" size="md">
-              {APA_REFERENCES.length} Referencias Verificadas
-            </Badge>
+            <div className="flex items-center gap-3">
+              <input
+                type="text"
+                value={bibSearch}
+                onChange={e => setBibSearch(e.target.value)}
+                placeholder="Buscar referencias..."
+                className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-500/50"
+              />
+              <Badge variant="amber" size="md">
+                {filteredBib.length} Fuentes
+              </Badge>
+            </div>
           </GlassCard>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {APA_REFERENCES.map(ref => {
+            {filteredBib.map(ref => {
               const isCopiedRef = isCopied(`ref-${ref.id}`);
               return (
                 <GlassCard key={ref.id} hoverEffect className="flex flex-col gap-3">

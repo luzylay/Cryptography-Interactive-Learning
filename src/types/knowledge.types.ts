@@ -3,13 +3,19 @@
 export type QACategory =
   | 'all'
   | 'fundamentos'
+  | 'simetrico'
+  | 'asimetrico'
+  | 'hashes'
+  | 'distribuidos_dnie'
+  | 'fuerza_bruta'
+  | 'herramientas_lab'
   | 'esteganografia'
   | 'cifrado_moderno'
   | 'criptoanalisis';
 
 export interface QAItem {
   id: string;
-  category: 'fundamentos' | 'esteganografia' | 'cifrado_moderno' | 'criptoanalisis';
+  category: Exclude<QACategory, 'all'>;
   categoryLabel: string;
   question: string;
   shortSummary: string;

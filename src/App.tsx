@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlphabetMode } from './crypto/alphabets';
 import { Navbar, MainTabType } from './components/Navbar';
 import { InteractiveLabTab } from './components/tabs/InteractiveLabTab';
@@ -6,10 +6,24 @@ import { PracticeQuizTab } from './components/tabs/PracticeQuizTab';
 import { CryptanalysisTab } from './components/tabs/CryptanalysisTab';
 import { DecisionMatrixTab } from './components/tabs/DecisionMatrixTab';
 import { EncyclopediaTab } from './components/tabs/EncyclopediaTab';
+import { ExamConsultationModal } from './components/modals/ExamConsultationModal';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<MainTabType>('lab');
   const [alphabetMode, setAlphabetMode] = useState<AlphabetMode>('es27');
+  const [isExamModalOpen, setIsExamModalOpen] = useState(false);
+
+  // Global keyboard shortcut: Ctrl+K / Cmd+K to toggle Exam Consultation Modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsExamModalOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200">
@@ -19,6 +33,17 @@ export default function App() {
         onTabChange={setActiveTab}
         alphabetMode={alphabetMode}
         onAlphabetModeChange={setAlphabetMode}
+        onOpenExamModal={() => setIsExamModalOpen(true)}
+      />
+
+      {/* Global Quick Exam Consultation Modal (Available anywhere via Ctrl+K or Button) */}
+      <ExamConsultationModal
+        isOpen={isExamModalOpen}
+        onClose={() => setIsExamModalOpen(false)}
+        onNavigateToEncyclopedia={(articleId) => {
+          setActiveTab('encyclopedia');
+          setIsExamModalOpen(false);
+        }}
       />
 
       {/* Main Tab Views */}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlphabetMode, ALPHABETS } from '../crypto/alphabets';
 import { MainTabType } from '../types';
-import { Shield, Sparkles, BookOpen, GraduationCap, BarChart3, SlidersHorizontal, Layers, Compass } from 'lucide-react';
+import { Shield, Sparkles, BookOpen, GraduationCap, BarChart3, SlidersHorizontal, Layers, Compass, Zap } from 'lucide-react';
 
 export type { MainTabType };
 
@@ -10,6 +10,7 @@ interface NavbarProps {
   onTabChange: (tab: MainTabType) => void;
   alphabetMode: AlphabetMode;
   onAlphabetModeChange: (mode: AlphabetMode) => void;
+  onOpenExamModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -17,13 +18,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   onTabChange,
   alphabetMode,
   onAlphabetModeChange,
+  onOpenExamModal,
 }) => {
   const tabs = [
     { id: 'lab', label: 'Laboratorio de Discos y Cifras', shortLabel: 'Laboratorio', icon: Layers, badge: 'Interactivo' },
     { id: 'practice', label: 'Estudio de Ejercicios', shortLabel: 'Ejercicios', icon: GraduationCap, badge: 'Autoevaluación' },
     { id: 'cryptoanalysis', label: 'Criptoanálisis y Frecuencias', shortLabel: 'Criptoanálisis', icon: BarChart3, badge: 'Herramientas' },
     { id: 'decision', label: 'Toma de Decisiones & Kleopatra', shortLabel: 'Matriz de Decisión', icon: Compass, badge: 'NIST & OpenPGP' },
-    { id: 'encyclopedia', label: 'Enciclopedia Teórica', shortLabel: 'Enciclopedia', icon: BookOpen, badge: 'Referencia' },
+    { id: 'encyclopedia', label: 'Enciclopedia & Consultas de Examen', shortLabel: 'Consultas & Examen', icon: BookOpen, badge: 'Teoría Oficial' },
   ];
 
   return (
@@ -53,32 +55,49 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Global Alphabet Mode Selector */}
-          <div className="flex items-center justify-between sm:justify-end gap-1.5 bg-slate-900/90 border border-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl shadow-inner overflow-x-auto">
-            <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 pl-1.5 sm:pl-2 flex items-center gap-1 flex-shrink-0">
-              <SlidersHorizontal className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
-              <span className="hidden xs:inline">Alfabeto:</span>
-            </span>
-            <div className="flex items-center gap-1">
-              {(['es27', 'en26', 'alberti24'] as AlphabetMode[]).map(mKey => {
-                const cfg = ALPHABETS[mKey];
-                const isSelected = alphabetMode === mKey;
+          {/* Right Controls: Exam Query Button & Global Alphabet Mode Selector */}
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap justify-between sm:justify-end">
+            {onOpenExamModal && (
+              <button
+                onClick={onOpenExamModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 text-amber-300 border border-amber-500/40 hover:bg-amber-500/25 hover:border-amber-400 text-xs font-mono font-bold shadow-md shadow-amber-500/10 transition-all flex-shrink-0"
+                title="Abrir buscador rápido para preguntas de examen (Ctrl+K)"
+              >
+                <Zap className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                <span>Consultar en Examen</span>
+                <kbd className="hidden md:inline-block px-1.5 py-0.2 text-[9px] bg-slate-950/80 border border-amber-500/30 rounded text-amber-300/80">
+                  Ctrl+K
+                </kbd>
+              </button>
+            )}
 
-                return (
-                  <button
-                    key={mKey}
-                    onClick={() => onAlphabetModeChange(mKey)}
-                    className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-mono text-[11px] sm:text-xs whitespace-nowrap transition-all ${
-                      isSelected
-                        ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                    }`}
-                    title={cfg.description}
-                  >
-                    {cfg.shortName}
-                  </button>
-                );
-              })}
+            {/* Global Alphabet Mode Selector */}
+            <div className="flex items-center justify-between sm:justify-end gap-1.5 bg-slate-900/90 border border-slate-800 p-1 sm:p-1.5 rounded-xl sm:rounded-2xl shadow-inner overflow-x-auto">
+              <span className="text-[10px] sm:text-[11px] font-mono text-slate-400 pl-1.5 sm:pl-2 flex items-center gap-1 flex-shrink-0">
+                <SlidersHorizontal className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" />
+                <span className="hidden xs:inline">Alfabeto:</span>
+              </span>
+              <div className="flex items-center gap-1">
+                {(['es27', 'en26', 'alberti24'] as AlphabetMode[]).map(mKey => {
+                  const cfg = ALPHABETS[mKey];
+                  const isSelected = alphabetMode === mKey;
+
+                  return (
+                    <button
+                      key={mKey}
+                      onClick={() => onAlphabetModeChange(mKey)}
+                      className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl font-mono text-[11px] sm:text-xs whitespace-nowrap transition-all ${
+                        isSelected
+                          ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      }`}
+                      title={cfg.description}
+                    >
+                      {cfg.shortName}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

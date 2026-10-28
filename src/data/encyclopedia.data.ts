@@ -316,6 +316,188 @@ export const APA_REFERENCES: ApaReference[] = [
     inTextCitation: '(Wheatstone & Playfair, 1854; Stallings, 2017)',
     notes: 'Primer cifrador digrámico de sustitución poligráfica simétrica de uso práctico militar. Utiliza una matriz cuadrada de 5×5 con unificación de I/J (y N/Ñ en castellano) y reglas geométricas de desplazamiento.',
   },
+  {
+    id: 'diffie_hellman1976',
+    topic: 'Criptografía Asimétrica y Concepto de Clave Pública/Privada',
+    category: 'Artículo Científico (Journal)',
+    author: 'Diffie, W., & Hellman, M. E.',
+    year: '1976',
+    title: 'New directions in cryptography',
+    source: 'IEEE Transactions on Information Theory, 22(6), 644–654',
+    doiOrUrl: 'https://doi.org/10.1109/TIT.1976.1055638',
+    displayUrlLabel: 'IEEE Xplore - DOI: 10.1109/TIT.1976.1055638',
+    inTextCitation: '(Diffie & Hellman, 1976)',
+    notes: 'Artículo seminal que introduce formalmente el concepto de criptografía de clave pública, funciones trampa unidireccionales y el intercambio seguro de claves sin canal secreto previo.',
+  },
+  {
+    id: 'rfc8017_oaep',
+    topic: 'Estándar RSA Criptográfico PKCS #1 v2.2 y Esquema OAEP',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Moriarty, K. (Ed.), Kaliski, B., Jonsson, J., & Rusch, A.',
+    year: '2016',
+    title: 'PKCS #1: RSA Cryptography Specifications Version 2.2',
+    source: 'RFC 8017, Internet Engineering Task Force (IETF)',
+    doiOrUrl: 'https://www.rfc-editor.org/rfc/rfc8017',
+    displayUrlLabel: 'IETF RFC Editor - RFC 8017 (PKCS #1 v2.2)',
+    inTextCitation: '(Moriarty et al. / IETF RFC 8017, 2016)',
+    notes: 'Norma canónica que especifica el relleno OAEP (Optimal Asymmetric Encryption Padding) para RSA, previniendo ataques de texto cifrado adaptativo (Bleichenbacher) y oráculos de relleno.',
+  },
+  {
+    id: 'rfc5531_rpc',
+    topic: 'Protocolo de Llamada a Procedimiento Remoto (RPC Versión 2)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Thurlow, R.',
+    year: '2009',
+    title: 'RPC: Remote Procedure Call Protocol Specification Version 2',
+    source: 'RFC 5531, Internet Engineering Task Force (IETF)',
+    doiOrUrl: 'https://www.rfc-editor.org/rfc/rfc5531',
+    displayUrlLabel: 'IETF RFC Editor - RFC 5531 (RPC v2)',
+    inTextCitation: '(Thurlow / IETF RFC 5531, 2009)',
+    notes: 'Especificación canónica del protocolo RPC en sistemas distribuidos, detallando la serialización de parámetros (XDR), el rol de stubs cliente/servidor y mecanismos de autenticación e integridad.',
+  },
+  {
+    id: 'icao9303_dnie',
+    topic: 'Documentos de Viaje e Identidad Electrónicos (DNIe / eID & MRTD)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'International Civil Aviation Organization (ICAO)',
+    year: '2021',
+    title: 'Machine Readable Travel Documents (Doc 9303 Part 9–11: Deployment of Biometric Identification and Electronic Storage of Data and Security Mechanisms)',
+    source: 'ICAO Standard Publications, 8.ª ed., Montreal, Canadá',
+    doiOrUrl: 'https://www.icao.int/publications/pages/publication.aspx?docnum=9303',
+    displayUrlLabel: 'ICAO Doc 9303 - Estándar Oficial de Pasaportes y DNIs Electrónicos',
+    inTextCitation: '(ICAO Doc 9303, 2021)',
+    notes: 'Estándar internacional rector de los chips criptográficos en pasaportes y DNIs electrónicos, estableciendo la protección biométrica, firma de datos y protocolos seguros BAC y PACE.',
+  },
+  {
+    id: 'bsi_tr03110_pace',
+    topic: 'Protocolo de Establecimiento de Conexión Autenticada con Contraseña (PACE)',
+    category: 'Estándar Internacional / Normativa',
+    author: 'Federal Office for Information Security (BSI)',
+    year: '2020',
+    title: 'Advanced Security Mechanisms for Machine Readable Travel Documents - Part 2: Password Authenticated Connection Establishment (PACE)',
+    source: 'Technical Guideline BSI TR-03110-2 v2.21, Bonn, Alemania',
+    doiOrUrl: 'https://www.bsi.bund.de/EN/The-BSI/Standards-and-Certifications/Technical-Guidelines/TR-03110/TR-03110_node.html',
+    displayUrlLabel: 'BSI TR-03110 - Guía Técnica PACE para Tarjetas Inteligentes',
+    inTextCitation: '(BSI TR-03110, 2020)',
+    notes: 'Especificación del protocolo criptográfico PACE utilizado en los chips de DNIe modernos (v3.0 y v4.0) con cifrado AES para crear canales seguros inalámbricos inmunes a escuchas pasivas.',
+  },
+  {
+    id: 'kleppmann2017',
+    topic: 'Sistemas Distribuidos, Tablas Hash y Almacenamiento Clave-Valor (NoSQL)',
+    category: 'Libro de Texto Base',
+    author: 'Kleppmann, M.',
+    year: '2017',
+    title: 'Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems',
+    source: 'O\'Reilly Media. ISBN: 978-1449373320',
+    doiOrUrl: 'https://dataintensive.net/',
+    displayUrlLabel: 'O\'Reilly Media - Designing Data-Intensive Applications',
+    inTextCitation: '(Kleppmann, 2017, pp. 69–90)',
+    notes: 'Tratado fundamental sobre índices basados en tablas hash (Hash Indexes), particionamiento distribuido (Consistent Hashing) y contraste entre modelos relacionales y no relacionales (Key-Value Stores).',
+  },
+  {
+    id: 'tanenbaum2017',
+    topic: 'Principios y Paradigmas de Sistemas Distribuidos',
+    category: 'Libro de Texto Base',
+    author: 'Tanenbaum, A. S., & Van Steen, M.',
+    year: '2017',
+    title: 'Distributed Systems: Principles and Paradigms (3.ª ed.)',
+    source: 'CreateSpace Independent Publishing Platform. ISBN: 978-1543057386',
+    doiOrUrl: 'https://www.distributed-systems.net/',
+    displayUrlLabel: 'Distributed-Systems.net - Libro de Texto de Tanenbaum & Van Steen',
+    inTextCitation: '(Tanenbaum & Van Steen, 2017)',
+    notes: 'Obra cumbre sobre arquitectura cliente-servidor, comunicación por llamadas a procedimiento remoto (RPC), serialización en stubs y seguridad distribuida.',
+  },
+  {
+    id: 'nakamoto2008',
+    topic: 'Blockchain, Hash SHA-256 y Prueba de Trabajo (Proof of Work)',
+    category: 'Artículo Científico (Journal)',
+    author: 'Nakamoto, S.',
+    year: '2008',
+    title: 'Bitcoin: A Peer-to-Peer Electronic Cash System',
+    source: 'Bitcoin.org Whitepaper',
+    doiOrUrl: 'https://bitcoin.org/bitcoin.pdf',
+    displayUrlLabel: 'Bitcoin.org - Whitepaper Original de Satoshi Nakamoto (2008)',
+    inTextCitation: '(Nakamoto, 2008)',
+    notes: 'Artículo seminal que introduce la arquitectura Blockchain basada en encadenamiento inmutable por hash SHA-256, árboles de Merkle y algoritmo de consenso Proof-of-Work (PoW).',
+  },
+  {
+    id: 'smid2021_aes_development',
+    topic: 'Historia y Estandarización de AES por NIST (De DES a Rijndael)',
+    category: 'Artículo Científico (Journal)',
+    author: 'Smid, M. E.',
+    year: '2021',
+    title: 'Development of the Advanced Encryption Standard',
+    source: 'Journal of Research of the National Institute of Standards and Technology, 126, 126024',
+    doiOrUrl: 'https://doi.org/10.6028/jres.126.024',
+    displayUrlLabel: 'NIST J. Res. - DOI: 10.6028/jres.126.024 (docs/references/subreferences/jres.126.024.pdf)',
+    inTextCitation: '(Smid, 2021)',
+    notes: 'Historia oficial exhaustiva escrita por el líder de la Security Technology Group de NIST. Documenta el ocaso de DES (ataques DESCHALL y EFF Deep Crack), el fracaso del Clipper Chip (SKIPJACK), la transición a 3DES, las conferencias de candidatos (15 postulantes, 5 finalistas) y la selección final de Rijndael por su rendimiento superior en tarjetas inteligentes y resistencia a ataques de canal lateral.',
+  },
+  {
+    id: 'sitraka2024_aes_modes',
+    topic: 'Evaluación de Modos de Operación AES (ECB, CBC, CFB, OFB, CTR, GCM) y Entropía',
+    category: 'Artículo Científico (Journal)',
+    author: 'Sitraka, R. R., & Malalatiana, R. H.',
+    year: '2024',
+    title: 'Evaluations of Crypto-System AES Using Multiple Bloc Ciphering Mode',
+    source: 'Applied Engineering, 8(1), 14–30',
+    doiOrUrl: 'https://doi.org/10.11648/j.ae.20240801.12',
+    displayUrlLabel: 'SciencePG - Applied Engineering (docs/references/subreferences/Evaluations_of_Crypto-System_AES_Using_Multiple_Bl.pdf)',
+    inTextCitation: '(Sitraka & Malalatiana, 2024)',
+    notes: 'Estudio experimental riguroso sobre los 6 modos de operación de AES. Analiza el modo autenticado GCM con tag de autenticación sobre GF(2^128) para prevenir ataques de oráculo, la derivación de claves con SHA-256 y métricas estadísticas: histogramas planos, NPCR (99.61%), UACI (30.4%) y entropía de Shannon (H ≈ 7.64 / 8.0).',
+  },
+  {
+    id: 'shakor2024_dynamic_aes_blockchain',
+    topic: 'Cifrado Dinámico AES, Gestión de Claves con Blockchain y Curvas Elípticas (ECC)',
+    category: 'Artículo Científico (Journal)',
+    author: 'Shakor, M. Y., Khaleel, M. I., Safran, M., Alfarhood, S., & Zhu, M.',
+    year: '2024',
+    title: 'Dynamic AES Encryption and Blockchain Key Management: A Novel Solution for Cloud Data Security',
+    source: 'IEEE Access, 12, 26334–26343',
+    doiOrUrl: 'https://doi.org/10.1109/ACCESS.2024.3351119',
+    displayUrlLabel: 'IEEE Access - DOI: 10.1109/ACCESS.2024.3351119 (docs/references/subreferences/Dynamic_AES_Encryption...)',
+    inTextCitation: '(Shakor et al., 2024)',
+    notes: 'Propone una arquitectura híbrida que combina generación dinámica de claves de sesión AES-256 mediante XOR de hashes SHA-256, encapsulamiento de claves con criptografía de curva elíptica (ECC) y almacenamiento descentralizado inmutable de claves en una Blockchain privada.',
+  },
+  {
+    id: 'zhang2026_lens_sse',
+    topic: 'Cifrado Simétrico con Búsqueda (SSE) y Grafo HNSW sobre Vectores Cifrados (LENS)',
+    category: 'Artículo Científico (Journal)',
+    author: 'Zhang, Y., Xu, Q., & Li, Y.',
+    year: '2026',
+    title: 'LENS: A graph-based ciphertext semantic retrieval scheme with lightweight representations',
+    source: 'Information Sciences, 761, 124169',
+    doiOrUrl: 'https://doi.org/10.1016/j.ins.2026.124169',
+    displayUrlLabel: 'Elsevier Information Sciences (docs/references/subreferences/1-s2.0-S002002552601100X-main.pdf)',
+    inTextCitation: '(Zhang, Xu, & Li, 2026)',
+    notes: 'Esquema de recuperación semántica sobre datos cifrados en la nube (Searchable Symmetric Encryption - SSE) mediante navegación en grafos HNSW y producto escalar seguro (EASPE), demostrando seguridad formal IND2-CKA bajo perfil de fuga controlado.',
+  },
+  {
+    id: 'kanwal2022_orthogonal_hill',
+    topic: 'Cifrado de Hill con Matrices Ortogonales y Mapas Caóticos (Henon y Tent)',
+    category: 'Artículo Científico (Journal)',
+    author: 'Kanwal, S., Inam, S., Othman, M. T. B., Waqar, A., Ibrahim, M., Nawaz, F., Nawaz, Z., & Hamam, H.',
+    year: '2022',
+    title: 'An Effective Color Image Encryption Based on Henon Map, Tent Chaotic Map, and Orthogonal Matrices',
+    source: 'Sensors, 22(12), 4359',
+    doiOrUrl: 'https://doi.org/10.3390/s22124359',
+    displayUrlLabel: 'MDPI Sensors - DOI: 10.3390/s22124359 (docs/references/subreferences/sensors-22-04359-v3.pdf)',
+    inTextCitation: '(Kanwal et al., 2022)',
+    notes: 'Optimización del cifrado de Hill clásico mediante generación de matrices clave ortogonales 3x3 a partir de ecuaciones de plano (A^t A = I), combinadas con permutación de Henon y difusión con mapa tent caótico, logrando espacio de clave > 2^240.',
+  },
+  {
+    id: 'salman2024_gaussian_hill',
+    topic: 'Cifrado de Hill Extendido con Enteros Gaussianos para Sistemas Bancarios',
+    category: 'Artículo Científico (Journal)',
+    author: 'Salman, S. A., Mohialden, Y. M., Abdulhameed, A., & Hussien, N. M.',
+    year: '2024',
+    title: 'A Novel Method for Hill Cipher Encryption and Decryption Using Gaussian Integers Implemented in Banking Systems',
+    source: 'Iraqi Journal for Computer Science and Mathematics, 5(1), 277–284',
+    doiOrUrl: 'https://doi.org/10.52866/ijcsm.2024.05.01.019',
+    displayUrlLabel: 'IJCSM - DOI: 10.52866/ijcsm.2024.05.01.019 (docs/references/subreferences/A Novel Method for Hill...)',
+    inTextCitation: '(Salman et al., 2024)',
+    notes: 'Extensión matemática del Cifrado de Hill utilizando números complejos en el anillo de enteros gaussianos Z[i] mod 26 para transacciones bancarias, implementado con NumPy y Pandas y resistente a ataques de texto claro conocido.',
+  },
 ];
 
 
@@ -863,5 +1045,290 @@ Cita académica: (Ramió Aguirre, 1999, pp. 88–96; Kahn, 1996)
    • Se completa con el comodín ('X') si no es múltiplo de NF.
    • El criptograma se obtiene leyendo horizontalmente fila por fila (Fila 1, Fila 2, ..., Fila NF).
    • Descifrado: Con LC y NF, se calcula NC = LC / NF. Se escribe horizontalmente en NF filas de NC columnas y se lee verticalmente de arriba hacia abajo columna por columna.`,
+  },
+  {
+    id: 'cripto_simetrica_des_3des_aes',
+    title: 'Criptografía Simétrica: Fundamentos, Clave Secreta y Algoritmos DES, 3DES y AES',
+    category: 'Criptografía Simétrica',
+    citation: '(NIST FIPS PUB 197, 2001; NIST FIPS PUB 46-3, 1999; NIST SP 800-67, 2017; Stallings, 2017)',
+    content: `CRIPTOGRAFÍA SIMÉTRICA O DE CLAVE SECRETA Y CIFRADORES POR BLOQUES
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST FIPS PUB 197, 2001; NIST FIPS PUB 46-3, 1999; NIST SP 800-67, 2017; Stallings, 2017)
+
+1. FUNDAMENTOS DE LA CRIPTOGRAFÍA SIMÉTRICA
+   • Principio de Clave Única: Emplea una sola clave secreta K compartida tanto para la operación de cifrado como para la de descifrado: C = E_K(M) y M = D_K(C).
+   • Seguridad centrada en la clave (Principio de Kerckhoffs, 1883): La fortaleza y confidencialidad del sistema no dependen de ocultar el algoritmo (el cual debe ser público para ser auditado por la comunidad científica), sino únicamente de salvaguardar el secreto de la clave.
+   • Debilidad Fundamental: El problema de distribución y compartición de la clave (Key Distribution Problem). Transmitir la clave K de forma segura entre emisor y receptor requiere un canal seguro previo. En una red de N usuarios, el número de claves bilaterales requeridas crece cuadráticamente: N × (N - 1) / 2.
+   • Parámetros Esenciales de Seguridad:
+     1. Unidireccionalidad computacional de la clave: Resulta matemáticamente inviable deducir la clave K a partir del conocimiento del texto cifrado C (e incluso con pares conocidos texto plano/cifrado).
+     2. Criterio Económico-Temporal: El costo computacional, temporal y financiero necesario para quebrar el criptosistema debe exceder ampliamente el valor comercial o estratégico de la información resguardada, y el tiempo de descifrado debe sobrepasar la vigencia temporal de su confidencialidad.
+
+2. DATA ENCRYPTION STANDARD (DES - FIPS 46-3)
+   • Historia: Diseñado por IBM (Lucifer) y estandarizado en 1977 por el NBS (actual NIST) como FIPS PUB 46.
+   • Parámetros: Bloque de 64 bits. Clave nominal de 64 bits con 8 bits de paridad, resultando en una clave efectiva de 56 bits (2^56 combinaciones).
+   • Arquitectura: Red de Feistel de 16 rondas con Permutación Inicial (IP) e Inversa (IP⁻¹).
+   • Función F: Expansión E (32 a 48 bits), suma XOR con la subclave K_i (48 bits), 8 Cajas S no lineales (S-Boxes de 6 a 4 bits, fuente primaria de confusión) y permutación P (difusión).
+   • Modos de Operación: ECB (Electronic Codebook), CBC (Cipher Block Chaining), CFB, OFB y CTR.
+   • Vulnerabilidad por Fuerza Bruta: Su espacio de 2^56 claves se demostró insuficiente en 1998 cuando la EFF quebró una clave en 56 horas con "Deep Crack". Hoy se quiebra en menos de 24 horas con clústeres de GPUs. Retirado oficialmente por NIST.
+
+3. TRIPLE DES (3DES / TDEA - NIST SP 800-67 REV. 2)
+   • Esquema EDE (Encrypt-Decrypt-Encrypt): C = E_K3( D_K2( E_K1( M ) ) ).
+   • Descifrado: M = D_K1( E_K2( D_K3( C ) ) ).
+   • Retrocompatibilidad: Si K1 = K2 = K3, el esquema colapsa a DES estándar (E_K(D_K(E_K(M))) = E_K(M)).
+   • Variantes de Clave:
+     - 3-Key 3DES (168 bits nominales): Seguridad efectiva de 112 bits debido al ataque Meet-in-the-Middle (MitM en 2^112 operaciones).
+     - 2-Key 3DES (112 bits nominales, K1 = K3): Seguridad efectiva de ~80 bits.
+   • Retiro Oficial por NIST: Conserva el bloque de 64 bits. El ataque Sweet32 (2016) demostró que tras 32 GB de datos cifrados en modo CBC se producen colisiones de bloques aprovechables para secuestro de sesiones HTTPS. El NIST retiró formalmente 3DES el 31 de diciembre de 2023.
+
+4. ADVANCED ENCRYPTION STANDARD (AES / RIJNDAEL - FIPS 197)
+   • Estandarización: Diseñado por Joan Daemen y Vincent Rijmen. Ganó el concurso abierto del NIST en 2001.
+   • Matriz de Estado: Bloques fijos de 128 bits organizados en una matriz de 4×4 bytes.
+   • Longitudes de Clave y Rondas:
+     - AES-128: Clave de 128 bits → 10 rondas.
+     - AES-192: Clave de 192 bits → 12 rondas.
+     - AES-256: Clave de 256 bits → 14 rondas (resistente ante computación cuántica por algoritmo de Grover).
+   • Las 4 Transformaciones de la Red de Sustitución-Permutación (SPN):
+     1. SubBytes: Sustitución no lineal byte a byte mediante la S-Box de Rijndael, calculada sobre el campo finito GF(2^8) con el polinomio irreducible m(x) = x^8 + x^4 + x^3 + x + 1 seguido de una transformación afín.
+     2. ShiftRows: Rotación cíclica de filas (Fila 0: 0, Fila 1: 1, Fila 2: 2, Fila 3: 3 bytes a la izquierda) para difusión inter-columnas.
+     3. MixColumns: Multiplicación matricial de cada columna en GF(2^8) por el polinomio c(x) = {03}x^3 + {01}x^2 + {01}x + {02} mod x^4 + 1. (Se omite en la última ronda).
+     4. AddRoundKey: Operación XOR bit a bit entre la matriz de estado y la subclave de ronda expandida.
+
+5. MATRIZ DE VENTAJAS Y DESVENTAJAS COMPARATIVAS
+┌────────────┬─────────────┬──────────────┬───────────────┬──────────────────────────┬────────────────────────┐
+│ Algoritmo  │ Bloque      │ Clave Efect. │ Rondas        │ Ventajas                 │ Desventajas            │
+├────────────┼─────────────┼──────────────┼───────────────┼──────────────────────────┼────────────────────────┤
+│ DES        │ 64 bits     │ 56 bits      │ 16 (Feistel)  │ Simplicidad histórica    │ Clave corta, roto por  │
+│            │             │              │               │ en circuitos de los 70   │ fuerza bruta (2^56)    │
+├────────────┼─────────────┼──────────────┼───────────────┼──────────────────────────┼────────────────────────┤
+│ 3DES       │ 64 bits     │ 112/168 bits │ 48 (3xFeistel)│ Mitigó la clave corta;   │ Muy lento (3x cómputo);│
+│            │             │ (efect. 112) │               │ retrocompatible con DES  │ Sweet32 (bloque 64b)   │
+├────────────┼─────────────┼──────────────┼───────────────┼──────────────────────────┼────────────────────────┤
+│ AES        │ 128 bits    │ 128, 192,    │ 10, 12, 14    │ Ultrarrápido (AES-NI);   │ Requiere código de     │
+│ (Rijndael) │             │ 256 bits     │ (SPN)         │ inmune a Sweet32; 256b   │ tiempo constante contra│
+│            │             │              │               │ resiste Grover cuántico  │ canal lateral de caché │
+└────────────┴─────────────┴──────────────┴───────────────┴──────────────────────────┴────────────────────────┘`,
+  },
+  {
+    id: 'cripto_asimetrica_cleopatra_hibrido',
+    title: 'Criptografía Asimétrica: RSA, DSA, ElGamal, Cleopatra (Gpg4win) y Cifrado Híbrido',
+    category: 'Criptografía Asimétrica',
+    citation: '(Diffie & Hellman, 1976; Rivest et al., 1978; RFC 9580, 2024; RFC 8017, 2016)',
+    content: `CRIPTOGRAFÍA ASIMÉTRICA, GESTIÓN EN CLEOPATRA Y CIFRADO HÍBRIDO
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Diffie & Hellman, 1976; Rivest, Shamir & Adleman, 1978; RFC 9580, 2024; RFC 8017, 2016)
+
+1. PRINCIPIOS MATEMÁTICOS DE LA CLAVE PÚBLICA (DIFFIE-HELLMAN, 1976)
+   • Funciones Trampa Unidireccionales (Trapdoor One-Way Functions):
+     Son funciones matemáticas y = f(x) fáciles de computar para cualquier entrada x, pero computacionalmente inviables de invertir (hallar x dado y) salvo que se conozca un dato secreto complementario denominado "trampa" (la clave privada).
+   • Par Asimétrico:
+     - Clave Pública: Se comparte y divulga abiertamente. En confidencialidad se utiliza para CIFRAR.
+     - Clave Privada: Se mantiene en estricto secreto por su titular. Se utiliza para DESCIFRAR.
+     - Inversión en Firma Digital: La clave privada FIRMA y la clave pública VERIFICA.
+   • Escalabilidad de Gestión: Para N participantes, se necesitan únicamente 2N claves (distribución lineal O(N)), superando la complejidad O(N^2) de la criptografía simétrica.
+
+2. ALGORITMOS ASIMÉTRICOS PRINCIPALES
+   • RSA (Rivest, Shamir & Adleman, 1978):
+     - Fundamento: Dificultad computacional de factorizar el producto n = p × q de dos números primos gigantescos.
+     - Función de Euler: φ(n) = (p - 1)(q - 1). Clave pública (e, n) con mcd(e, φ(n)) = 1; clave privada d ≡ e⁻¹ (mod φ(n)).
+     - Cifrado: C = M^e mod n. Descifrado: M = C^d mod n.
+     - Esquema de Relleno Obligatorio: RSA-OAEP (Optimal Asymmetric Encryption Padding - RFC 8017) para evitar ataques de texto cifrado elegido adaptativo (Bleichenbacher).
+   • DSA (Digital Signature Algorithm - FIPS 186):
+     - Fundamento: Problema del logaritmo discreto sobre subgrupos de campos finitos.
+     - Diseñado exclusivamente para firma digital (no cifra datos).
+     - Retiro por NIST: En FIPS 186-5 (2023), el NIST retiró DSA para generación de nuevas claves en favor de RSA y Curvas Elípticas.
+   • ElGamal (Taher ElGamal, 1985):
+     - Fundamento: Intercambio de claves Diffie-Hellman sobre grupos multiplicativos finitos.
+     - Característica: Cifrado probabilístico (el mismo mensaje produce criptogramas distintos en cada ejecución debido al parámetro efímero k).
+
+3. GESTIÓN PRÁCTICA CON CLEOPATRA (KLEOPATRA / GPG4WIN)
+   • Cleopatra es el gestor gráfico de certificados OpenPGP y X.509 de la suite Gpg4win (basada en GnuPG).
+   • Flujo de Generación de Claves:
+     1. Menú "Archivo" → "Nuevo par de claves OpenPGP...".
+     2. Ingresar Nombre Real y Correo Electrónico.
+     3. "Configuración avanzada": Seleccionar algoritmo (RSA 3072/4096 bits o curva Ed25519) y fecha de caducidad.
+     4. Frase de Paso (Passphrase): Contraseña de alta entropía que cifra la clave privada en disco mediante derivación S2K (String-to-Key / PBKDF2) con miles de rondas de hash.
+   • Exportación de Claves:
+     - Clave Pública: Se exporta a un archivo de texto plano ASCII Armor (\`.asc\` con encabezado \`-----BEGIN PGP PUBLIC KEY BLOCK-----\`). Puede compartirse por correo o subirse a servidores de claves HKP (keys.openpgp.org).
+     - Clave Privada: Se resguarda en copia de seguridad protegida por contraseña o token de hardware (YubiKey / Smart Card). NUNCA se comparte.
+   • Cifrado y Descifrado en Comunicaciones:
+     - El emisor importa la clave pública del receptor en Cleopatra y cifra un archivo.
+     - El receptor abre el archivo cifrado (\`.gpg\` o \`.asc\`), Cleopatra solicita su frase de paso para desbloquear la clave privada local, y recupera el texto claro.
+
+4. ARQUITECTURA DE CIFRADO HÍBRIDO (HYBRID ENCRYPTION)
+   • Problema: RSA es matemáticamente pesado (1000 veces más lento que AES) y no puede cifrar mensajes mayores a su módulo (máx. 190 bytes para RSA-2048 con OAEP).
+   • Solución Híbrida:
+     1. El emisor genera una clave de sesión simétrica efímera y aleatoria K_sesion de 256 bits.
+     2. Los datos voluminosos M (documentos, bases de datos de varios gigabytes) se cifran a gran velocidad con AES-256-CBC o GCM usando K_sesion: C_datos = AES(M, K_sesion).
+     3. La clave pequeña K_sesion (32 bytes) se cifra con la clave pública RSA del receptor usando OAEP: C_clave = RSA_Pub(K_sesion).
+     4. Se envía el contenedor: [C_clave (256 bytes) || C_datos].
+     5. El receptor descifra primero K_sesion con su clave privada RSA, y luego descifra los datos completos M con AES.`,
+  },
+  {
+    id: 'fuerza_bruta_espacio_claves',
+    title: 'Ataques de Fuerza Bruta: Diccionarios, Desencriptadores y Longitud de Clave',
+    category: 'Criptoanálisis y Seguridad',
+    citation: '(Stallings, 2017; NIST SP 800-131A Rev. 2, 2019; Shannon, 1949)',
+    content: `ATAQUES DE FUERZA BRUTA, HERRAMIENTAS Y MATEMÁTICA DEL ESPACIO DE CLAVES
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Stallings, 2017; NIST SP 800-131A Rev. 2, 2019; Shannon, 1949)
+
+1. MECÁNICA DEL ATAQUE DE FUERZA BRUTA (EXHAUSTIVE KEY SEARCH)
+   • Consiste en evaluar sistemáticamente cada una de las claves posibles de un algoritmo criptográfico hasta dar con aquella que produce un texto en claro inteligible o que genera el mismo hash objetivo.
+   • A diferencia de los ataques criptoanalíticos (que explotan debilidades algebraicas o estadísticas en las cajas S, permutaciones o números aleatorios), la fuerza bruta es un ataque puramente exhaustivo que siempre tiene éxito si se cuenta con tiempo y cómputo suficientes.
+
+2. DICCIONARIOS DE DATOS Y PROGRAMAS DESENCRIPTADORES
+   • Diccionarios (Wordlists):
+     - Listas de millones de contraseñas reales filtradas en brechas de seguridad (ej. RockYou.txt con 14.3 millones de contraseñas, SecLists).
+     - Motores de Reglas (Rule-Based Attacks): Generan permutaciones automáticas aplicando sustituciones leet (\`e\` → \`3\`, \`a\` → \`@\`), sufijos numéricos (\`2024\`, \`!\`) y combinaciones fonéticas.
+   • Programas Desencriptadores Modernos:
+     - Hashcat: Motor de descifrado forense acelerado masivamente por GPU (CUDA y OpenCL). Capaz de probar decenas de miles de millones de hashes NTLM o MD5 por segundo en un clúster doméstico.
+     - John the Ripper: Suite de auditoría multiplataforma para contraseñas de sistemas operativos (Unix shadow, Windows SAM), archivos comprimidos cifrados (ZIP, RAR) y documentos PDF.
+     - Hydra y Medusa: Herramientas de ataque de fuerza bruta en red contra servicios de autenticación remota (SSH, RDP, HTTP POST login).
+   • Tablas Arcoíris (Rainbow Tables): Tablas precalculadas que utilizan cadenas de reducción tiempo-memoria para invertir hashes que carecen de sal (salt).
+
+3. RELACIÓN MATEMÁTICA CON LA LONGITUD DE LA CLAVE (EXPONENCIALIDAD 2^k)
+   • El espacio de búsqueda de una clave binaria de k bits es N = 2^k.
+   • Principio de Duplicación Exponencial:
+     Cada bit adicional incorporado a la clave DUPLICA el tamaño total del espacio de búsqueda: 2^{k+1} = 2 × 2^k.
+   • Análisis Comparativo de Longitudes:
+     - 56 bits (DES): 2^56 ≈ 7.2 × 10^16 claves. Con un equipo de GPUs probando 10^11 claves/s, se recorre en 20 horas. Inseguro.
+     - 80 bits (2-Key 3DES / SHA-1): 2^80 ≈ 1.2 × 10^24 claves. Quebrado por supercomputadoras y redes de botnets. Retirado por NIST.
+     - 112 bits (3-Key 3DES efectivo): 2^112 ≈ 5.19 × 10^33 claves. Límite de seguridad alcanzable por estados nacionales para espionaje selectivo (retirado en 2023).
+     - 128 bits (AES-128): 2^128 ≈ 3.4 × 10^38 claves. Inalcanzable con la física del universo conocido: si toda la supercomputadora más potente del mundo probara 10^18 combinaciones por segundo, tardaría más de 10^13 años (mucho más que la edad del universo, ~13.8 mil millones de años).
+     - 256 bits (AES-256): 2^256 ≈ 1.15 × 10^77 claves. Resiste el Algoritmo Cuántico de Grover (que reduce la búsqueda a la raíz cuadrada: 2^{256/2} = 2^128 operaciones cuánticas efectivas).`,
+  },
+  {
+    id: 'sistemas_distribuidos_rpc_dnie',
+    title: 'Criptografía en Sistemas Distribuidos (RPC, Stubs) y el DNI Electrónico (DNIe)',
+    category: 'Sistemas Distribuidos y DNIe',
+    citation: '(Tanenbaum & Van Steen, 2017; RFC 5531, 2009; ICAO Doc 9303, 2021; BSI TR-03110, 2020)',
+    content: `SISTEMAS DISTRIBUIDOS, RPC, STUBS Y CRIPTOGRAFÍA EN EL DNI ELECTRÓNICO (DNIe)
+────────────────────────────────────────────────────────────────────────
+Cita académica: (Tanenbaum & Van Steen, 2017; RFC 5531, 2009; ICAO Doc 9303, 2021; BSI TR-03110, 2020)
+
+1. COMUNICACIONES CLIENTE-SERVIDOR Y LLAMADAS A PROCEDIMIENTO REMOTO (RPC)
+   • Modelo Cliente-Servidor: Comunicación entre procesos distribuidos en nodos de red separados que intercambian solicitudes y respuestas sobre canales de transporte.
+   • RPC (Remote Procedure Call - RFC 5531 / Birrell & Nelson, 1984): Abstracción que permite a una aplicación invocar métodos y rutinas alojadas en una máquina remota con la misma sintaxis que una función local.
+   • El Papel de los Stubs en la Seguridad Criptográfica:
+     - Client Stub: Intercepta la llamada a la función local, realiza el empaquetado de argumentos en formato estándar (Marshaling / Serialización XDR/Protobuf), cifra los parámetros confidenciales con clave simétrica (AES-256) y genera un hash o firma digital HMAC para autenticación.
+     - Server Stub (Skeleton): Recibe la trama del socket de red, ejecuta la desencriptación simétrica de la carga útil, valida el resumen hash para confirmar la integridad, desempaca los tipos de datos (Unmarshaling) y ejecuta la función local del servidor.
+   • Validación de Integridad mediante Hashes: Previene la inyección y alteración maliciosa de parámetros en tránsito (ataques Man-in-the-Middle) verificando que Hash(Payload_recibido) == Hash(Payload_enviado).
+
+2. ARQUITECTURA CRIPTOGRÁFICA DEL DNI ELECTRÓNICO (DNIe)
+   • Chip Criptográfico (Smart Card / Tarjeta Inteligente):
+     - Microcontrolador seguro con memoria protegida (ROM, Flash/EEPROM) y coprocesador criptográfico por hardware resistente a intrusiones físicas y análisis de consumo eléctrico (DPA - Differential Power Analysis).
+     - Dispositivo Cualificado de Creación de Firma (QSCD): Las claves privadas se generan dentro del silicio mediante generadores físicos de números aleatorios (TRNG) y NUNCA son leídas ni exportadas fuera del chip.
+   • Certificados Digitales X.509 y Datos Biométricos:
+     - Certificado de Autenticación: Acredita la identidad electrónica del ciudadano ante servicios telemáticos.
+     - Certificado de Firma Digital Cualificada: Proporciona a las transacciones firma con plena equivalencia jurídica con la firma manuscrita.
+     - Datos Biométricos (ICAO Doc 9303): Plantilla de huellas dactilares (Minutiae) y fotografía facial almacenadas bajo Control de Acceso Extendido (EAC).
+   • Clave PIN Confidencial:
+     - Número secreto que autoriza el uso de la clave privada dentro del chip.
+     - Tres intentos consecutivos erróneos bloquean el chip por seguridad física.
+
+3. PROCESO DE FIRMA DIGITAL DE UN DOCUMENTO PDF CON DNIe
+   1. El software de usuario (Adobe Acrobat, AutoFirma) calcula localmente el resumen hash SHA-256 del archivo PDF completo.
+   2. Envía exclusivamente los 32 bytes del hash al chip del DNIe a través del protocolo APDU (ISO/IEC 7816).
+   3. El chip exige la verificación exitosa del PIN del ciudadano.
+   4. El coprocesador interno del chip cifra el hash con la clave privada asimétrica (RSA-2048/3072 o ECC Brainpool): S = Hash^d mod n.
+   5. El software anfitrión recibe la firma S y la incrusta en el PDF conforme a la norma europea PAdES (PDF Advanced Electronic Signatures), adjuntando el certificado del firmante y un sello de tiempo (TSA).
+
+4. PROTOCOLOS DE CANAL SEGURO DEL CHIP: USO INTERNO DE AES Y 3DES
+   • En la interfaz inalámbrica NFC/RFID (DNIe 3.0 y 4.0), las señales de radio podrían ser interceptadas por lectores clandestinos en las inmediaciones.
+   • Protocolos de Comunicación Segura (Secure Messaging):
+     - BAC (Basic Access Control) y PACE (Password Authenticated Connection Establishment - BSI TR-03110 / ICAO Doc 9303).
+     - El lector y el chip negocian claves de sesión efímeras utilizando la clave CAN o MRZ impresa físicamente en la tarjeta.
+     - Cifrado del Canal: Históricamente se utilizó 3DES en modo CBC para proteger las tramas APDU; en las generaciones modernas de DNIe se utiliza AES-128 o AES-256 en modo CBC/GCM, garantizando simultáneamente la Confidencialidad e la Integridad de la comunicación contra espionaje y manipulación.`,
+  },
+  {
+    id: 'funciones_hash_tablas_nosql',
+    title: 'Funciones Hash Criptográficas, Colisiones, Tablas Hash y Bases de Datos NoSQL (Clave-Valor)',
+    category: 'Funciones Hash y NoSQL',
+    citation: '(NIST FIPS PUB 180-4, 2015; Kleppmann, 2017; Nakamoto, 2008; Tanenbaum & Van Steen, 2017)',
+    content: `FUNCIONES HASH CRIPTOGRÁFICAS, COLISIONES, TABLAS HASH Y BASES DE DATOS CLAVE-VALOR
+────────────────────────────────────────────────────────────────────────
+Cita académica: (NIST FIPS PUB 180-4, 2015; Kleppmann, 2017; Nakamoto, 2008; Tanenbaum & Van Steen, 2017)
+
+1. DEFINICIÓN Y PROPIEDADES DE LAS FUNCIONES HASH (SHA-256)
+   • Definición Formal: Una función hash H transforma un mensaje de entrada M de tamaño arbitrario en un compendio determinista de tamaño fijo h = H(M) (ej. 256 bits).
+   • Garantiza Integridad, NO Confidencialidad:
+     - El hash es una función unidireccional (One-Way): no existe inversa H⁻¹ para recuperar M a partir de h.
+     - No oculta información para su posterior lectura confidencial; sirve de huella digital matemática para auditar si un conjunto de datos sufrió la mínima modificación.
+   • Estructura de SHA-256 (FIPS PUB 180-4):
+     - Bloques de 512 bits procesados en 64 rondas mediante la construcción de Merkle-Damgård, utilizando 8 palabras de inicialización, operaciones booleanas (Ch, Maj, rotaciones y sumas módulo 2^32).
+   • Las 6 Propiedades Matemáticas Fundamentales:
+     1. Entrada arbitraria: Admite cadenas cortas o gigabytes de datos.
+     2. Salida fija: Exactamente 256 bits (64 caracteres hexadecimales).
+     3. Eficiencia computacional: Cálculo casi instantáneo en CPU.
+     4. Resistencia a Preimagen (One-Way): Dado h, es inviable hallar M con H(M) = h.
+     5. Resistencia a Segunda Preimagen: Dado M₁, es inviable hallar M₂ ≠ M₁ con H(M₁) = H(M₂).
+     6. Resistencia a Colisiones: Es inviable hallar dos entradas arbitrarias M₁ ≠ M₂ tales que H(M₁) = H(M₂).
+     7. Efecto Avalancha: Modificar un solo bit de entrada debe alterar aproximadamente el 50% de los bits del hash final.
+   • Qué es una Colisión: Situación en que dos datos distintos producen el mismo hash. Existen teóricamente por el Principio del Palomar (entradas infinitas vs salidas finitas 2^256), pero en SHA-256 requieren 2^128 operaciones (Paradoja del Cumpleaños), lo que resulta computacionalmente inexpugnable. Algoritmos como MD5 y SHA-1 fueron descontinuados por vulnerabilidades de colisión práctica.
+
+2. APLICACIONES PRÁCTICAS DE LAS FUNCIONES HASH
+   • Contraseñas Seguras:
+     - Nunca en texto plano. Se almacena Hash(Contraseña || Salt).
+     - Sal (Salt): Aleatoriedad que anula ataques de Tablas Arcoíris.
+     - Funciones lentas y resistentes a GPU: Argon2id, bcrypt, PBKDF2 (NIST SP 800-63B).
+   • Firmas Digitales: Se firma el hash de 32 bytes en vez del archivo original para optimizar tamaño y velocidad.
+   • Blockchain y Criptomonedas (Bitcoin):
+     - Encadenamiento de bloques por PrevBlockHash (SHA-256).
+     - Árboles de Merkle: Verificación eficiente O(log N) de transacciones.
+     - Proof of Work (PoW): Minería mediante búsqueda de nonces para generar hashes con ceros iniciales.
+
+3. TABLAS HASH Y BASES DE DATOS NO RELACIONALES (MODELO CLAVE-VALOR)
+   • Tablas Hash (Hash Tables) en Algoritmia:
+     - Mapean una clave arbitraria k a un índice en memoria mediante una función hash h(k).
+     - Complejidad: Inserción, búsqueda y eliminación en tiempo constante promedio O(1).
+     - Resolución de colisiones: Encadenamiento (listas enlazadas) o direccionamiento abierto (sondeo lineal).
+   • Relacionales (SQL) vs No Relacionales (NoSQL):
+     - Relacionales (PostgreSQL, MySQL): Esquema rígido y tabular, normalización, claves foráneas, índices B-Tree (costo O(log N)), ideales para transacciones ACID.
+     - No Relacionales (NoSQL): Sin esquemas rígidos (schemaless), particionamiento horizontal masivo y altísima concurrencia de lectura/escritura.
+   • El Modelo Clave-Valor (Key-Value Stores - Redis, Amazon DynamoDB, Memcached):
+     - Operan como gigantescas Tablas Hash Distribuidas (Distributed Hash Tables - DHT).
+     - Hashing Consistente (Consistent Hashing - Karger et al., 1997): La clave del registro se procesa con una función hash para situarla en un anillo virtual de nodos.
+     - Esto permite ubicar de forma instantánea qué partición o servidor físico almacena el valor en microsegundos, sin bloqueos de tablas ni búsquedas en árboles complejos.`,
+  },
+  {
+    id: 'laboratorio_openssl_cyberchef',
+    title: 'Laboratorio Práctico: OpenSSL CLI, CyberChef, AES-256-CBC, RSA-OAEP y SHA-256',
+    category: 'Laboratorio y Práctica',
+    citation: '(RFC 8017 / PKCS #1 v2.2, 2016; The OpenSSL Project, 2024; GCHQ CyberChef)',
+    content: `GUÍA DE LABORATORIO: OPENSSL, CYBERCHEF, CIFRADO HÍBRIDO Y FORMATOS DE CLAVE
+────────────────────────────────────────────────────────────────────────
+Cita académica: (RFC 8017 / PKCS #1 v2.2, 2016; The OpenSSL Project, 2024; GCHQ CyberChef)
+
+1. COMANDOS OFICIALES EN OPENSSL CLI
+   • Generación de Claves RSA:
+     $ openssl genpkey -algorithm RSA -out privada.pem -pkeyopt rsa_keygen_bits:2048
+     $ openssl rsa -pubout -in privada.pem -out publica.pem
+   • Cifrado Simétrico AES-256-CBC con Derivación PBKDF2:
+     $ openssl enc -aes-256-cbc -salt -pbkdf2 -in mensaje.txt -out mensaje.enc -k PasswordSuperSegura123!
+   • Descifrado Simétrico:
+     $ openssl enc -d -aes-256-cbc -pbkdf2 -in mensaje.enc -out recuperado.txt -k PasswordSuperSegura123!
+   • Cifrado Asimétrico RSA-2048 con Relleno Seguro OAEP:
+     $ openssl pkeyutl -encrypt -pubin -inkey publica.pem -in clave_sesion.bin -out clave_sesion.enc -pkeyopt rsa_padding_mode:oaep
+   • Descifrado Asimétrico con Clave Privada:
+     $ openssl pkeyutl -decrypt -inkey privada.pem -in clave_sesion.enc -out clave_sesion_recup.bin -pkeyopt rsa_padding_mode:oaep
+   • Cálculo de Resumen Criptográfico SHA-256:
+     $ openssl dgst -sha256 mensaje.txt
+
+2. PIPELINES Y RECETAS EN CYBERCHEF (THE CYBER SWISS ARMY KNIFE)
+   • Receta Simétrica AES:
+     - Operación "AES Encrypt" → Configurar Mode: CBC, Key (hex de 64 caracteres), IV (hex de 32 caracteres), Padding: PKCS7.
+     - Operación "To Base64" para exportar el resultado en formato transferible.
+   • Receta Asimétrica RSA:
+     - Operación "RSA Encrypt" → Pegar clave pública PEM, Padding: OAEP, Hashing: SHA-256.
+   • Receta de Resumen:
+     - Operación "SHA256" → Produce directamente el compendio de 64 caracteres hex.
+
+3. FORMATOS DE EXPORTACIÓN Y SERIALIZACIÓN DE CLAVES
+   • Formato PEM (Privacy Enhanced Mail):
+     - Codificación Base64 delimitada por cabeceras de texto: \`-----BEGIN RSA PRIVATE KEY-----\` o \`-----BEGIN CERTIFICATE-----\`.
+   • Formato DER (Distinguished Encoding Rules):
+     - Codificación binaria compacta directa de la estructura ASN.1, utilizada internamente en tarjetas inteligentes y TLS.
+   • Formato PKCS #12 (.pfx / .p12):
+     - Formato contenedor protegido con contraseña que almacena simultáneamente la clave privada, el certificado del servidor y la cadena de confianza de la CA.`,
   },
 ];
